@@ -1,7 +1,5 @@
 class OpenTags {
-	constructor() {
-		this.tags = [];
-	}
+	tags = [];
 
 	add(tag) {
 		this.tags.push(tag);

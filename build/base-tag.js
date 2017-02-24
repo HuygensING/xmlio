@@ -26,9 +26,7 @@ class Base {
         return keys
             .map((key) => {
             const value = attrs[key];
-            if (key === 'xml:id')
-                key = 'id';
-            key = key.replace(':', '');
+            key = key.replace(':', '-');
             return ` data-${key}="${value}"`;
         })
             .join('');

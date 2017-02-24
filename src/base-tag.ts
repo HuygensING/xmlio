@@ -31,8 +31,7 @@ class Base {
 				const value = attrs[key];
 
 				// Rename the key if necessary
-				if (key === 'xml:id') key = 'id';
-				key = key.replace(':', '');
+				key = key.replace(':', '-');
 
 				return ` data-${key}="${value}"`
 			})

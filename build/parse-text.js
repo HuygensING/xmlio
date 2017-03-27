@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = (state, tagsToSkip) => (text) => {
-    if (!state.openTags.containsOneOf(tagsToSkip)) {
+exports.default = (state) => (text) => {
+    if (!state.openTags.containsOneOf(state.tagsToSkip)) {
         state.appendHtml(text);
     }
 };

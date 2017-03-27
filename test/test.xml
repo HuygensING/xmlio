@@ -1,0 +1,667 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../VERANTWOORDING/documentation/MD.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:md="http://mondrian.huygens.knaw.nl/">
+    <teiHeader>
+        <fileDesc>
+            <!-- EERSTE VERSIE OVERGETYPT VAN 'Two Mondrian Sketchbooks'
+                        paginering uit boek overgenomen (ook evt. dubbele paginering, later te beslissen)-->
+            <titleStmt>
+                <title>Schetsboek 2</title>
+                <editor xml:id="wc">Wietse Coppes</editor>
+                <editor xml:id="lj">Leo Jansen</editor>
+                <sponsor>Mondriaan Editieproject</sponsor>
+            </titleStmt>
+
+            <publicationStmt>
+                <p></p>
+            </publicationStmt>
+
+            <sourceDesc>
+                <md:letDesc>
+                    <md:letIdentifier>
+                        <idno type="pilot">Schetsboek 2</idno>
+                        <idno type="letterId"></idno>
+                        <idno type="whereabouts">Guggenheim</idno>
+                        <idno type="def"></idno>
+                    </md:letIdentifier>
+
+                    <md:letHeading>
+                        <author attested="yes" ref="http://explore.rkd.nl/explore/artists/56854">Piet Mondriaan</author>
+                        <md:addressee attested="no" ref="xx"></md:addressee>
+                        <md:placeLet attested="no"></md:placeLet>
+                        <md:dateLet attested="no"></md:dateLet>
+                    </md:letHeading>
+
+                    <md:letPhysDesc>
+                        <md:type></md:type>
+
+                        <md:decoration>
+                            <md:decoList>
+                                <md:decoItem>
+                                    <md:letDecoDesc>
+                                        <p/>
+                                    </md:letDecoDesc>
+                                </md:decoItem>
+                            </md:decoList>
+                        </md:decoration>
+                    </md:letPhysDesc>
+
+                    <md:letContents>
+                        <p/>
+                        <keywords>
+                            <term></term>
+                            <term></term>
+                            <term/>
+                        </keywords>
+                        <note></note>
+                    </md:letContents>
+
+                    <md:envOcc occ="no"/>
+
+                </md:letDesc>
+            </sourceDesc>
+        </fileDesc>
+
+        <revisionDesc>
+            <change who="wc">transcriptie: in bewerking 7.8.15</change>
+            <change who="wc">collatie bron: te doen / in bewerking / voltooid</change>
+            <change who="lj">tweede collatie op basis van origineel: voltooid 16.11.16</change>
+            <change who="lj">invoer tweede collatie: voltooid 8.12.16</change>
+            <change>bespreking eindversie: gb</change>
+            <change>markeren annotaties: in bewerking / voltooid</change>
+        </revisionDesc>
+
+    </teiHeader>
+
+    <facsimile>
+
+
+        <!-- envelope recto and verso -->
+        <surface n="814env-R" xml:id="surf-env-r">
+            <zone xml:id="zone-env-r">
+                <graphic url="exemple.jpg"/>
+            </zone>
+        </surface>
+        <surface n="814env-V" xml:id="surf-env-v">
+            <zone xml:id="zone-env-v">
+                <graphic url="exemple.jpg"/>
+            </zone>
+        </surface>
+    </facsimile>
+
+    <text>
+        <body>
+
+            <div>   <!-- envelope recto -->
+                <pb n="envelope-v" xml:id="env-v" facs="#zone-env-v"/>
+                <address type="receiver">
+                    <addrLine></addrLine>
+                </address>
+                <md:postmark></md:postmark>
+            </div>
+
+            <div type="postalData" xml:id="PD">
+            </div>
+
+
+
+            <div type="original" xml:lang="en">
+                <pb f="1r" n="1" xml:id="pb-orig-1r-1" facs="#zone-pb-1r-1"/>
+                <!-- Voorzijde: -->
+                <ab>Schetsboek
+                </ab>
+
+                <pb f="1r" n="1" xml:id="pb-orig-1r-2" facs="#zone-pb-1r-1"/>
+
+            </div>
+
+            <!-- Opmerkingen bij transcriptie
+                * onderscheid slotpunt / -streepje niet altijd goed te maken
+                * onderstrepingen van woorden soms slechts onder enkele letters; i.t.t. transcripte van schetsboek 1 is hier steeds het hele woord
+                als onderstreept getranscribeerd (dus geïntendeerde lezing).
+                * door gebruik potlood en vlug schrift letters vaak niet geheel gerealiseerd.
+                * id. mbt hoofdletters/kl. letters
+                * geen alinea’s gemarkeerd.
+                * oriëntatie van schrijf/leesrichting niet genoteerd (alle vier liggingen vh schetsboek komen voor)
+                * volgorde: op p. 14 Introduction wordt gesuggereerd dat (een deel van) de teksten het best in omgekeerde volgorde
+                gelezen kan worden; zelf bepalen a.d.h.v. origineel. Daarbij in overweging nemen dat een aantal bladen los is en door
+                Welsh op bep. plaats is tussengevoegd; zie Editor’s Note p. 6
+
+            -->
+
+
+            <div>
+                <pb/><!-- 51 -->
+                <p><lb/>moderne machines
+                    <lb/>(baggermolens etc.)
+                    <!-- HIER IS EEN LIJN GEPLAATST OM DE TEKSTFRAGMENTEN VAN ELKAAR TE SCHEIDEN -->
+                    <lb/>Bach <choice><unclear>intuïtif</unclear><unclear>intiütif</unclear></choice> —
+                    <lb/>moderne kunst meer
+                    <lb/>met <hi rend="underline">bewust</hi>zijn.
+                    <!-- HIER IS EEN LIJN GEPLAATST OM DE TEKSTFRAGMENTEN VAN ELKAAR TE SCHEIDEN -->
+                    <!-- OP DEZE PAGINE IN RECHTERONDERHOEK (DOORLOPEND IN TEKST ERBOVEN?) EEN SCHETS -->
+
+                    <!-- ONDERSTAANDE TEKST STAAT OP DEZE PAGINA ONDERAAN TEGEN DE LINKERKANTLIJN VAN BOVEN NAAR BENEDEN GESCHREVEN -->
+                    <lb/>Van Rees
+                    <lb/>Fleury en Bière
+                    <lb rend="indent"/>(Seine et Marne)
+
+                    <pb/><!-- 52 / 3 (2) -->
+                    <lb/>Kunst en Realiteit.
+                    <lb/>Kunst is boven de
+                    <lb rend="indent"/>realiteit.
+                    <lb rend="indent"/>heeft geen rapport
+                    <lb/>direkt met realiteit.
+                    <lb/>tusschen <del><unclear>lucht</unclear></del> de physie<lb/>ke <!-- nb geen wbh -->
+                    en eterische sfeer
+                    <lb/>is een voor onze zin<c type="wbh">-</c><lb/>tuigen
+                    afgebakende
+                    <lb/>grens: <del>zoo ook tus</del>
+                    <lb/>toch doordringt de
+                    <lb/>ether de phys. sfeer
+                    <lb/>en werkt op deze in.
+                    <lb/>Zoo doordringt de
+                    <lb/><del rend="overwritten">geestelijke</del><add>artistieke</add> sfeer de
+
+                    <pb/><!-- 53 / 5 (18) -->
+                    <lb/>realiteit: maar
+                    <lb/>voor onze zintuigen
+                    <lb/>zijn 't twee dingen:
+                    <lb/>'t geestelijk en materieel
+                    <lb/><del>Daarom</del>Om 't geeste<c type="wbh">-</c><lb/>lijke
+                    te benaderen
+                    <lb/>in kunst, neemt
+                    <lb/>men zoo min
+                    <lb/>mogelijk realiteit,
+                    <lb/>omdat realiteit
+                    <lb/>tegenover 't geestelijk
+                    <lb/>staat. Zoo is 't
+                    <lb/>logisch verklaart
+                    <lb/>dat men neemt
+                    <lb/>de grondvormen.
+
+                    <pb/><!-- 53 / 6 (19) -->
+                    <lb/>Daar deze abstract
+                    <lb/>zijn, ontstaat er
+                    <lb/>een abstracte kunst.
+                    <lb/>Kunst moet boven
+                    <lb/>de realiteit zijn.
+                    <lb/>Kunst moet boven
+                    <lb/>menschelijk zijn.
+                    <lb/>Anders zoude ze
+                    <lb/>voor den mensch geen
+                    <lb/>waarde hebben.
+                    <lb/>(Dit boven den mensch
+                    <lb/>zijn, lijkt voor den
+                    <lb/>materieelen mensch
+                    <lb/><hi rend="underline">vaag</hi> en droomerig,
+                    <lb/>voor den geestelijken
+                    <lb/>is 't juist positief
+                    <lb rend="right"/>en klaar)
+
+                    <pb/><!-- 54 / 7 (20) -->
+                    <lb/>Als kunst boven
+                    <lb/>menschelijk is, culti<c type="wbh">-</c><lb/>veert
+                    zij 't bovenmen<c type="wbh">-</c><lb/>schelijk
+                    element in
+                    <lb/>den mensch, en is
+                    <lb/>de kunst, evenals
+                    <lb/>de godsdienst <del>het</del><add rend="above"> een</add>
+                    <lb/>middel tot evolu<c type="wbh">-</c><lb/>eeren
+                    der mensch<c type="wbh">-</c><lb/>heid.
+                    <lb/>Daarentegen is
+                    <lb/>r<retrace>ea</retrace>liteitskunst
+                    <lb/>een amusement
+                    <lb/>der menschen in
+                    <lb/>het menschelijke,
+
+                    <pb/><!-- 54 / 8 (21) -->
+                    <lb/><del>en</del> <del>alleen is 't moge<c type="wbh">-</c><lb/>lijk</del>
+                    en het schoone
+                    <lb/>dat we zoo bewonderen
+                    <lb/>is niet veel schooner
+                    <lb/>dan we met onze
+                    <lb/>menschelijke oogen
+                    <lb/>zien. Deze kunst
+                    <lb/>heeft echter toch
+                    <lb/>daarom reden van
+                    <lb/>bestaan, omdat de
+                    <lb/>menschelijke men<c type="wbh">-</c><lb/>schen
+                    weer niet
+                    <lb/>alle <hi rend="underline">even</hi> mensche<c type="wbh">-</c><lb/>lijk
+                    zijn. De ar<c type="wbh">-</c><lb/>tist
+                    ziet intuitief
+                    <lb/>veel geestelijker dan
+                    <lb/>den alledaagschen
+
+                    <pb/><!-- 55 / 9 (22) -->
+                    <lb/>mensch: daarom
+                    <lb/>ziet hij de realiteit
+                    <lb/>mooier en daardoor
+                    <lb/>is zijn kunst wêer
+                    <lb/>goed voor den alle<c type="wbh">-</c><lb/>daagschen
+                    mensch.
+                    <lb/>De artistmensch
+                    <lb/>echter behoeft wêer
+                    <lb/>een kunst<add rend="above">enaar</add> die
+                    <lb/>mooier ziet dan
+                    <lb/>hij zelf ziet en
+                    <lb/>dezen mensch
+                    <lb/>heeft behoefte aan
+                    <lb/>Abstracte kunst.
+                    <!-- HIER VOLGT EEN STREEP DIE DE PAGINA/PARAGRAAF AFSLUIT -->
+
+                    <pb/><!-- 55 / 10 (23) -->
+                    <lb/><hi rend="underline"><del rend="overwritten">k</del><add>K</add>unst</hi>.
+                    <lb/>Alle kunst is even
+                    <lb/>mooi <del rend="overwritten">en</del><add>of</add> even goed:
+                    <lb/>evenmin als goed
+                    <lb/>en kwaad bestaat,
+                    <lb/>evenmin bestaat
+                    <lb/>goede of slechte kunst.
+                    <lb/>(leelijke of mooie).
+                    <lb/>Het goed of kwaad
+                    <lb/><del>h</del>is <hi rend="underline">induvidueel</hi>:
+                    <lb/>wat voor den <hi rend="underline">een</hi>
+                    <lb/>goed is, is voor den
+                    <lb/>ander kwaad.
+                    <lb/>(Evenals met
+
+                    <pb/><!-- 56 / 11 (24) -->
+                    <lb/>eten: wat voor
+                    <lb/><del>kinderen</del>groote
+                    <lb/>menschen goed is,
+                    <lb/>is voor kinderen
+                    <lb/>slecht.
+                    <lb/>Zoo ook kunst is
+                    <lb/>al of niet mooi
+                    <lb/>naarmate die
+                    <lb/>kunst geschikt
+                    <lb/>is voor 't indivi<c type="wbh">-</c><lb/>du—
+                    <lb/>We hebben elk
+                    <lb/>dus maar alleen
+                    <lb/>uit te zoeken.
+
+                    <pb/><!-- 56 12 (25) -->
+                    <lb/>En al het mooie
+                    <lb/>bestaat <hi rend="underline">naast</hi> el<c type="wbh">-</c><lb/>kaar,
+                    evenals al
+                    <lb/>het eten.
+                    <lb/>Maar kunst is niet
+                    <lb/><add rend="above">een </add>algemeenheid: niet
+                    <lb/>een algemeen mooi.
+                    <lb/>Daarom kan geen
+                    <lb/>universeele kunst
+                    <lb/>bestaan: ze is altoos
+                    <lb/>(bij groepen indi<c type="wbh">-</c><lb/>viduen)
+                    individu<c type="wbh">-</c><lb/>eel.
+                    <lb/>Kunst (althans
+
+                    <pb/><!-- 57 / 13 (26) -->
+                    <lb/>abstracte kunst)
+                    <lb/>is dus nooit sociaal.
+                    <lb/>Andere kunst (meer
+                    <lb/>realistisch) kan
+                    <lb/>dit eerder wezen.
+                    <lb/>Want het volk
+                    <lb/>moet nog de
+                    <lb/>materie hebben:
+                    <lb/>het volk leeft in
+                    <lb/>zijn denken in de
+                    <lb/>materie. Dus
+                    <lb/>voor hun het
+                    <lb/>mooie in de
+                    <lb/>materie.
+                    <lb/>Zoo ook voor
+
+                    <pb/><!-- 57 / 14 (27) -->
+                    <lb/>rijken die in de
+                    <lb/>materie leven.
+                    <lb/>Zij, die di<del rend="overwritten">t</del><add>e</add> ma<c type="wbh">-</c><lb/>terie
+                    <hi rend="underline">in hun den<c type="wbh">-</c><lb/>ken</hi>
+                    althans (want
+                    <lb/>de mensch blijft nog
+                    <lb/>lang mensch, ook
+                    <lb/>de artist zelfs, en
+                    <lb/>wel <hi rend="underline2">vooral</hi>) te
+                    <lb/>boven zijn, zij zijn
+                    <lb/><hi rend="underline">vatbaar</hi> voor ab<c type="wbh">-</c><lb/>stracte
+                    kunst.
+                    <!-- HIER IS EEN LIJN GEPLAATST OM DE TEKSTFRAGMENTEN VAN ELKAAR TE SCHEIDEN -->
+                    <lb/>Zij, die de materie
+                    <lb/>in hun denken niet
+                    <lb/>alleen maar ook in
+                    <lb/>hun <hi rend="underline">leven</hi> te boven
+
+
+                    <pb/><!-- 58 / 16 (28) -->
+                    <lb/>zijn, zij hebben
+                    <lb/>ook de abstracte
+                    <lb/>kunst niet meer
+                    <lb/>noodig: zij zijn
+                    <lb/><del>de</del><add rend="above"> in</add> waarheid
+                    <lb/>geestelijken —
+                    <!-- HIER IS EEN LIJN GEPLAATST OM DE TEKSTFRAGMENTEN VAN ELKAAR TE SCHEIDEN -->
+
+                    <pb/><!-- 58 / 16 (28) --><!-- n.b. LEGE PAGINA -->
+
+
+                    <pb/><!-- 59 / 17 (30) --><!-- GESCHREVEN VAN BOVEN NAAR BENEDEN, IPV VAN LINKS NAAR RECHTS -->
+                    <lb/>is, zal ook de vorm zijn. <hi rend="underline">Vorm</hi>
+                    <lb/>is dus afhankelijk van den <hi rend="underline">tijd</hi> en
+                    <lb/>van de mate van <hi rend="underline">ontwikkeling</hi> der
+                    <lb/>menschheid. Dit sluit in dat
+                    <lb/>de <hi rend="underline">vorm</hi> n<retrace>oo</retrace>it aldoor dezelfde
+                    <lb/>kan zijn. Ook niet <hi rend="underline">vorm</hi> in
+                    <lb/>kunst. (Denk aan verschillende
+                    <lb/>temp<retrace>el</retrace>vormen).
+
+                    <pb/><!-- 59 / 18 (31) --><!-- GESCHREVEN VAN BOVEN NAAR BENEDEN, IPV VAN LINKS NAAR RECHTS -->
+                    <lb/>Alle godsdiensten hebben de zelfde
+                    <lb/>oerinhoud: in vorm zijn ze verschil<c type="wbh">-</c><lb/>lend
+                    alleen. De <hi rend="underline">vorm</hi> is de uiterlijke
+                    <lb/>representatie ervan: <del>dit is dus</del><add rend="below"> de<del>ze</del> vorm</add>
+                    <lb/>is dus iets onmisbaars voor de uit<c type="wbh">-</c><lb/>beelding
+                    van de oerprincipes. Door
+                    <lb/>den <hi rend="underline">vorm</hi> werk<del>t</del><add>en</add> de oerprincipes
+                    <lb/>in de menschheid. Naarmate
+                    <lb/>de menschheid in zekere periode
+
+
+                    <pb/><!-- 60 / 19 (34) -->
+                    <lb/>Wees dus niet bezorgd Uwe idialen
+                    <lb/>te verliezen (d.i. te zien verplaatsen)
+                    <!-- SCHEIDINGSLIJN -->
+                    <lb/>De groote dwalingen omtrent 't begrij<c type="wbh">-</c><lb/>pen
+                    van 't leven is daarin gelegen,
+                    <lb/>dat men alleen 't eene afgescheiden
+                    <lb/>leven ziet en niet <hi rend="underline">het heele</hi> leven
+                    <lb/>(van alle in<retrace>c</retrace>arnaties)
+
+                    <pb/><!-- 60 / 20 (35) -->
+                    <lb/>Gedurende de vele incarnatien
+                    <lb/>heen <add rend="above" seq="4">is men verplicht </add><del seq="1">verlies</del><del seq="3"><add seq="2">verplaatst men </add></del>aldoor
+                    <lb/>zijne idialen<del> tot</del> te verplaatsen
+                    <lb/>(van de materieelen tot de abstracten
+                    <lb/>toe)<del rend="overwritten">.</del><add>,</add>, tot dat de idialen (als
+                    <lb/>zijnde geweest zoovele impulsen
+                    <lb/>om te evolueeren) wegvallen
+                    <lb/>en niet meer <del>als </del>noodig zijn. Dan
+                    <lb/>is de menschelijke evolutie voltooid.
+
+                    <pb/><!-- 61 / 21 (36) -->
+                    <lb/>Een vorm moet van zijn
+                    <lb/>tijd zijn om gekend te
+                    <lb/>worden: wat men niet
+                    <lb/>heeft of is, kent men
+                    <lb/>niet. Daarmede is alles
+                    <lb/>van vroeger tijd veroor<c type="wbh">-</c><lb/>deelt.
+
+                    <pb/><!-- 61 / 22 (37) -->
+                    <lb/>kunst en ornamentiek
+                    <lb/>kunst en Rembrand
+                    <lb/>dwalen we nu of
+                    <lb/>dwalen
+                    <lb/>we
+                    <lb/>niet?
+
+                    <pb/><!-- 62 / 23 (38) -->
+                    <lb/>De vorm is het juist,
+                    <lb/>waar 't op aan komt
+                    <lb/>'t Innerlijke hoofdzaak
+                    <lb/>goed, maar 't innerlijk
+                    <lb/>wordt alleen door den vorm
+                    <lb rend="indent"/>gekend.
+
+                    <pb/><!-- 62 / 24 (39) --><!-- n.b. DE TEKST OP DEZE PAGINA STAAT VAN BOVEN NAAR BENEDEN GEZIEN VANUIT DE KANTLIJN -->
+                    <lb/>Ook zonder te <hi rend="underline">kennen</hi>
+                    <lb/>wordt de Artist door den
+                    <lb/>tijdgeest gedrongen
+                    <lb/>naar 't <retrace>a</retrace>bstracte: juist
+                    <lb/>in de lijn van de evolutie
+                    <lb/>(Picasso)
+
+                    <pb/><!-- 63 / 25 (62) --><!-- BEVAT TEKENING VAN GESLOOPTE GEVEL; ONDERSTEBOVEN OP BLAD -->
+
+                    <pb/><!-- 63 / 26 (63) --><!-- LEGE PAGINA -->
+
+                    <pb/><!-- 64 / 27 (68) --><!-- DE TEKST OP DEZE PAGINA STAAT ONDERSTEBOVEN -->
+                    <lb/>aard der komende
+                    <lb/>kunst.
+                    <lb/>Een wetenschap.
+                    <lb/>basis is dus
+                    <lb/>mogelijk.
+
+                    <pb/><!-- 64 / 28 (69) --><!-- DE TEKST OP DEZE PAGINA STAAT ONDERSTEBOVEN -->
+                    <lb/>De Leer der Evolut
+                    <lb/>nu leert ons
+                    <lb/>den <del>aard </del><del>h</del>hoe
+                    <lb/>den aard dezer
+                    <lb/>twee dingen
+                    <lb/>verandert.
+                    <lb/><del seq="1">En </del><del seq="2"><add rend="above" seq="1">Zij</add></del> <del seq="2">g</del><add rend="overwritten" seq="2">G</add>eeft
+                    <add rend="above">zij </add>ons in
+                    <lb/>elke periode
+                    <lb/>de<add seq="4">n</add> <del type="strikover" seq="3">basis aan</del>
+                    <lb/>aard daarvan
+                    <lb/>aan, zoo kunnen
+                    <lb/>we kennen den
+
+                    <pb/><!-- 65 / 29 (70) --><!-- DE TEKST OP DEZE PAGINA STAAT ONDERSTEBOVEN -->
+                    <lb/>Wat is leven?
+                    <lb/>We kunnen dit zien
+                    <lb/>als een Evolueerend
+                    <lb/>herhaling van
+                    <lb/>genieten
+                    <lb/>Scheppen.
+                    <lb/>rust.
+                    <lb/>vrouwelijk en
+                    <lb/>mannelijk begin<c type="wbh">-</c><lb/>sel
+                    <del>tot </del>komen
+                    <lb/>alzoo in <hi rend="underline">rust</hi>
+                    <lb/>tot een Eenheid.
+
+                    <pb/><!-- 65 / 30 (71) --><!-- DE TEKST OP DEZE PAGINA STAAT ONDERSTEBOVEN -->
+                    <lb/>Rekent men met
+                    <lb/>geest alleen,
+                    <lb/>zoo ontstaat er
+                    <lb/>geen leven, geen
+                    <lb/>kunst.
+                    <lb/>Met <del>geest </del><add rend="above">stof</add> alle<retrace>e</retrace>n,
+                    <lb/>ook niets.
+                    <lb/>De eenheid v.
+                    <lb/>deze twee
+                    <lb/>vormt de
+                    <lb/>Schepping.
+
+                    <pb/><!-- 66 / 31 (74) --><!-- DE TEKST OP DEZE PAGINA STAAT ONDERSTEBOVEN -->
+                    <lb/>Heeft de modern
+                    <lb/>wetensch. de leer<unclear reason="error">,</unclear><!-- lijkt niet moedwillig gezette komma -->
+                    <lb/>der Theo. bevestigd
+                    <lb/>dat stof en kracht
+                    <lb/>(geest) een zijn,
+                    <lb/>zoo is er geen
+                    <lb/>reden om deze
+                    <lb/>te scheiden.
+                    <lb/>Waar stof en <del rend="overwritten">kr.</del><add>geest</add>
+                    <lb/>'t leven vormen,
+                    <lb/>moet met beiden
+                    <lb/>gerekend worden.
+                    <lb/><hi rend="underline">Niet</hi> met <hi rend="underline">een</hi>
+                    <lb/>van twee.
+
+                    <pb/><!-- 66 / 32 (75) --><!-- DE TEKST OP DEZE PAGINA STAAT ONDERSTEBOVEN -->
+                    <lb/>Als Kunst Leven
+                    <lb/>is, is kunst
+                    <lb/>afhankel. van
+                    <lb/>de ontwikk.
+                    <lb/>en <hi rend="underline">aard</hi>
+                    <lb/>der maatschappij
+                    <!-- streep ter afsluiting -->
+
+                    <pb/><!-- 67 / 33 (79) --><!-- DE TEKST OP DEZE PAGINA STAAT ONDERSTEBOVEN -->
+                    <lb/>Beeld me iets zint.<!-- nb 'me' m.z. 'men' -->
+                    <lb/>waarneembaars af,
+                    <lb/>zoo zegt me iets<!-- nb 'me' m.z. 'men' -->
+                    <lb/>menschelijks omdat
+                    <lb/>men de dingen door
+                    <lb/>zich zelf kent.
+                    <lb/>Beeld men de
+                    <lb/>dingen niet uit,
+                    <lb/>zoo blijft er
+                    <lb/>plaats voor 't
+                    <lb/><hi rend="underline">Goddelijke.</hi>
+                    <lb/><del rend="overwritten">d</del><add>D</add>e gehechtheid a.d.
+                    <lb/>stof maakt 't
+                    <lb/>lijden. Geen stof
+                    <lb rend="right"/>geen lijden.
+
+                    <pb/><!-- 67 / 34 (77) --><!-- DE TEKST OP DEZE PAGINA STAAT ONDERSTEBOVEN -->
+                    <lb/>Door de oppervl.
+                    <lb/>der dingen waren
+                    <lb/>die wetten geslui<c type="wbh">-</c><lb/>erd.<!-- ALINE-EINDE > NIEUWE REGEL BEGINT DUS OP lb/ -->
+                    <lb/>Nu kome ze<!-- nb 'kome' m.z. 'komen' -->
+                    <lb/>puur te
+                    <lb/>voorschijn.
+
+                    <pb/><!-- 68 / 35 (78) --><!-- DE TEKST OP DEZE PAGINA STAAT ONDERSTEBOVEN -->
+                    <lb/>stof ook afbeelden
+                    <lb/>daarvan —
+                    <lb/>We komen tot
+                    <lb/>afbeelden van
+                    <lb/>andere dingen als
+                    <lb/>daar zijn de
+                    <lb/>wetten die
+                    <lb/>de stof bij elkaar
+                    <lb/>houdt.
+                    <lb/>Dit zijn de
+                    <lb/>groote algemeen
+                    <lb/>heden.
+                    <lb/>Die niet veranderen.
+
+                    <pb/><!-- 68 / 36 (79) --><!-- DE TEKST OP DEZE PAGINA STAAT ONDERSTEBOVEN -->
+                    <lb/>Het zintuigelijk
+                    <lb/>waarneembaar
+                    <lb/>gedeelte v.d.
+                    <lb/>geest noeme<!-- nb 'noeme' m.z. 'noemen' -->
+                    <lb/>we stof.<!-- nb. het vlekje boven de punt zit in het papier, het is geen dubbele punt; Jeffrey Warda agrees -->
+                    <lb/>Hiervan kunnen
+                    <lb/>we iets uitbeelden.
+                    <lb/>Door onze zintuigen,
+                    <lb/>Van het niet waar<c type="wbh">-</c><lb/>neembare
+                    kunnen
+                    <lb/>we niets afbeelden.
+                    <lb/>Dus vervalt
+                    <lb/>met vervallen van
+
+                    <pb/><!-- 69 / 37 (80) --><!-- DE TEKST OP DEZE PAGINA STAAT ONDERSTEBOVEN -->
+                    <lb/>Geest <add rend="above">(Kracht) </add>en stof een
+                    <lb rend="center"/>Eenheid.
+                    <lb/>Uit deze Eenheid
+                    <lb/>de Scheppingsdrang
+                    <lb/><del>De stof, Evolueert
+                        <lb/>naar den geest,
+                        <lb/><choice><unclear>bren</unclear><unclear>toen</unclear></choice></del>
+                    <lb/>We moeten de kun<lb/>stenaar
+                    steeds
+                    <lb/>in<gap unit="chars" quantity="2" reason="overwritten"/><add> ver</add>vand met
+                    <lb/>de maatsch. zie<gap reason="edge" quantity="1" unit="chars"></gap>
+                    <lb/>Kunst en maats.
+                    <lb rend="indent"/>is een.
+
+                    <pb/><!-- 69 / 38 (81) --><!-- DE TEKST OP DEZE PAGINA STAAT ONDERSTEBOVEN -->
+                    <!-- SCHETS ONDER/OVER DE TEKST OP DEZE PAG.? -->
+                    <lb/>Een gevolg is dat
+                    <lb/>de hoofdzaak
+                    <lb/>in de kunst deze
+                    <lb/>worden.
+                    <lb/>Dat zijn harmon
+                    <lb/>Evenwicht
+                    <lb/>enz.
+                    <lb/>Deze worden in
+                    <lb/>Schilderkunst
+                    <lb/>uitgedrukt
+                    <lb/>door:
+
+                    <pb/><!-- 70 / 39 (82) --><!-- DE TEKST OP DEZE PAGINA STAAT ONDERSTEBOVEN -->
+                    <lb/>met het leven <del>moet</del>
+                    <lb/>en de stof moet blijven.
+                    <lb/>Dit kan met zeer
+                    <lb/>weinig gedaan worden.
+                    <lb/>hangt v.d. intentie<!-- JOOSTEN DENKT: intuitie --><!-- Leo denkt: indruk -->
+                    <lb/>v.d. kunstenaar af.
+                    <lb rend="indent"/>Van de oppervlakte
+                    <lb/>àf, komt men dichter
+                    <lb/>bij de innerlijke
+                    <lb/>wetten, der Stof.
+                    <lb/>Die ook de wetten
+                    <lb/>van de geest zijn —
+                    <lb/>Zoo vallen einde<c type="wbh">-</c><lb/>lijk
+                    deze samen
+
+                    <pb/><!-- 70 / 40 (83) --><!-- DE TEKST OP DEZE PAGINA STAAT ONDERSTEBOVEN -->
+                    <lb/>Het zwaartepunt van
+                    <lb/>bewustzijn wordt van
+                    <lb/>buiten naar binnen
+                    <lb/>verplaatst.
+                    <lb/>De zaak blijft even
+                    <lb/>bestaanbaar, omdat
+                    <lb/>het bewustzijn Evoleert.
+                    <lb/>Als het bewustz. zich
+                    <lb/>van de oppervlakte af
+                    <lb/>went, wordt er in
+                    <lb/>Schilderk. ook minder
+                    <lb/>daarvan afgebeeld.
+                    <lb/>Alleen het rapport
+
+                    <pb/><!-- 71 / 41 (84) --><!-- DE TEKST OP DEZE PAGINA STAAT ONDERSTEBOVEN -->
+                    <lb/>Hoewel minder stoffe
+                    <lb/>nog zeer vèr van den Geest
+                    <lb/>af.
+                    <!--  LIJN  -->
+                    <lb/>Betrekkelijkheid der
+                    <lb/>stof. De oppervlakte
+                    <lb/>zegt weinig.
+                    <!-- LIJN -->
+                    <lb/>In dezen tijd meer in<c type="wbh">-</c><lb/>dringen.
+                    <!-- LIJN -->
+                    <lb/>De oppervlakte ver<c type="wbh">-</c><lb/>dwijnt.
+                    <lb/>Men nadert de
+                    <lb/>kracht.
+                    <lb/>Stof minder
+                    <lb/>kracht meer.
+
+                    <pb/><!-- 71 / 42 (87) --><!-- blad is in HGM -->
+                    <!-- DE TEKST OP DEZE PAGINA STAAT TEGEN DE RECHTKANTLIJN IN DE RICHTING VAN DE LINKERKANTLIJN GESCHREVEN -->
+                    <lb/>Het zich losmaken v.h. ras is voor
+                    <lb/>den geest. Kunst. een groot gevaar —
+                    <!-- LIJN -->
+                    <lb/><del>Kuns</del> 't Is niet de rede, die een
+                    <lb/>kunstwerk doet ontstaan —
+                    <space unit="lines" dim="vertical" n="1"/>
+                    <lb/>Kleur en factuur representeer<supplied>en</supplied>
+                    <lb/><del>genoeg</del> voldoende de stof voor
+                    <lb/>den geestelij. Kunst.
+
+                    <!-- DE VOLGENDE PAGINA'S BEVATTEN GEEN TEKST / ALLEEN SCHETSEN -->
+
+                    <pb/><!-- 92 / 83 (144) -->
+                    <lb/>M<add><hi rend="super">lle</hi></add> Annette Danseuse
+                    <lb/>7 Rue audran
+                    <lb rend="indent"/>Paris
+                </p>
+
+            </div>
+
+
+            <div type="notes" xml:lang="nl">
+                <note></note>
+            </div>
+        </body>
+    </text>
+
+</TEI>
+
+
+
+

@@ -5,16 +5,15 @@
   "main": "build/index.js",
   "scripts": {
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "tsc -w"
   },
   "author": "Gijsjan Brouwer (https://github.com/Gijsjan)",
   "license": "ISC",
   "dependencies": {
-    "@types/sax": "^1.0.0",
     "sax": "^1.2.2"
   },
   "devDependencies": {
+    "@types/sax": "^1.0.0",
     "typescript": "^2.2.1"
   }
 }

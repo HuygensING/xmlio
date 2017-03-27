@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const utils_1 = require("./utils");
 class Base {
     constructor(data, state) {
         this.className = null;
@@ -9,6 +10,13 @@ class Base {
         this.tagName = 'div';
         this.data = data;
         this.state = state;
+        this.open = state.jsx ? this.openJSX : this.openHTML;
+        this.close = state.jsx ? this.closeJSX : this.closeHTML;
+        if (state.jsx) {
+            this.tagName = utils_1.formatTagName(this.data.name);
+        }
+        if (state.writeToOutput)
+            state.usedTags.add(this.tagName);
     }
     classNamesToString() {
         const className = (this.className == null) ?
@@ -31,8 +39,12 @@ class Base {
         })
             .join('');
     }
-    open() {
+    openHTML() {
         return `<${this.tagName}${this.classNamesToString()}${this.getAttributes()}>${this.openAfter()}`;
+    }
+    openJSX() {
+        const slash = this.data.isSelfClosing ? '/' : '';
+        return `<${this.tagName}${this.getAttributes()}${slash}>${this.openAfter()}`;
     }
     openAfter() {
         return '';
@@ -40,8 +52,13 @@ class Base {
     closeBefore() {
         return '';
     }
-    close() {
+    closeHTML() {
         return `${this.closeBefore()}</${this.tagName}>`;
+    }
+    closeJSX() {
+        return this.data.isSelfClosing ?
+            '' :
+            `${this.closeBefore()}</${this.tagName}>`;
     }
 }
 exports.default = Base;

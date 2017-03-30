@@ -4,11 +4,11 @@ class Base {
 	private className = null;
 	private classNames = new Set();
 	private data = null;
-	private state = null;
 	private tagName = 'div';
 
 	public close;
 	public open;
+	public state = null;
 
 	constructor(data, state) {
 		this.data = data;

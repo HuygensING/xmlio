@@ -6,8 +6,8 @@ class Base {
         this.className = null;
         this.classNames = new Set();
         this.data = null;
-        this.state = null;
         this.tagName = 'div';
+        this.state = null;
         this.data = data;
         this.state = state;
         this.open = state.jsx ? this.openJSX : this.openHTML;

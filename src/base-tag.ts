@@ -1,16 +1,18 @@
 import {formatTagName} from "./utils";
+import {IBaseTag, IState} from "../index";
+import {Tag} from "sax";
 
-class Base {
-	private className = null;
-	private classNames = new Set();
-	private data = null;
-	private tagName = 'div';
+class BaseTag implements IBaseTag {
+	private className: string;
+	private classNames: Set<string> = new Set();
+	private data: Tag;
+	private tagName: string = 'div';
 
 	public close;
 	public open;
-	public state = null;
+	public state;
 
-	constructor(data, state) {
+	constructor(data: Tag, state: IState) {
 		this.data = data;
 		this.state = state;
 
@@ -61,11 +63,11 @@ class Base {
 		return `<${this.tagName}${this.getAttributes()}${slash}>${this.openAfter()}`;
 	}
 
-	openAfter() {
+	protected openAfter() {
 		return '';
 	}
 
-	closeBefore() {
+	protected closeBefore() {
 		return '';
 	}
 
@@ -80,4 +82,4 @@ class Base {
 	}
 }
 
-export default Base;
+export default BaseTag;

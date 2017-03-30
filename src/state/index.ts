@@ -1,5 +1,6 @@
 import OpenTags from './open-tags';
 import PreviousNodes from './previous-nodes';
+import {IState} from "../../index";
 
 export interface ISettings {
 	// Path where JSX components can be found.
@@ -20,18 +21,18 @@ export interface ISettings {
 	tagsToSkip?: any[];
 }
 
-class State {
+class State implements IState {
 	private componentsPath: string;
 	private output: string = '';
 
-	public jsx: boolean = false;
+	public jsx = false;
 	public openTags = new OpenTags();
 	public previousNodes = new PreviousNodes();
-	public startFromTag: string;
+	public startFromTag;
 	public tags;
 	public tagsToSkip;
 	public usedTags = new Set();
-	public writeToOutput: boolean = false;
+	public writeToOutput = false;
 
 	constructor(settings: ISettings) {
 		let { componentsPath, jsx, startFromTag, tags, tagsToSkip } = settings;
@@ -41,6 +42,7 @@ class State {
 		if (startFromTag == null) this.writeToOutput = true;
 		this.tags = (tags == null) ? {} : tags;
 		this.tagsToSkip = (tagsToSkip == null) ? [] : tagsToSkip;
+		this.appendHtml(false)
 	}
 
 	public appendHtml(str) {

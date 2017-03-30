@@ -1,13 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = require("./utils");
-class Base {
+class BaseTag {
     constructor(data, state) {
-        this.className = null;
         this.classNames = new Set();
-        this.data = null;
         this.tagName = 'div';
-        this.state = null;
         this.data = data;
         this.state = state;
         this.open = state.jsx ? this.openJSX : this.openHTML;
@@ -61,4 +58,4 @@ class Base {
             `${this.closeBefore()}</${this.tagName}>`;
     }
 }
-exports.default = Base;
+exports.default = BaseTag;

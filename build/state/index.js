@@ -19,6 +19,7 @@ class State {
             this.writeToOutput = true;
         this.tags = (tags == null) ? {} : tags;
         this.tagsToSkip = (tagsToSkip == null) ? [] : tagsToSkip;
+        this.appendHtml(false);
     }
     appendHtml(str) {
         if (this.writeToOutput)

@@ -1,21 +1,16 @@
 import {formatTagName} from "./utils";
-import {IBaseTag, IState} from "../index";
+import {IBaseTag, IState} from "./types";
 import {Tag} from "sax";
 
 class BaseTag implements IBaseTag {
 	private className: string;
 	private classNames: Set<string> = new Set();
-	private data: Tag;
 	private tagName: string = 'div';
 
 	public close;
 	public open;
-	public state;
 
-	constructor(data: Tag, state: IState) {
-		this.data = data;
-		this.state = state;
-
+	constructor(private data: Tag, public state: IState) {
 		this.open = state.jsx ? this.openJSX : this.openHTML;
 		this.close = state.jsx ? this.closeJSX : this.closeHTML;
 

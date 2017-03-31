@@ -16,5 +16,5 @@
     "@types/sax": "^1.0.0",
     "typescript": "^2.2.1"
   },
-  "types": "index.d.ts"
+  "types": "build/index"
 }

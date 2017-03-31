@@ -1,25 +1,6 @@
 import OpenTags from './open-tags';
 import PreviousNodes from './previous-nodes';
-import {IState} from "../../index";
-
-export interface ISettings {
-	// Path where JSX components can be found.
-	componentsPath?: string;
-
-	// Output JSX instead of HTML.
-	jsx?: boolean;
-
-	// When the parser encouters this tag name, the parser starts writing
-	// to this.output. The tag name should be a unique tag (like <body>).
-	startFromTag?: string;
-
-	// Maps a tag name (key) to a tag class (value). The tag class may extend
-	// BaseTag. If a tag is not in the map, BaseTag is used to generate output.
-	tags?: Object;
-
-	// List of tag names to skip (and their children!)
-	tagsToSkip?: any[];
-}
+import {ISettings, IState} from "../types";
 
 class State implements IState {
 	private componentsPath: string;

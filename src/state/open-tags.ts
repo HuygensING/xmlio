@@ -1,19 +1,21 @@
-class OpenTags {
-	tags = [];
+import {IBaseTag, IOpenTags} from "../types";
 
-	add(tag) {
+class OpenTags implements IOpenTags {
+	private tags = [];
+
+	public add(tag: IBaseTag) {
 		this.tags.push(tag);
 	}
 
-	remove() {
+	public remove() {
 		return this.tags.pop();
 	}
 
-	contains(tagName) {
+	public contains(tagName) {
 		return this.tags.find((tag) => tag.data.name === tagName) != null;
 	}
 
-	containsBy(tagName, attributeKey, attributeValue) {
+	public containsBy(tagName, attributeKey, attributeValue) {
 		return this.tags.find((t) =>
 				t.data.name === tagName &&
 				t.data.attributes.hasOwnProperty(attributeKey) &&
@@ -21,23 +23,23 @@ class OpenTags {
 			) != null;
 	}
 
-	containsOneOf(list) {
-		return list.some((tagName) => this.contains(tagName));
+	public containsOneOf(tagNames) {
+		return tagNames.some((tagName) => this.contains(tagName));
 	}
 
-	count() {
+	public count() {
 		return this.tags.length;
 	}
 
-	countType(tagName) {
+	public countType(tagName) {
 		return this.tags.filter((tag) => tag.data.name === tagName).length;
 	}
 
-	lastOfType(tagName) {
+	public lastOfType(tagName) {
 		return [...this.tags].reverse().find((tag) => tag.data.name === tagName);
 	}
 
-	log() {
+	public log() {
 		return this.tags.map((t) => t.data.name).join(', ');
 	}
 }

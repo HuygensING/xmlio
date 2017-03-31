@@ -18,8 +18,8 @@ class OpenTags {
             t.data.attributes.hasOwnProperty(attributeKey) &&
             t.data.attributes[attributeKey] === attributeValue) != null;
     }
-    containsOneOf(list) {
-        return list.some((tagName) => this.contains(tagName));
+    containsOneOf(tagNames) {
+        return tagNames.some((tagName) => this.contains(tagName));
     }
     count() {
         return this.tags.length;

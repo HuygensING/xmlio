@@ -3,10 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = require("./utils");
 class BaseTag {
     constructor(data, state) {
-        this.classNames = new Set();
-        this.tagName = 'div';
         this.data = data;
         this.state = state;
+        this.classNames = new Set();
+        this.tagName = 'div';
         this.open = state.jsx ? this.openJSX : this.openHTML;
         this.close = state.jsx ? this.closeJSX : this.closeHTML;
         if (state.jsx) {

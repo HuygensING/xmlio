@@ -3,13 +3,13 @@ import State from "./state";
 import parseCloseTag from './parse-close-tag';
 import parseOpenTag from './parse-open-tag';
 import parseText from './parse-text';
-import {ISettings} from "./state/index";
+import {ISettings} from "./types";
 
 import BaseTag from './base-tag';
 export { BaseTag } ;
 
 export default (xmlString: string, settings: ISettings = {}) =>
-	new Promise((resolve, reject) => {
+	new Promise<string>((resolve, reject) => {
 		const state = new State(settings);
 		const parser = sax.parser(true, {});
 		parser.onopentag = parseOpenTag(state);

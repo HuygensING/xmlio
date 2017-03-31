@@ -1,19 +1,23 @@
-export default class PreviousNodes {
-	nodes = [];
-	add(node) {
+import {IPreviousNodes} from "../types";
+
+export default class PreviousNodes implements IPreviousNodes {
+	private nodes = [];
+	public add(node) {
 		if (this.nodes.length === 3) {
 			this.nodes = this.nodes.slice(1).concat(node);
 		} else {
 			this.nodes = this.nodes.concat(node);
 		}
 	}
-	last() {
+
+	public last() {
 		return this.nodes[this.nodes.length - 1];
 	}
-	lastButOne() {
+
+	public lastButOne() {
 		return this.nodes[this.nodes.length - 2];
 	}
-	lastButTwo() {
+	public lastButTwo() {
 		return this.nodes[this.nodes.length - 3];
 	}
 }

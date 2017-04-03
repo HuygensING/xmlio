@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "bump": "hi-bump",
+    "test": "node test/index.js",
     "watch": "tsc -w"
   },
   "author": "Gijsjan Brouwer (https://github.com/Gijsjan)",

@@ -1,26 +1,28 @@
 import { Tag } from "sax";
 export interface IBaseTag {
     state: IState;
+}
+export interface ICustomTag extends IBaseTag {
     close(): string;
     open(): string;
 }
+export declare type TagClasses = 'html' | 'jsx' | 'empty';
 export interface IState {
-    jsx: boolean;
     openTags: any;
     previousNodes: any;
     startFromTag: string;
+    tagClass: TagClasses;
     tags: any;
     tagsToSkip: string[];
     usedTags: Set<string>;
     writeToOutput: boolean;
     appendHtml(str: string): void;
-    wrapOutput(): string;
     [prop: string]: any;
 }
 export interface ISettings {
     componentsPath?: string;
-    jsx?: boolean;
     startFromTag?: string;
+    tagClass?: TagClasses;
     tags?: Object;
     tagsToSkip?: any[];
 }

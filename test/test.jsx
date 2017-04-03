@@ -1,9 +1,4 @@
-import * as React from 'react';
-import { Body, Div, Pb, Address, AddrLine, MdPostmark, Ab, P, Lb, Choice, Unclear, Hi, Del, C, Add, Retrace, Gap, Space, Supplied, Note } from 'client/components/entry';
-
-export default () => (
-	<div className="wrapper">
-		<Body>
+<Body>
 
             <Div>   
                 <Pb data-n="envelope-v" data-xml-id="env-v" data-facs="#zone-env-v"/>
@@ -559,5 +554,3 @@ export default () => (
                 <Note></Note>
             </Div>
         </Body>
-	</div>
-);

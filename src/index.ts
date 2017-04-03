@@ -3,19 +3,21 @@ import State from "./state";
 import parseCloseTag from './parse-close-tag';
 import parseOpenTag from './parse-open-tag';
 import parseText from './parse-text';
-import {ISettings} from "./types";
+import {ISettings, IState} from "./types";
 
-import BaseTag from './base-tag';
-export { BaseTag } ;
+import HtmlTag from './tags/html';
+import JsxTag from './tags/jsx';
+import EmptyTag from './tags/empty';
+export { EmptyTag, HtmlTag, JsxTag } ;
 
 export default (xmlString: string, settings: ISettings = {}) =>
-	new Promise<string>((resolve, reject) => {
+	new Promise<IState>((resolve, reject) => {
 		const state = new State(settings);
 		const parser = sax.parser(true, {});
 		parser.onopentag = parseOpenTag(state);
 		parser.ontext = parseText(state);
 		parser.onclosetag = parseCloseTag(state);
 		parser.onerror = (e) => reject(e);
-		parser.onend = () => resolve(state.wrapOutput());
+		parser.onend = () => resolve(state);
 		parser.write(xmlString).close();
 	});

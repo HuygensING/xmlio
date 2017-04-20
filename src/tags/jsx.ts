@@ -11,7 +11,11 @@ class JsxTag extends BaseTag implements ICustomTag {
 
 	public open() {
 		const slash = this.data.isSelfClosing ? '/' : '';
-		return `<${this.tagName}${this.getAttributes()}${slash}>${this.openAfter()}`;
+		const className = (this.className != null) ?
+			` className="${this.className}"` :
+			'';
+
+		return `<${this.tagName}${className}${this.getAttributes()}${slash}>${this.openAfter()}`;
 	}
 
 	public close() {

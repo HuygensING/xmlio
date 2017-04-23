@@ -1,16 +1,13 @@
 import OpenTags from './open-tags';
 import PreviousNodes from './previous-nodes';
-import { ISettings, IState, TagClasses } from "../types";
+import { ISettings, IState } from "../types";
 declare class State implements IState {
-    private componentsPath;
-    output: string;
+    settings: ISettings;
+    custom: {};
     GenericTag: any;
     openTags: OpenTags;
+    output: string;
     previousNodes: PreviousNodes;
-    startFromTag: any;
-    tagClass: TagClasses;
-    tags: any;
-    tagsToSkip: any;
     usedTags: Set<any>;
     writeToOutput: boolean;
     constructor(settings: ISettings);

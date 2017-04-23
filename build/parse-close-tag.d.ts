@@ -1,2 +1,3 @@
-declare var _default: (state: any) => (tagName: any) => void;
+import { IState } from "./types";
+declare var _default: (state: IState) => (tagName: string) => void;
 export default _default;

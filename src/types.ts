@@ -1,6 +1,10 @@
-import {Tag} from "sax";
+import {Tag as SaxTag} from "sax";
+import JsxTag from "./tags/jsx";
+import HtmlTag from "./tags/html";
+import EmptyTag from "./tags/empty";
 
 export interface IBaseTag {
+	data: SaxTag;
 	state: IState;
 }
 
@@ -9,49 +13,57 @@ export interface ICustomTag extends IBaseTag {
 	open(): string;
 }
 
-export type TagClasses = 'html' | 'jsx' | 'empty';
-
-export interface IState {
-	openTags;
-	previousNodes;
-	startFromTag: string;
-	tagClass: TagClasses;
-	tags;
-	// ToDo make more flexibel: [{name: 'hi', rend: 'super'}]
-	tagsToSkip: string[];
-	usedTags: Set<string>;
-	writeToOutput: boolean;
-	appendHtml(str: string): void;
-	[prop: string]: any;
-}
-
+export type TagClassNames = 'html' | 'jsx' | 'empty';
+export type TagClass = typeof HtmlTag | typeof JsxTag | typeof EmptyTag;
 export interface ISettings {
 	// Path where JSX components can be found.
 	componentsPath?: string;
 
 	// When the parser encouters this tag name, the parser starts writing
 	// to this.output. The tag name should be a unique tag (like <body>).
-	startFromTag?: string;
+	parent?: {
+		attribute?: string;
+		tag: string;
+		value?: string;
+	};
 
-	tagClass?: TagClasses;
+	tagClass?: TagClassNames;
+
 	// Maps a tag name (key) to a tag class (value). The tag class may extend
 	// BaseTag. If a tag is not in the map, BaseTag is used to generate output.
-	tags?: Object;
+	getComponent?(node: SaxTag): TagClass;
 
 	// List of tag names to skip (and their children!)
+	// ToDo make more flexibel: [{name: 'hi', rend: 'super'}]
 	tagsToSkip?: any[];
+
+	// Called on all text nodes.
+	transformTextNode?: (text: string) => string;
+}
+
+export interface IState {
+	appendHtml(str: string): void;
+	custom: {
+		[prop: string]: any
+	};
+	GenericTag: TagClass;
+	openTags: IOpenTags;
+	previousNodes: IPreviousNodes;
+	settings: ISettings;
+	usedTags: Set<string>;
+	writeToOutput: boolean;
 }
 
 export interface IPreviousNodes {
-	add(node: Tag): void;
-	last(): Tag;
-	lastButOne(): Tag;
-	lastButTwo(): Tag;
+	add(node: SaxTag): void;
+	last(): SaxTag;
+	lastButOne(): SaxTag;
+	lastButTwo(): SaxTag;
 }
 
 export interface IOpenTags {
-	add(tag: IBaseTag): void;
-	remove(): void;
+	add(tag: ICustomTag): void;
+	remove(): ICustomTag;
 	contains(name: string): boolean;
 	containsBy(tagName: string, attributeKey: string, attributeValue: string): boolean;
 	containsOneOf(tagNames: string[]): void;

@@ -3,6 +3,8 @@ import BaseTag from "./base";
 import {ICustomTag} from "../types";
 
 class JsxTag extends BaseTag implements ICustomTag {
+	protected passProps = false;
+
 	constructor(data, state) {
 		super(data, state);
 		this.tagName = formatTagName(this.data.name);
@@ -15,7 +17,9 @@ class JsxTag extends BaseTag implements ICustomTag {
 			` className="${this.className}"` :
 			'';
 
-		return `<${this.tagName}${className}${this.getAttributes()}${slash}>${this.openAfter()}`;
+		const props = this.passProps ? ' {...props}' : '';
+
+		return `<${this.tagName}${className}${this.getAttributes()}${props}${slash}>${this.openAfter()}`;
 	}
 
 	public close() {

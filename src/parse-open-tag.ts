@@ -1,17 +1,21 @@
-import {Tag} from "sax";
+import {Tag as SaxTag} from "sax";
+import {IState} from "./types";
 
-export default (state) => (node: Tag) => {
-	if (state.startFromTag === node.name) state.writeToOutput = true;
+export default (state: IState) => (node: SaxTag) => {
+	const { getComponent, parent, tagsToSkip } = state.settings;
+	if (
+		parent != null && parent.tag === node.name
+	) state.writeToOutput = true;
 
-	const Tag = Object.keys(state.tags).indexOf(node.name) > -1 ?
-		state.tags[node.name] :
-		state.GenericTag;
-	const tag = new Tag(node, state);
+	let Comp;
+	if (getComponent != null) Comp = getComponent(node);
+	if (Comp == null) Comp = state.GenericTag;
+	const tag = new Comp(node, state);
 	const open = tag.open();
 
 	if (
-		state.tagsToSkip.indexOf(node.name) === -1 &&
-		!state.openTags.containsOneOf(state.tagsToSkip)
+		tagsToSkip.indexOf(node.name) === -1 &&
+		!state.openTags.containsOneOf(tagsToSkip)
 	) {
 		state.appendHtml(open);
 	}

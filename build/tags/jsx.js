@@ -5,6 +5,7 @@ const base_1 = require("./base");
 class JsxTag extends base_1.default {
     constructor(data, state) {
         super(data, state);
+        this.passProps = false;
         this.tagName = utils_1.formatTagName(this.data.name);
         if (state.writeToOutput)
             state.usedTags.add(this.tagName);
@@ -14,7 +15,8 @@ class JsxTag extends base_1.default {
         const className = (this.className != null) ?
             ` className="${this.className}"` :
             '';
-        return `<${this.tagName}${className}${this.getAttributes()}${slash}>${this.openAfter()}`;
+        const props = this.passProps ? ' {...props}' : '';
+        return `<${this.tagName}${className}${this.getAttributes()}${props}${slash}>${this.openAfter()}`;
     }
     close() {
         return this.data.isSelfClosing ?

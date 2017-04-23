@@ -1,7 +1,7 @@
 import { IBaseTag, IState } from "../types";
 import { Tag } from "sax";
 declare class BaseTag implements IBaseTag {
-    protected data: Tag;
+    data: Tag;
     state: IState;
     protected className: string;
     protected classNames: Set<string>;

@@ -1,36 +1,28 @@
 import OpenTags from './open-tags';
 import PreviousNodes from './previous-nodes';
-import {ICustomTag, ISettings, IState, TagClasses} from "../types";
-import JsxTag from "../tags/jsx";
+import {ISettings, IState} from "../types";
 import HtmlTag from "../tags/html";
+import JsxTag from "../tags/jsx";
 import EmptyTag from "../tags/empty";
 
 class State implements IState {
-	private componentsPath: string;
-	public output: string = '';
-
+	public custom = {};
 	public GenericTag;
 	public openTags = new OpenTags();
+	public output: string = '';
 	public previousNodes = new PreviousNodes();
-	public startFromTag;
-	public tagClass: TagClasses = 'html';
-	public tags;
-	public tagsToSkip;
 	public usedTags = new Set();
 	public writeToOutput = false;
 
-	constructor(settings: ISettings) {
-		let { componentsPath, startFromTag, tagClass, tags, tagsToSkip } = settings;
-		this.componentsPath = (componentsPath == null) ? 'components' : componentsPath;
-		this.startFromTag = startFromTag;
-		if (startFromTag == null) this.writeToOutput = true;
-		this.tags = (tags == null) ? {} : tags;
-		this.tagsToSkip = (tagsToSkip == null) ? [] : tagsToSkip;
-		this.appendHtml(false);
-		if (tagClass != null && tagClass.length) this.tagClass = tagClass;
-		this.GenericTag = this.tagClass === 'html' ?
+	constructor(public settings: ISettings) {
+		if (this.settings.componentsPath == null) this.settings.componentsPath = 'components';
+		if (this.settings.parent == null) this.writeToOutput = true;
+		if (this.settings.tagsToSkip == null) this.settings.tagsToSkip = [];
+		if (this.settings.tagClass == null) this.settings.tagClass = 'html';
+		if (this.settings.transformTextNode == null) this.settings.transformTextNode = (t) => t;
+		this.GenericTag = this.settings.tagClass === 'html' ?
 			HtmlTag :
-			this.tagClass === 'jsx' ? JsxTag : EmptyTag;
+			this.settings.tagClass === 'jsx' ? JsxTag : EmptyTag;
 	}
 
 	public appendHtml(str) {

@@ -7,7 +7,7 @@ class BaseTag implements IBaseTag {
 	protected classNames: Set<string> = new Set();
 	protected tagName: string = 'div';
 
-	constructor(protected data: Tag, public state: IState) {}
+	constructor(public data: Tag, public state: IState) {}
 
 	protected classNamesToString() {
 		const className = (this.className == null) ?

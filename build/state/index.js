@@ -2,30 +2,31 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const open_tags_1 = require("./open-tags");
 const previous_nodes_1 = require("./previous-nodes");
-const jsx_1 = require("../tags/jsx");
 const html_1 = require("../tags/html");
+const jsx_1 = require("../tags/jsx");
 const empty_1 = require("../tags/empty");
 class State {
     constructor(settings) {
-        this.output = '';
+        this.settings = settings;
+        this.custom = {};
         this.openTags = new open_tags_1.default();
+        this.output = '';
         this.previousNodes = new previous_nodes_1.default();
-        this.tagClass = 'html';
         this.usedTags = new Set();
         this.writeToOutput = false;
-        let { componentsPath, startFromTag, tagClass, tags, tagsToSkip } = settings;
-        this.componentsPath = (componentsPath == null) ? 'components' : componentsPath;
-        this.startFromTag = startFromTag;
-        if (startFromTag == null)
+        if (this.settings.componentsPath == null)
+            this.settings.componentsPath = 'components';
+        if (this.settings.parent == null)
             this.writeToOutput = true;
-        this.tags = (tags == null) ? {} : tags;
-        this.tagsToSkip = (tagsToSkip == null) ? [] : tagsToSkip;
-        this.appendHtml(false);
-        if (tagClass != null && tagClass.length)
-            this.tagClass = tagClass;
-        this.GenericTag = this.tagClass === 'html' ?
+        if (this.settings.tagsToSkip == null)
+            this.settings.tagsToSkip = [];
+        if (this.settings.tagClass == null)
+            this.settings.tagClass = 'html';
+        if (this.settings.transformTextNode == null)
+            this.settings.transformTextNode = (t) => t;
+        this.GenericTag = this.settings.tagClass === 'html' ?
             html_1.default :
-            this.tagClass === 'jsx' ? jsx_1.default : empty_1.default;
+            this.settings.tagClass === 'jsx' ? jsx_1.default : empty_1.default;
     }
     appendHtml(str) {
         if (this.writeToOutput)

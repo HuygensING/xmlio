@@ -1,3 +1,4 @@
-import { Tag } from "sax";
-declare var _default: (state: any) => (node: Tag) => void;
+import { Tag as SaxTag } from "sax";
+import { IState } from "./types";
+declare var _default: (state: IState) => (node: SaxTag) => void;
 export default _default;

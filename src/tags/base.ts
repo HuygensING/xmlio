@@ -1,13 +1,13 @@
 import {formatTagName} from "../utils";
 import {IBaseTag, IState} from "../types";
-import {Tag} from "sax";
+import {Tag as SaxTag} from "sax";
 
 class BaseTag implements IBaseTag {
 	protected className: string;
 	protected classNames: Set<string> = new Set();
-	protected tagName: string = 'div';
 
-	constructor(public data: Tag, public state: IState) {}
+	// ToDo rename data to node
+	constructor(public data: SaxTag, public state: IState) {}
 
 	protected classNamesToString() {
 		const className = (this.className == null) ?
@@ -43,6 +43,10 @@ class BaseTag implements IBaseTag {
 
 	protected closeBefore() {
 		return '';
+	}
+
+	public name(): string {
+		return this.data.name;
 	}
 }
 

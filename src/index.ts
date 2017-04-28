@@ -8,6 +8,7 @@ import {ISettings, IState} from "./types";
 import HtmlTag from './tags/html';
 import JsxTag from './tags/jsx';
 import EmptyTag from './tags/empty';
+import {xml2json} from "./utils";
 export { EmptyTag, HtmlTag, JsxTag } ;
 
 export default (xmlString: string, settings: ISettings = {}) =>
@@ -18,6 +19,20 @@ export default (xmlString: string, settings: ISettings = {}) =>
 		parser.ontext = parseText(state);
 		parser.onclosetag = parseCloseTag(state);
 		parser.onerror = (e) => reject(e);
-		parser.onend = () => resolve(state);
+		parser.onend = async () => {
+			if (state.settings.outputType === 'json') {
+				// The settings.parent option can yield invalid XML. If parent is 'b':
+				// <a><b /><b /></a>, results in: <b /><b />. If this is passed
+				// to xml2json, only the first <b /> will be parsed, therefor a
+				// root node is added.
+				if (state.settings.parent != null) {
+					state.output = `<root>${state.output}</root>`;
+				}
+
+				state.output = await xml2json(state.output);
+			}
+
+			resolve(state);
+		};
 		parser.write(xmlString).close();
 	});

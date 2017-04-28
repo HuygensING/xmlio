@@ -1,4 +1,5 @@
-import {IBaseTag, IOpenTags} from "../types";
+import {IBaseTag, IOpenTags, ITagSelector} from "../types";
+import {compareNodeToSelector} from "../utils";
 
 class OpenTags implements IOpenTags {
 	private tags = [];
@@ -15,16 +16,12 @@ class OpenTags implements IOpenTags {
 		return this.tags.find((tag) => tag.data.name === tagName) != null;
 	}
 
-	public containsBy(tagName, attributeKey, attributeValue) {
-		return this.tags.find((t) =>
-				t.data.name === tagName &&
-				t.data.attributes.hasOwnProperty(attributeKey) &&
-				t.data.attributes[attributeKey] === attributeValue
-			) != null;
+	public containsBy(selector: ITagSelector) {
+		return this.tags.find((t) => compareNodeToSelector(t.data)(selector))
 	}
 
-	public containsOneOf(tagNames) {
-		return tagNames.some((tagName) => this.contains(tagName));
+	public containsOneOf(selectors: ITagSelector[]) {
+		return selectors.some((selector) => this.containsBy(selector));
 	}
 
 	public count() {

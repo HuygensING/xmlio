@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const utils_1 = require("../utils");
 class OpenTags {
     constructor() {
         this.tags = [];
@@ -13,13 +14,11 @@ class OpenTags {
     contains(tagName) {
         return this.tags.find((tag) => tag.data.name === tagName) != null;
     }
-    containsBy(tagName, attributeKey, attributeValue) {
-        return this.tags.find((t) => t.data.name === tagName &&
-            t.data.attributes.hasOwnProperty(attributeKey) &&
-            t.data.attributes[attributeKey] === attributeValue) != null;
+    containsBy(selector) {
+        return this.tags.find((t) => utils_1.compareNodeToSelector(t.data)(selector));
     }
-    containsOneOf(tagNames) {
-        return tagNames.some((tagName) => this.contains(tagName));
+    containsOneOf(selectors) {
+        return selectors.some((selector) => this.containsBy(selector));
     }
     count() {
         return this.tags.length;

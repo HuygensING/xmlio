@@ -1,11 +1,16 @@
 import {Tag as SaxTag} from "sax";
 import {IState} from "./types";
+import {compareNodeToSelector, ignoreNode} from "./utils";
 
 export default (state: IState) => (node: SaxTag) => {
-	const { getComponent, parent, tagsToSkip } = state.settings;
+	const { getComponent, parent, ignore } = state.settings;
+
 	if (
-		parent != null && parent.tag === node.name
-	) state.writeToOutput = true;
+		parent != null &&
+		compareNodeToSelector(node)(parent)
+	) {
+		state.writeToOutput = true;
+	}
 
 	let Comp;
 	if (getComponent != null) Comp = getComponent(node);
@@ -14,8 +19,8 @@ export default (state: IState) => (node: SaxTag) => {
 	const open = tag.open();
 
 	if (
-		tagsToSkip.indexOf(node.name) === -1 &&
-		!state.openTags.containsOneOf(tagsToSkip)
+		!ignoreNode(state.settings.ignore, node) &&
+		!state.openTags.containsOneOf(state.settings.ignore)
 	) {
 		state.appendHtml(open);
 	}

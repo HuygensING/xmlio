@@ -5,7 +5,6 @@ class BaseTag {
         this.data = data;
         this.state = state;
         this.classNames = new Set();
-        this.tagName = 'div';
     }
     classNamesToString() {
         const className = (this.className == null) ?
@@ -33,6 +32,9 @@ class BaseTag {
     }
     closeBefore() {
         return '';
+    }
+    name() {
+        return this.data.name;
     }
 }
 exports.default = BaseTag;

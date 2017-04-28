@@ -6,18 +6,33 @@
   "scripts": {
     "build": "tsc",
     "bump": "hi-bump",
-    "test": "node test/index.js",
+    "test": "jest",
     "watch": "tsc -w"
   },
   "author": "Gijsjan Brouwer (https://github.com/Gijsjan)",
   "license": "ISC",
   "dependencies": {
-    "sax": "^1.2.2"
+    "sax": "^1.2.2",
+    "xml2js": "^0.4.17"
   },
   "devDependencies": {
+    "@types/jest": "^19.2.2",
     "@types/sax": "^1.0.0",
     "hi-bump": "^1.1.1",
+    "jest": "^19.0.2",
+    "ts-jest": "^19.0.10",
     "typescript": "^2.2.1"
   },
-  "types": "build/index"
+  "types": "build/index",
+  "jest": {
+    "transform": {
+      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ]
+  }
 }

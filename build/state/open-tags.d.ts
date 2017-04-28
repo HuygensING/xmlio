@@ -1,11 +1,11 @@
-import { IBaseTag, IOpenTags } from "../types";
+import { IBaseTag, IOpenTags, ITagSelector } from "../types";
 declare class OpenTags implements IOpenTags {
     private tags;
     add(tag: IBaseTag): void;
     remove(): any;
     contains(tagName: any): boolean;
-    containsBy(tagName: any, attributeKey: any, attributeValue: any): boolean;
-    containsOneOf(tagNames: any): any;
+    containsBy(selector: ITagSelector): any;
+    containsOneOf(selectors: ITagSelector[]): boolean;
     count(): number;
     countType(tagName: any): number;
     lastOfType(tagName: any): any;

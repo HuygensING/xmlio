@@ -2,26 +2,32 @@ import { Tag as SaxTag } from "sax";
 import JsxTag from "./tags/jsx";
 import HtmlTag from "./tags/html";
 import EmptyTag from "./tags/empty";
+import XmlTag from "./tags/xml";
 export interface IBaseTag {
     data: SaxTag;
     state: IState;
 }
 export interface ICustomTag extends IBaseTag {
     close(): string;
+    name?(): string;
     open(): string;
 }
-export declare type TagClassNames = 'html' | 'jsx' | 'empty';
-export declare type TagClass = typeof HtmlTag | typeof JsxTag | typeof EmptyTag;
+export interface ITagSelector {
+    attribute?: string;
+    name: string;
+    value?: string;
+}
+export declare type OutputType = 'html' | 'jsx' | 'xml' | 'json' | 'empty';
+export declare type TagClass = typeof HtmlTag | typeof JsxTag | typeof XmlTag | typeof EmptyTag;
 export interface ISettings {
     componentsPath?: string;
-    parent?: {
-        attribute?: string;
-        tag: string;
-        value?: string;
-    };
-    tagClass?: TagClassNames;
+    parent?: ITagSelector;
+    outputType?: OutputType;
     getComponent?(node: SaxTag): TagClass;
-    tagsToSkip?: any[];
+    ignore?: ITagSelector[];
+    state?: {
+        [prop: string]: any;
+    };
     transformTextNode?: (text: string) => string;
 }
 export interface IState {
@@ -31,6 +37,7 @@ export interface IState {
     };
     GenericTag: TagClass;
     openTags: IOpenTags;
+    output: string;
     previousNodes: IPreviousNodes;
     settings: ISettings;
     usedTags: Set<string>;
@@ -46,10 +53,10 @@ export interface IOpenTags {
     add(tag: ICustomTag): void;
     remove(): ICustomTag;
     contains(name: string): boolean;
-    containsBy(tagName: string, attributeKey: string, attributeValue: string): boolean;
-    containsOneOf(tagNames: string[]): void;
+    containsBy(selector: ITagSelector): boolean;
+    containsOneOf(selectors: ITagSelector[]): void;
     count(): number;
     countType(tagName: string): number;
-    lastOfType(tagName: string): IBaseTag;
+    lastOfType(tagName: string): ICustomTag;
     log(): string;
 }

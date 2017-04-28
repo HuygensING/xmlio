@@ -5,5 +5,7 @@ declare class JsxTag extends BaseTag implements ICustomTag {
     constructor(data: any, state: any);
     open(): string;
     close(): string;
+    name(): string;
+    protected getAttributes(): string;
 }
 export default JsxTag;

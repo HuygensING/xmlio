@@ -4,6 +4,7 @@ import {ISettings, IState} from "../types";
 import HtmlTag from "../tags/html";
 import JsxTag from "../tags/jsx";
 import EmptyTag from "../tags/empty";
+import XmlTag from "../tags/xml";
 
 class State implements IState {
 	public custom = {};
@@ -17,14 +18,25 @@ class State implements IState {
 	constructor(public settings: ISettings) {
 		if (this.settings.componentsPath == null) this.settings.componentsPath = 'components';
 		if (this.settings.parent == null) this.writeToOutput = true;
-		if (this.settings.tagsToSkip == null) this.settings.tagsToSkip = [];
-		if (this.settings.tagClass == null) this.settings.tagClass = 'html';
+		if (this.settings.ignore == null) this.settings.ignore = [];
+		if (this.settings.outputType == null) this.settings.outputType = 'html';
 		if (this.settings.transformTextNode == null) this.settings.transformTextNode = (t) => t;
-		this.GenericTag = this.settings.tagClass === 'html' ?
+		if (this.settings.state != null) {
+			this.custom = this.settings.state;
+			delete this.settings.state;
+		}
+
+		const { outputType } = this.settings;
+		this.GenericTag = outputType === 'html' ?
 			HtmlTag :
-			this.settings.tagClass === 'jsx' ? JsxTag : EmptyTag;
+			outputType === 'jsx' ?
+				JsxTag :
+				outputType === 'xml' || outputType === 'json' ?
+					XmlTag :
+					EmptyTag;
 	}
 
+	// ToDo rename to appendString
 	public appendHtml(str) {
 		if (this.writeToOutput) this.output += str;
 	}

@@ -1,3 +1,7 @@
+### v2.0.0	(2017/4/28 16:50)
+* Refactor
+* Move settings to state
+
 ### v1.2.1	(2017/4/20 10:1)
 * Pass className to JSX tag
 

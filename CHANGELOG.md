@@ -1,3 +1,6 @@
+### v2.0.1	(2017/5/4 11:47)
+* Rename JSX key-attribute
+
 ### v2.0.0	(2017/4/28 16:50)
 * Refactor
 * Move settings to state

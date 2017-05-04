@@ -1,3 +1,6 @@
+### v2.0.2	(2017/5/4 15:40)
+* Clone settings.state
+
 ### v2.0.1	(2017/5/4 11:47)
 * Rename JSX key-attribute
 

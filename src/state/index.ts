@@ -22,7 +22,7 @@ class State implements IState {
 		if (this.settings.outputType == null) this.settings.outputType = 'html';
 		if (this.settings.transformTextNode == null) this.settings.transformTextNode = (t) => t;
 		if (this.settings.state != null) {
-			this.custom = this.settings.state;
+			this.custom = { ...this.settings.state };
 			delete this.settings.state;
 		}
 

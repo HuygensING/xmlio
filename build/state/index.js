@@ -26,7 +26,7 @@ class State {
         if (this.settings.transformTextNode == null)
             this.settings.transformTextNode = (t) => t;
         if (this.settings.state != null) {
-            this.custom = this.settings.state;
+            this.custom = Object.assign({}, this.settings.state);
             delete this.settings.state;
         }
         const { outputType } = this.settings;

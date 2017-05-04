@@ -40,9 +40,8 @@ class JsxTag extends BaseTag implements ICustomTag {
 			.map((key) => {
 				const value = attrs[key];
 
-				// Rename the key if necessary
-				// key = key.replace(':', '-');
 				key = convertColon(key);
+				if (key === 'key') key = 'xmlKey';
 
 				return ` ${key}="${value}"`
 			})

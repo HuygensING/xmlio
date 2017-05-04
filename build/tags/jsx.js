@@ -32,6 +32,8 @@ class JsxTag extends base_1.default {
             .map((key) => {
             const value = attrs[key];
             key = utils_1.convertColon(key);
+            if (key === 'key')
+                key = 'xmlKey';
             return ` ${key}="${value}"`;
         })
             .join('');

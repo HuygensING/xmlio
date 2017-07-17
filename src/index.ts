@@ -4,12 +4,13 @@ import parseCloseTag from './parse-close-tag';
 import parseOpenTag from './parse-open-tag';
 import parseText from './parse-text';
 import {ISettings, IState} from "./types";
+import {xml2json} from "./utils";
 
+import EmptyTag from './tags/empty';
 import HtmlTag from './tags/html';
 import JsxTag from './tags/jsx';
-import EmptyTag from './tags/empty';
-import {xml2json} from "./utils";
-export { EmptyTag, HtmlTag, JsxTag } ;
+import XmlTag from './tags/xml';
+export { EmptyTag, HtmlTag, JsxTag, XmlTag } ;
 
 export default (xmlString: string, settings: ISettings = {}) =>
 	new Promise<IState>((resolve, reject) => {

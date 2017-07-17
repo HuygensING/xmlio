@@ -1,3 +1,3 @@
 import { IState } from "./types";
-declare var _default: (state: IState) => (tagName: string) => void;
+declare const _default: (state: IState) => (tagName: string) => void;
 export default _default;

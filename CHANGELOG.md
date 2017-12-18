@@ -1,3 +1,7 @@
+### v2.1.0	(2017/12/18 10:58)
+* Convert interfaces to classes, add splitOn
+* New build
+
 ### v2.0.2	(2017/5/4 15:40)
 * Clone settings.state
 

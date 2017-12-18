@@ -6,7 +6,7 @@ class JsxTag extends base_1.default {
     constructor(data, state) {
         super(data, state);
         this.passProps = false;
-        if (state.writeToOutput)
+        if (state.settings.writeToOutput)
             state.usedTags.add(this.name());
     }
     open() {

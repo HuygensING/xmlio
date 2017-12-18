@@ -1,16 +1,14 @@
 import OpenTags from './open-tags';
 import PreviousNodes from './previous-nodes';
-import { ISettings, IState } from "../types";
-declare class State implements IState {
-    settings: ISettings;
+import Settings from './setttings';
+declare class State {
+    settings: Partial<Settings>;
     custom: {};
-    GenericTag: any;
     openTags: OpenTags;
     output: string;
     previousNodes: PreviousNodes;
     usedTags: Set<any>;
-    writeToOutput: boolean;
-    constructor(settings: ISettings);
-    appendHtml(str: any): void;
+    constructor(settings: Partial<Settings>);
+    appendHtml(str: string): void;
 }
 export default State;

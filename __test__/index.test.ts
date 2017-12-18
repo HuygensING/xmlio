@@ -1,4 +1,4 @@
-import xml2html from '../src/index';
+import xml2html from '../src'
 
 const xml =
 	`<xml>
@@ -9,7 +9,7 @@ const xml =
 				<size>12.000.000</size>
 			</location>
 		</locations>
-	</xml>`;
+	</xml>`
 
 const defaultHtml =
 	`<div class="xml">
@@ -20,7 +20,7 @@ const defaultHtml =
 				<div class="size">12.000.000</div>
 			</div>
 		</div>
-	</div>`;
+	</div>`
 
 const defaultJsx =
 	`<Xml>
@@ -31,28 +31,28 @@ const defaultJsx =
 				<Size>12.000.000</Size>
 			</Location>
 		</Locations>
-	</Xml>`;
+	</Xml>`
 
-const defaultEmpty = `Aurora Buenos "Bono" Aires 12.000.000`;
+const defaultEmpty = `Aurora Buenos "Bono" Aires 12.000.000`
 
 describe('xml2html {}', () => {
-	test('html', async () => {
-		const state = await xml2html(xml);
-		expect(state.output).toBe(defaultHtml);
-	});
+	test('Convert XML to HTML', async () => {
+		const response = await xml2html(xml)
+		expect(response.result).toBe(xml)
+	})
 
-	test('jsx', async () => {
-		const state = await xml2html(xml, { outputType: 'jsx' });
-		expect(state.output).toBe(defaultJsx);
-	});
+	test('Convert XML to JSX', async () => {
+		const response = await xml2html(xml, { outputType: 'jsx' })
+		expect(response.result).toBe(defaultJsx)
+	})
 
-	test('xml', async () => {
-		const state = await xml2html(xml, { outputType: 'xml' });
-		expect(state.output).toBe(xml);
-	});
+	test('Convert XML to XML', async () => {
+		const response = await xml2html(xml, { outputType: 'xml' })
+		expect(response.result).toBe(xml)
+	})
 
-	test('json', async () => {
-		const state = await xml2html(xml, { outputType: 'json' });
+	test('Convert XML to JSON', async () => {
+		const response = await xml2html(xml, { outputType: 'json' })
 		const expected = {
 			xml: {
 				locations: [{
@@ -70,29 +70,38 @@ describe('xml2html {}', () => {
 					}]
 				}]
 			}
-		};
-		expect(JSON.stringify(state.output)).toBe(JSON.stringify(expected));
-	});
-
-	test('empty', async () => {
-		const state = await xml2html(xml, { outputType: 'empty' });
-		const output = state.output
-			.replace(/"/g, '\"')
-			.replace(/\s\s+/g, ' ')
-			.trim();
-		expect(output).toBe(defaultEmpty);
+		}
+		expect(JSON.stringify(response.result)).toBe(JSON.stringify(expected))
 	})
-});
 
+	test('Strip XML tags', async () => {
+		const response = await xml2html(xml, { outputType: 'empty' })
+		const output = response.result
+		expect(output).toBe(defaultEmpty)
+	})
+})
+
+describe('xml2html { splitOn }', () => {
+	test('Split on selector', async () => {
+		const response = await xml2html(xml, { splitOn: { name: 'location' } })
+		expect(JSON.stringify(response.result)).toBe(JSON.stringify([
+			'<location xml:id="14">Aurora</location>',
+			`<location xml:id="15">
+				<name>Buenos "Bono" Aires</name>
+				<size>12.000.000</size>
+			</location>`,
+		]))
+	})
+})
 
 describe('xml2html { parent }', () => {
 	test('{name: "locations"}', async () => {
-		const state = await xml2html(xml, {
+		const response = await xml2html(xml, {
 			outputType: 'jsx',
 			parent: {
 				name: 'locations',
 			},
-		});
+		})
 
 		const output =
 			`<Locations>
@@ -101,56 +110,56 @@ describe('xml2html { parent }', () => {
 					<Name>Buenos "Bono" Aires</Name>
 					<Size>12.000.000</Size>
 				</Location>
-			</Locations>`;
+			</Locations>`
 
-		expect(clean(state.output)).toBe(clean(output));
-	});
+		expect(clean(response.result)).toBe(clean(output))
+	})
 
 	test('{name: "location"}', async () => {
-		const state = await xml2html(xml, {
+		const response = await xml2html(xml, {
 			outputType: 'jsx',
 			parent: {
 				name: 'location',
 			},
-		});
+		})
 
 		const output =
 			`<Location xmlId="14">Aurora</Location>
 			<Location xmlId="15">
 				<Name>Buenos "Bono" Aires</Name>
 				<Size>12.000.000</Size>
-			</Location>`;
+			</Location>`
 
-		expect(clean(state.output)).toBe(clean(output));
-	});
+		expect(clean(response.result)).toBe(clean(output))
+	})
 
 	test('{name: "location", attribute: "xml:id", value: "15"}', async () => {
-		const state = await xml2html(xml, {
+		const response = await xml2html(xml, {
 			outputType: 'jsx',
 			parent: {
 				name: 'location',
 				attribute: 'xml:id',
 				value: '15',
 			},
-		});
+		})
 
 		const output =
 			`<Location xmlId="15">
 				<Name>Buenos "Bono" Aires</Name>
 				<Size>12.000.000</Size>
-			</Location>`;
+			</Location>`
 
-		expect(clean(state.output)).toBe(clean(output));
-	});
-});
+		expect(clean(response.result)).toBe(clean(output))
+	})
+})
 
 
 describe('xml2html { outputType: json, parent }', () => {
 	test('json', async () => {
-		const state = await xml2html(xml, {
+		const response = await xml2html(xml, {
 			outputType: 'json',
 			parent: { name: 'location' },
-		});
+		})
 
 		const expected = {
 			root: {
@@ -167,10 +176,10 @@ describe('xml2html { outputType: json, parent }', () => {
 					size: ['12.000.000'],
 				}]
 			}
-		};
+		}
 
-		expect(JSON.stringify(state.output)).toBe(JSON.stringify(expected));
-	});
-});
+		expect(JSON.stringify(response.result)).toBe(JSON.stringify(expected))
+	})
+})
 
-const clean = (xml) => xml.replace(/>(\s*)</g, '><');
+const clean = (xml) => xml.replace(/>(\s*)</g, '><')

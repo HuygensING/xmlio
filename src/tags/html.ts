@@ -1,7 +1,6 @@
 import BaseTag from "./base";
-import {ICustomTag} from "../types";
 
-class HtmlTag extends BaseTag implements ICustomTag {
+class HtmlTag extends BaseTag {
 	public open() {
 		return `<${this.name()}${this.classNamesToString()}${this.getAttributes()}>${this.openAfter()}`;
 	}

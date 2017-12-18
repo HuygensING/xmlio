@@ -1,11 +1,13 @@
-import { IBaseTag, IState } from "../types";
 import { Tag as SaxTag } from "sax";
-declare class BaseTag implements IBaseTag {
+import State from '../state';
+declare abstract class BaseTag {
     data: SaxTag;
-    state: IState;
+    state: State;
     protected className: string;
     protected classNames: Set<string>;
-    constructor(data: SaxTag, state: IState);
+    abstract close(): string;
+    abstract open(): string;
+    constructor(data: SaxTag, state: State);
     protected classNamesToString(): string;
     protected getAttributes(): string;
     protected openAfter(): string;

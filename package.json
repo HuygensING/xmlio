@@ -12,16 +12,17 @@
   "author": "Gijsjan Brouwer (https://github.com/Gijsjan)",
   "license": "ISC",
   "dependencies": {
-    "sax": "^1.2.2",
-    "xml2js": "^0.4.17"
+    "sax": "^1.2.4",
+    "xml2js": "^0.4.19"
   },
   "devDependencies": {
-    "@types/jest": "^19.2.2",
+    "@types/jest": "^21.1.8",
     "@types/sax": "^1.0.0",
+    "@types/xml2js": "^0.4.2",
     "hi-bump": "^1.1.1",
-    "jest": "^19.0.2",
-    "ts-jest": "^19.0.10",
-    "typescript": "^2.2.1"
+    "jest": "^21.2.1",
+    "ts-jest": "^21.2.4",
+    "typescript": "^2.6.2"
   },
   "types": "build/index",
   "jest": {

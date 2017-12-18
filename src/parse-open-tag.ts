@@ -1,22 +1,28 @@
-import {Tag as SaxTag} from "sax";
-import {IState} from "./types";
-import {compareNodeToSelector, ignoreNode} from "./utils";
+import {Tag as SaxTag} from "sax"
+import {compareNodeToSelector, ignoreNode} from "./utils"
+import State from './state'
+import { TagInstance, TagType } from "./state/setttings";
+import { SPLIT_ON_DIVIDER } from './constants'
 
-export default (state: IState) => (node: SaxTag) => {
-	const { getComponent, parent, ignore } = state.settings;
-
+export default (state: State) => (node: SaxTag) => {
 	if (
-		parent != null &&
-		compareNodeToSelector(node)(parent)
+		state.settings.parent != null &&
+		compareNodeToSelector(node)(state.settings.parent)
 	) {
-		state.writeToOutput = true;
+		state.settings.writeToOutput = true;
 	}
 
-	let Comp;
-	if (getComponent != null) Comp = getComponent(node);
-	if (Comp == null) Comp = state.GenericTag;
-	const tag = new Comp(node, state);
-	const open = tag.open();
+	if (
+		state.settings.splitOn != null &&
+		compareNodeToSelector(node)(state.settings.splitOn)
+	) {
+		state.settings.writeToOutput = true;
+		state.output += SPLIT_ON_DIVIDER
+	}
+
+	const Tag: TagType = state.settings.getComponent(node)
+	const tag: TagInstance = new Tag(node, state)
+	const open = tag.open()
 
 	if (
 		!ignoreNode(state.settings.ignore, node) &&

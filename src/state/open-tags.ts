@@ -1,42 +1,43 @@
-import {IBaseTag, IOpenTags, ITagSelector} from "../types";
-import {compareNodeToSelector} from "../utils";
+import { compareNodeToSelector } from "../utils"
+import { SaxTagSelector } from "../types";
+import { TagInstance } from "./setttings";
 
-class OpenTags implements IOpenTags {
-	private tags = [];
+class OpenTags {
+	private tags: TagInstance[] = [];
 
-	public add(tag: IBaseTag) {
+	public add(tag: TagInstance) {
 		this.tags.push(tag);
 	}
 
-	public remove() {
+	public remove(): TagInstance {
 		return this.tags.pop();
 	}
 
-	public contains(tagName) {
-		return this.tags.find((tag) => tag.data.name === tagName) != null;
+	public contains(tagName: string): boolean {
+		return this.tags.find((tag) => tag.data.name === tagName) != null
 	}
 
-	public containsBy(selector: ITagSelector) {
-		return this.tags.find((t) => compareNodeToSelector(t.data)(selector))
+	public containsBy(selector: SaxTagSelector): boolean {
+		return this.tags.find((t) => compareNodeToSelector(t.data)(selector)) != null
 	}
 
-	public containsOneOf(selectors: ITagSelector[]) {
+	public containsOneOf(selectors: SaxTagSelector[]): boolean {
 		return selectors.some((selector) => this.containsBy(selector));
 	}
 
-	public count() {
+	public count(): number {
 		return this.tags.length;
 	}
 
-	public countType(tagName) {
+	public countType(tagName: string): number {
 		return this.tags.filter((tag) => tag.data.name === tagName).length;
 	}
 
-	public lastOfType(tagName) {
+	public lastOfType(tagName: string): TagInstance {
 		return [...this.tags].reverse().find((tag) => tag.data.name === tagName);
 	}
 
-	public log() {
+	public log(): string {
 		return this.tags.map((t) => t.data.name).join(', ');
 	}
 }

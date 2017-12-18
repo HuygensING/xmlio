@@ -1,6 +1,5 @@
 import BaseTag from "./base";
-import { ICustomTag } from "../types";
-declare class XmlTag extends BaseTag implements ICustomTag {
+declare class XmlTag extends BaseTag {
     open(): string;
     close(): string;
     protected getAttributes(): string;

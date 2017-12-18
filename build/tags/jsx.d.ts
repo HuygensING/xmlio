@@ -1,8 +1,9 @@
+import { Tag as SaxTag } from 'sax';
+import State from '../state';
 import BaseTag from "./base";
-import { ICustomTag } from "../types";
-declare class JsxTag extends BaseTag implements ICustomTag {
+declare class JsxTag extends BaseTag {
     protected passProps: boolean;
-    constructor(data: any, state: any);
+    constructor(data: SaxTag, state: State);
     open(): string;
     close(): string;
     name(): string;

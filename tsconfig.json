@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "declaration": true,
+    "noImplicitAny": true,
     "module": "commonjs",
+    "noUnusedLocals": true,
     "outDir": "build",
     "removeComments": true,
     "target": "es6"

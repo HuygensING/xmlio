@@ -15,7 +15,7 @@ class OpenTags {
         return this.tags.find((tag) => tag.data.name === tagName) != null;
     }
     containsBy(selector) {
-        return this.tags.find((t) => utils_1.compareNodeToSelector(t.data)(selector));
+        return this.tags.find((t) => utils_1.compareNodeToSelector(t.data)(selector)) != null;
     }
     containsOneOf(selectors) {
         return selectors.some((selector) => this.containsBy(selector));

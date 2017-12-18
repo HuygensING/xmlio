@@ -1,8 +1,8 @@
-import { ISettings, IState } from "./types";
-import EmptyTag from './tags/empty';
-import HtmlTag from './tags/html';
-import JsxTag from './tags/jsx';
-import XmlTag from './tags/xml';
-export { EmptyTag, HtmlTag, JsxTag, XmlTag };
-declare const _default: (xmlString: string, settings?: ISettings) => Promise<IState>;
+import State from "./state";
+import Settings from './state/setttings';
+export interface ReturnType {
+    result: string | string[] | Object;
+    state: State;
+}
+declare const _default: (xmlString: string, settings?: Partial<Settings>) => Promise<ReturnType>;
 export default _default;

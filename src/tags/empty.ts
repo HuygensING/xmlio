@@ -1,7 +1,6 @@
 import BaseTag from "./base";
-import {ICustomTag} from "../types";
 
-class EmptyTag extends BaseTag implements ICustomTag {
+class EmptyTag extends BaseTag {
 	public open() {
 		return ' ';
 	}

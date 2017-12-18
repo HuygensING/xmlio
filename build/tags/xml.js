@@ -10,12 +10,8 @@ class XmlTag extends base_1.default {
     }
     getAttributes() {
         const attrs = this.data.attributes;
-        const keys = Object.keys(attrs);
-        return keys
-            .map((key) => {
-            const value = attrs[key];
-            return ` ${key}="${value}"`;
-        })
+        return Object.keys(attrs)
+            .map((key) => ` ${key}="${attrs[key]}"`)
             .join('');
     }
 }

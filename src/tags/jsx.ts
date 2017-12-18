@@ -1,14 +1,15 @@
+import { Tag as SaxTag } from 'sax'
+import State from '../state'
 import {convertColon, formatTagName} from "../utils";
 import BaseTag from "./base";
-import {ICustomTag} from "../types";
 
-class JsxTag extends BaseTag implements ICustomTag {
+class JsxTag extends BaseTag {
 	protected passProps = false;
 
-	constructor(data, state) {
+	constructor(data: SaxTag, state: State) {
 		super(data, state);
 
-		if (state.writeToOutput) state.usedTags.add(this.name());
+		if (state.settings.writeToOutput) state.usedTags.add(this.name());
 	}
 
 	public open() {

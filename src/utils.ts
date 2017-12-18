@@ -1,6 +1,6 @@
-import {ITagSelector} from "./types";
-import {Tag as SaxTag} from "sax";
-import { parseString } from 'xml2js';
+import { SaxTagSelector } from "./types"
+import {Tag as SaxTag} from "sax"
+import { parseString } from 'xml2js'
 
 const capitalize = (str: string): string =>
 	str.charAt(0).toUpperCase() + str.slice(1);
@@ -24,18 +24,18 @@ export const formatTagName = (str: string): string => {
 	return capitalize(convertColon(str));
 };
 
-export const compareNodeToSelector = (node: SaxTag) => (selector: ITagSelector): boolean => {
+export const compareNodeToSelector = (node: SaxTag) => (selector: SaxTagSelector): boolean => {
 	const name = selector.name  === node.name;
 	const attribute = selector.attribute == null || Object.keys(node.attributes).indexOf(selector.attribute) > -1;
 	const value = selector.value == null || (attribute && selector.value === node.attributes[selector.attribute]);
 	return name && attribute && value;
 };
 
-export const ignoreNode = (ignore: ITagSelector[], node: SaxTag): boolean =>
+export const ignoreNode = (ignore: SaxTagSelector[], node: SaxTag): boolean =>
 	ignore.some(compareNodeToSelector(node));
 
-export const xml2json = (xml) => new Promise<string>((resolve, reject) => {
-	parseString(xml, (err, result) => {
+export const xml2json = (xml: string) => new Promise<Object>((resolve, reject) => {
+	parseString(xml, (err, result: Object) => {
 		if (err) return reject(err);
 		resolve(result);
 	});

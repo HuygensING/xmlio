@@ -1,13 +1,15 @@
-import {formatTagName} from "../utils";
-import {IBaseTag, IState} from "../types";
-import {Tag as SaxTag} from "sax";
+import {Tag as SaxTag} from "sax"
+import State from '../state'
 
-class BaseTag implements IBaseTag {
+abstract class BaseTag {
 	protected className: string;
 	protected classNames: Set<string> = new Set();
 
+	public abstract close(): string
+	public abstract open(): string
+
 	// ToDo rename data to node
-	constructor(public data: SaxTag, public state: IState) {}
+	constructor(public data: SaxTag, public state: State) {}
 
 	protected classNamesToString() {
 		const className = (this.className == null) ?

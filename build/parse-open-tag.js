@@ -1,18 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = require("./utils");
+const constants_1 = require("./constants");
 exports.default = (state) => (node) => {
-    const { getComponent, parent, ignore } = state.settings;
-    if (parent != null &&
-        utils_1.compareNodeToSelector(node)(parent)) {
-        state.writeToOutput = true;
+    if (state.settings.parent != null &&
+        utils_1.compareNodeToSelector(node)(state.settings.parent)) {
+        state.settings.writeToOutput = true;
     }
-    let Comp;
-    if (getComponent != null)
-        Comp = getComponent(node);
-    if (Comp == null)
-        Comp = state.GenericTag;
-    const tag = new Comp(node, state);
+    if (state.settings.splitOn != null &&
+        utils_1.compareNodeToSelector(node)(state.settings.splitOn)) {
+        state.settings.writeToOutput = true;
+        state.output += constants_1.SPLIT_ON_DIVIDER;
+    }
+    const Tag = state.settings.getComponent(node);
+    const tag = new Tag(node, state);
     const open = tag.open();
     if (!utils_1.ignoreNode(state.settings.ignore, node) &&
         !state.openTags.containsOneOf(state.settings.ignore)) {

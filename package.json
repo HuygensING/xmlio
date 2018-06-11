@@ -1,6 +1,6 @@
 {
-  "name": "hi-xml2html",
-  "version": "2.1.0",
+  "name": "xmlio",
+  "version": "3.0.0",
   "description": "",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -14,7 +14,8 @@
   "license": "ISC",
   "dependencies": {
     "immutable": "^4.0.0-rc.9",
-    "sax": "^1.2.4"
+    "sax": "^1.2.4",
+    "xml2tree": "^1.0.0"
   },
   "devDependencies": {
     "@types/jest": "^23.0.0",

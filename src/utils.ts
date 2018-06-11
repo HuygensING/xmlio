@@ -1,6 +1,11 @@
 import { SaxTagSelector } from "./types"
 import {Tag as SaxTag} from "sax"
 
+export function castArray(value: any) {
+	if (Array.isArray(value)) return value
+	return [value]
+}
+
 const capitalize = (str: string): string =>
 	str.charAt(0).toUpperCase() + str.slice(1);
 

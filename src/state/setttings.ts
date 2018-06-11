@@ -1,10 +1,9 @@
-import {Tag as SaxTag} from "sax"
 import HtmlTag from '../tags/html'
 import JsxTag from '../tags/jsx'
 import XmlTag from '../tags/xml'
 import EmptyTag from '../tags/empty'
-import { SaxTagSelector } from "../types";
-import { TagNode } from "../index";
+import { SaxTagSelector } from "../types"
+import { SaxTag } from 'xml2tree'
 
 export type OutputType = 'html' | 'jsx' | 'xml' | 'empty'
 export type TagType = typeof HtmlTag | typeof JsxTag | typeof XmlTag | typeof EmptyTag
@@ -33,7 +32,7 @@ export class SettingsConfig {
 	passProps?: boolean
 	wrapNodes?: {
 		selector: SaxTagSelector
-		parent: Partial<TagNode>
+		parent: Partial<SaxTag>
 	}
 
 	constructor(config: SettingsConfig) {
@@ -49,7 +48,7 @@ export class SettingsConfig {
 	}
 
 	// Called on all nodes to transform a node (change the name, add an attribute, etc)
-	transformNode?(node: TagNode): TagNode {
+	transformNode?(node: SaxTag): SaxTag {
 		return node
 	} 
 

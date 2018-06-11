@@ -1,119 +1,138 @@
-import xml2html from '../src'
-import xml, { defaultProcessed } from './data/xml'
+import { fromString } from '../src'
 
-const defaultHtml =
-	`<div class="xml">
-		<div class="locations">
-			<div class="location" data-xml-id="14">Aurora</div>
-			<div class="location" data-xml-id="15">
-				<div class="name">Buenos "Bono" Aires</div>
-				<div class="size">12.000.000</div>
-			</div>
-		</div>
-	</div>`
+describe('xmlio', () => {
+	// Split the tree in subtrees by a parent selector
+	test('split', async () => {
+		const tree = await fromString('<text><line>haha</line><line>hihi</line></text>')
+		const expected = tree
+			.split({ name: 'line' })
+			.toXml()
 
-const defaultJsx = `<Xml><Locations><Location xmlId="14">Aurora</Location><Location xmlId="15"><Name>Buenos "Bono" Aires</Name><Size>12.000.000</Size></Location></Locations></Xml>`
-
-const defaultEmpty = `Aurora Buenos "Bono" Aires 12.000.000`
-
-describe('xml2html {}', () => {
-	test('Convert XML to HTML', async () => {
-		const response = await xml2html(xml)
-		expect(response[0]).toBe(defaultProcessed)
+		expect(expected).toEqual(['<line>haha</line>', '<line>hihi</line>'])
 	})
 
-	test('Convert XML to JSX', async () => {
-		const response = await xml2html(xml, { outputType: 'jsx' })
-		expect(response[0]).toBe(defaultJsx)
+	// Wrap a node with a new node
+	test('wrap', async () => {
+		const expected = (await fromString('<text><line>haha</line><line>hihi</line></text>'))
+			.wrap({ name: 'line' }, { name: 'p' })
+			.toXml()
+
+		expect(expected).toEqual('<text><p><line>haha</line></p><p><line>hihi</line></p></text>')
 	})
 
-	test('Convert XML to XML', async () => {
-		const response = await xml2html(xml, { outputType: 'xml' })
-		expect(response[0]).toBe(defaultProcessed)
+	// Add a new tag to the beginning of the children of a parent
+	test('prepend', async () => {
+		const expected = (await fromString('<text><line id="1">haha</line><line id="2">hihi</line></text>'))
+			.prepend({ name: 'hi', children: [{ name: 'b', children: ['dit'] }, 'dat'] }, { name: 'line', attributes: { id: "1" } })
+			.prepend({ name: 'hi', children: [{ name: 'i', children: ['dot'] }, 'det'] }, { name: 'line', attributes: { id: "2" } })
+			.toXml()
+
+		expect(expected).toEqual('<text><line id="1"><hi><b>dit</b>dat</hi>haha</line><line id="2"><hi><i>dot</i>det</hi>hihi</line></text>')
 	})
 
-	test('Strip XML tags', async () => {
-		const response = await xml2html(xml, { outputType: 'empty' })
-		expect(response[0].replace(/\s\s+/g, ' ').trim()).toBe(defaultEmpty)
+	// Add a new tag to the end of the children of a parent
+	test('append', async () => {
+		const expected = (await fromString('<text><line id="1">haha</line><line id="2">hihi</line></text>'))
+			.append({ name: 'hi', children: [{ name: 'b', children: ['dit'] }, 'dat'] }, { name: 'line', attributes: { id: "1" } })
+			.append({ name: 'hi', children: [{ name: 'i', children: ['dot'] }, 'det'] }, { name: 'line', attributes: { id: "2" } })
+			.toXml()
+
+		expect(expected).toEqual('<text><line id="1">haha<hi><b>dit</b>dat</hi></line><line id="2">hihi<hi><i>dot</i>det</hi></line></text>')
+	})
+
+	// Move the hi[on=1] tag to the line[id=1] tag
+	test('move - append', async () => {
+		const expected = (await fromString('<text><line id="1">haha</line><line>hihi</line><hi on="1">here</hi></text>'))
+			.move({ name: 'hi', attributes: { on: "1" } }, { name: 'line', attributes: { id: "1" } })
+			.toXml()
+
+		expect(expected).toEqual('<text><line id="1">haha<hi on="1">here</hi></line><line>hihi</line></text>')
+	})
+
+	// Move the hi[on=1] tag to the line[id=1] tag
+	test('move - prepend', async () => {
+		const expected = (await fromString('<text><line id="1">haha</line><line>hihi</line><hi on="1">here</hi></text>'))
+			.move({ name: 'hi', attributes: { on: "1" } }, { name: 'line', attributes: { id: "1" } }, false)
+			.toXml()
+
+		expect(expected).toEqual('<text><line id="1"><hi on="1">here</hi>haha</line><line>hihi</line></text>')
+	})
+
+	// Replace the line[id=1] tag with the hi[on=1] tag
+	test('replace', async () => {
+		const expected = (await fromString('<text><line id="1">haha</line><line>hihi</line><hi on="1">here</hi></text>'))
+			.replace({ name: 'hi', attributes: { on: "1" } }, (hiNode) => {
+				return { name: 'line', attributes: { id: hiNode.attributes.on } }
+			})
+			.toXml()
+
+		expect(expected).toEqual('<text><hi on="1">here</hi><line>hihi</line></text>')
+	})
+
+	// First split and than wrap
+	test('split => wrap', async () => {
+		const expected = (await fromString('<text><line>haha</line><line>hihi</line></text>'))
+			.split({ name: 'line' })
+			.wrap({ name: 'line' }, { name: 'p' })
+			.toXml()
+
+		expect(expected).toEqual(['<p><line>haha</line></p>', '<p><line>hihi</line></p>'])
+	})
+
+	// First wrap and than split
+	// Should have the same result as first split and than wrap
+	test('wrap => split', async () => {
+		const expected = (await fromString('<text><line>haha</line><line>hihi</line></text>'))
+			.wrap({ name: 'line' }, { name: 'p' })
+			.split({ name: 'p' })
+			.toXml()
+
+		expect(expected).toEqual(['<p><line>haha</line></p>', '<p><line>hihi</line></p>'])
+	})
+
+	test('toHtml', async () => {
+		const expected = (await fromString('<text><line>haha</line><line>hihi</line></text>'))
+			.toHtml()
+
+		expect(expected).toEqual('<div class="text"><div class="line">haha</div><div class="line">hihi</div></div>')
+	})
+
+	test('toJsx', async () => {
+		const expected = (await fromString('<text><line>haha</line><line>hihi</line></text>'))
+			.toJsx()
+
+		const received = [
+			"import * as React from 'react'",
+			"import {Line, Text} from './components'",
+			'export default () => <Text><Line>haha</Line><Line>hihi</Line></Text>'
+		].join('\n')
+
+		expect(expected).toEqual(received)
+	})
+
+	test('toJsx - componentPath', async () => {
+		const expected = (await fromString('<text><line>haha</line><line>hihi</line></text>'))
+			.toJsx({ componentPath: 'my-component-package' })
+
+		const received = [
+			"import * as React from 'react'",
+			"import {Line, Text} from 'my-component-package'",
+			'export default () => <Text><Line>haha</Line><Line>hihi</Line></Text>'
+		].join('\n')
+
+		expect(expected).toEqual(received)
+	})
+
+	test('toJsx - passProps', async () => {
+		const expected = (await fromString('<text><line>haha</line><line>hihi</line></text>'))
+			.toJsx({ passProps: true })
+
+		const received = [
+			"import * as React from 'react'",
+			"import {Line, Text} from './components'",
+			'export default (props) => <Text {...props}><Line {...props}>haha</Line><Line {...props}>hihi</Line></Text>'
+		].join('\n')
+
+		expect(expected).toEqual(received)
 	})
 })
-
-describe('xml2html { rename }', () => {
-	// test('basic', async () => {
-	// 	const response = await xml2html(xml, {
-	// 		rename: [
-	// 			{
-	// 				type: 'name',
-	// 				to: 'colation',
-	// 			},
-	// 			{
-	// 				type: 'name',
-	// 				to: 'colations',
-	// 			},
-	// 			{
-	// 				type: 'attribute',
-	// 				to: 'id',
-	// 			},
-	// 			{
-	// 				type: 'value',
-	// 				to: '41',
-	// 			},
-	// 		]
-	// 	})
-
-	// 	expect(response[0]).toBe(xml
-	// 		.replace(/locations/g, 'colations')
-	// 		.replace(/location/g, 'colations')
-	// 		.replace(/xml:id/g, 'id')
-	// 		.replace(/xml/g, 'colations')
-	// 		.replace(/name/g, 'colations')
-	// 		.replace(/size/g, 'colations')
-	// 		.replace(/14/g, '41')
-	// 		.replace(/15/g, '41')
-	// 	)
-	// })
-
-	// test('with selector', async () => {
-	// 	const response = await xml2html(xml, {
-	// 		rename: [
-	// 			{
-	// 				type: 'name',
-	// 				selector: {
-	// 					name: 'location',
-	// 				},
-	// 				to: 'colation',
-	// 			},
-	// 			{
-	// 				type: 'name',
-	// 				selector: {
-	// 					name: 'locations',
-	// 				},
-	// 				to: 'colations',
-	// 			},
-	// 			{
-	// 				type: 'attribute',
-	// 				selector: {
-	// 					attribute: 'xml:id',
-	// 				},
-	// 				to: 'id',
-	// 			},
-	// 			{
-	// 				type: 'value',
-	// 				selector: {
-	// 					attribute: 'id',
-	// 					value: '15',
-	// 				},
-	// 				to: '41',
-	// 			},
-	// 		]
-	// 	})
-
-	// 	expect(response[0]).toBe(xml
-	// 		.replace(/location/g, 'colation')
-	// 		.replace(/locations/g, 'colations')
-	// 		.replace(/xml:id/g, 'id')
-	// 		.replace(/15/g, '41')
-	// 	)
-	// })
-})
-

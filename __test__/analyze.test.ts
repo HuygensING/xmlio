@@ -1,12 +1,10 @@
-import { fromTree, removeFromTree, addToTree, moveNode } from '../src'
-import analyze, { analyzeAll } from '../src/analyze'
-import State from '../src/state'
-import sax2tree from 'sax2tree'
+import { fromString } from '../src'
 import xml from './data/xml'
 
 describe('analyze', () => {
-	test('some 1', async () => {
-		const tree = await sax2tree(xml)	
+	test('analyze a tree', async () => {
+		const tree = await fromString(xml)	
+		const received = tree.analyze()
 		const expected = {
 			__textNode: { count: 3 },
 			location: {
@@ -26,30 +24,32 @@ describe('analyze', () => {
 			size: { count: 1 },
 			xml: { count: 1 },
 		}
-		expect(analyze(tree)).toEqual(expected)
+			
+		expect(received).toEqual(expected)
 	})
 
-	test('some all', async () => {
-		const tree = await sax2tree(xml)	
+	test('analyze split tree', async () => {
+		const tree = await fromString(xml)	
+		const received = tree
+			.split({ name: 'location' })
+			.analyze()
 		const expected = {
-			__textNode: { count: 6 },
+			__textNode: { count: 3 },
 			location: {
 				attributes: {
 					'xml:id': {
-						count: 4,
+						count: 2,
 						values: {
-							14: { count: 2 },
-							15: { count: 2 },
+							14: { count: 1 },
+							15: { count: 1 },
 						},
 					},
 				},
-				count: 4,
+				count: 2,
 			},
-			locations: { count: 2 },
-			name: { count: 2 },
-			size: { count: 2 },
-			xml: { count: 2 },
+			name: { count: 1 },
+			size: { count: 1 }
 		}
-		expect(analyzeAll([tree, tree])).toEqual(expected)
+		expect(received).toEqual(expected)
 	})
 })

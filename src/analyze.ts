@@ -1,24 +1,24 @@
-import { TagNode } from 'sax2tree'
-import { iterateTree } from './index'
+import { SaxTag } from 'xml2tree'
+import { iterateTree } from './_index'
 
-export interface IStats {
+export interface Stats {
 	[key: string]: {
 		count: number
-		attributes?: IStats
-		values?: IStats
+		attributes?: Stats
+		values?: Stats
 	}
 }
-const analyze = (node: TagNode) => {
-	const stats: IStats = { __textNode: { count: 0 } }
+const analyze = (node: SaxTag): Stats => {
+	const stats: Stats = { __textNode: { count: 0 } }
 
-	const addValueToStats = (values: IStats, value: string) => {
+	const addValueToStats = (values: Stats, value: string) => {
 		if (values == null) values = {}
 		if (values.hasOwnProperty(value)) values[value] = { ...values[value], count: ++values[value].count }
 		else values[value] = { count: 1 }
 		return values
 	}
 
-	const addAttributesToStats = (n: TagNode) => {
+	const addAttributesToStats = (n: SaxTag) => {
 		let attrs = stats[n.name].attributes || {}
 		Object.keys(n.attributes).forEach(k => {
 			if (attrs.hasOwnProperty(k)) attrs[k] = { ...attrs[k], count: ++attrs[k].count }
@@ -28,7 +28,7 @@ const analyze = (node: TagNode) => {
 		return attrs
 	}
 
-	const addNodeToStats = (n: TagNode) => {
+	const addNodeToStats = (n: SaxTag) => {
 		if (stats.hasOwnProperty(n.name)) stats[n.name] = { ...stats[n.name], count: ++stats[n.name].count }
 		else stats[n.name] = { count: 1 }
 		if (Object.keys(n.attributes).length) {
@@ -36,7 +36,7 @@ const analyze = (node: TagNode) => {
 		}
 	}
 
-	iterateTree(node, (n: TagNode) => {
+	iterateTree(node, (n: SaxTag) => {
 		if (typeof n === 'string') stats.__textNode = { ...stats.__textNode, count: ++stats.__textNode.count }
 		else addNodeToStats(n)
 		return n
@@ -45,9 +45,9 @@ const analyze = (node: TagNode) => {
 	return stats
 }
 
-const mergeValues = (values1, values2) => {
+const mergeValues = (values1: Stats, values2: Stats) => {
 	if (values1 == null) values1 = {}
-	const aggr = {}
+	const aggr: { [key: string]: any } = {}
 	Object.keys(values1).forEach(values1Key => {
 		aggr[values1Key] = { ...values1[values1Key] }
 	})
@@ -62,9 +62,9 @@ const mergeValues = (values1, values2) => {
 	return aggr	
 }
 
-const mergeAttributes = (attrs1, attrs2) => {
+const mergeAttributes = (attrs1: Stats, attrs2: Stats) => {
 	if (attrs1 == null) attrs1 = {}
-	const aggr = {}
+	const aggr: { [key: string]: any } = {}
 	Object.keys(attrs1).forEach(attrs1Key => {
 		aggr[attrs1Key] = { ...attrs1[attrs1Key] }
 	})
@@ -82,8 +82,8 @@ const mergeAttributes = (attrs1, attrs2) => {
 	return aggr	
 }
 
-export const analyzeAll = (nodes: TagNode[]) =>
-	nodes
+export default function analyzeAll(nodes: SaxTag[]): Stats {
+	return nodes
 		.map(analyze)
 		.reduce(
 			(prev, curr, index) => {
@@ -102,5 +102,4 @@ export const analyzeAll = (nodes: TagNode[]) =>
 				return prev	
 			}, {}
 		)
-
-export default analyze
+}

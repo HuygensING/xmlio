@@ -1,5 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+function castArray(value) {
+    if (Array.isArray(value))
+        return value;
+    return [value];
+}
+exports.castArray = castArray;
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 exports.convertColon = (str) => str.replace(/:([a-zA-Z]{1})/g, (match, p1) => p1.toUpperCase());
 exports.formatTagName = (str) => {

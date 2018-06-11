@@ -1,10 +1,9 @@
-import { Tag as SaxTag } from "sax";
 import HtmlTag from '../tags/html';
 import JsxTag from '../tags/jsx';
 import XmlTag from '../tags/xml';
 import EmptyTag from '../tags/empty';
 import { SaxTagSelector } from "../types";
-import { TagNode } from "../index";
+import { SaxTag } from 'xml2tree';
 export declare type OutputType = 'html' | 'jsx' | 'xml' | 'empty';
 export declare type TagType = typeof HtmlTag | typeof JsxTag | typeof XmlTag | typeof EmptyTag;
 export declare type TagInstance = HtmlTag | JsxTag | XmlTag | EmptyTag;
@@ -30,11 +29,11 @@ export declare class SettingsConfig {
     passProps?: boolean;
     wrapNodes?: {
         selector: SaxTagSelector;
-        parent: Partial<TagNode>;
+        parent: Partial<SaxTag>;
     };
     constructor(config: SettingsConfig);
     getComponent?(node: SaxTag): TagType;
-    transformNode?(node: TagNode): TagNode;
+    transformNode?(node: SaxTag): SaxTag;
     transformTextNode?(text: string): string;
 }
 declare class Settings extends SettingsConfig {

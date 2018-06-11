@@ -18,4 +18,4 @@ $ npm test
 ```
 
 ## Examples
-See __test__ dir
+See `__test__` dir

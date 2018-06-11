@@ -18,6 +18,7 @@ export default class PreviousNodes {
 	public lastButOne(): SaxTag {
 		return this.nodes[this.nodes.length - 2];
 	}
+
 	public lastButTwo(): SaxTag {
 		return this.nodes[this.nodes.length - 3];
 	}

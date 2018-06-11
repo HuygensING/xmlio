@@ -9,6 +9,7 @@ declare class OpenTags {
     containsOneOf(selectors: SaxTagSelector[]): boolean;
     count(): number;
     countType(tagName: string): number;
+    last(): TagInstance;
     lastOfType(tagName: string): TagInstance;
     log(): string;
 }

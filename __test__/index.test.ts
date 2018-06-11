@@ -1,15 +1,5 @@
 import xml2html from '../src'
-
-const xml =
-	`<xml>
-		<locations>
-			<location xml:id="14">Aurora</location>
-			<location xml:id="15">
-				<name>Buenos "Bono" Aires</name>
-				<size>12.000.000</size>
-			</location>
-		</locations>
-	</xml>`
+import xml, { defaultProcessed } from './data/xml'
 
 const defaultHtml =
 	`<div class="xml">
@@ -22,164 +12,108 @@ const defaultHtml =
 		</div>
 	</div>`
 
-const defaultJsx =
-	`<Xml>
-		<Locations>
-			<Location xmlId="14">Aurora</Location>
-			<Location xmlId="15">
-				<Name>Buenos "Bono" Aires</Name>
-				<Size>12.000.000</Size>
-			</Location>
-		</Locations>
-	</Xml>`
+const defaultJsx = `<Xml><Locations><Location xmlId="14">Aurora</Location><Location xmlId="15"><Name>Buenos "Bono" Aires</Name><Size>12.000.000</Size></Location></Locations></Xml>`
 
 const defaultEmpty = `Aurora Buenos "Bono" Aires 12.000.000`
 
 describe('xml2html {}', () => {
 	test('Convert XML to HTML', async () => {
 		const response = await xml2html(xml)
-		expect(response.result).toBe(xml)
+		expect(response[0]).toBe(defaultProcessed)
 	})
 
 	test('Convert XML to JSX', async () => {
 		const response = await xml2html(xml, { outputType: 'jsx' })
-		expect(response.result).toBe(defaultJsx)
+		expect(response[0]).toBe(defaultJsx)
 	})
 
 	test('Convert XML to XML', async () => {
 		const response = await xml2html(xml, { outputType: 'xml' })
-		expect(response.result).toBe(xml)
-	})
-
-	test('Convert XML to JSON', async () => {
-		const response = await xml2html(xml, { outputType: 'json' })
-		const expected = {
-			xml: {
-				locations: [{
-					location: [{
-						_: 'Aurora',
-						$: {
-							'xml:id': '14',
-						}
-					}, {
-						$: {
-							'xml:id': '15',
-						},
-						name: ['Buenos "Bono" Aires'],
-						size: ['12.000.000'],
-					}]
-				}]
-			}
-		}
-		expect(JSON.stringify(response.result)).toBe(JSON.stringify(expected))
+		expect(response[0]).toBe(defaultProcessed)
 	})
 
 	test('Strip XML tags', async () => {
 		const response = await xml2html(xml, { outputType: 'empty' })
-		const output = response.result
-		expect(output).toBe(defaultEmpty)
+		expect(response[0].replace(/\s\s+/g, ' ').trim()).toBe(defaultEmpty)
 	})
 })
 
-describe('xml2html { splitOn }', () => {
-	test('Split on selector', async () => {
-		const response = await xml2html(xml, { splitOn: { name: 'location' } })
-		expect(JSON.stringify(response.result)).toBe(JSON.stringify([
-			'<location xml:id="14">Aurora</location>',
-			`<location xml:id="15">
-				<name>Buenos "Bono" Aires</name>
-				<size>12.000.000</size>
-			</location>`,
-		]))
-	})
+describe('xml2html { rename }', () => {
+	// test('basic', async () => {
+	// 	const response = await xml2html(xml, {
+	// 		rename: [
+	// 			{
+	// 				type: 'name',
+	// 				to: 'colation',
+	// 			},
+	// 			{
+	// 				type: 'name',
+	// 				to: 'colations',
+	// 			},
+	// 			{
+	// 				type: 'attribute',
+	// 				to: 'id',
+	// 			},
+	// 			{
+	// 				type: 'value',
+	// 				to: '41',
+	// 			},
+	// 		]
+	// 	})
+
+	// 	expect(response[0]).toBe(xml
+	// 		.replace(/locations/g, 'colations')
+	// 		.replace(/location/g, 'colations')
+	// 		.replace(/xml:id/g, 'id')
+	// 		.replace(/xml/g, 'colations')
+	// 		.replace(/name/g, 'colations')
+	// 		.replace(/size/g, 'colations')
+	// 		.replace(/14/g, '41')
+	// 		.replace(/15/g, '41')
+	// 	)
+	// })
+
+	// test('with selector', async () => {
+	// 	const response = await xml2html(xml, {
+	// 		rename: [
+	// 			{
+	// 				type: 'name',
+	// 				selector: {
+	// 					name: 'location',
+	// 				},
+	// 				to: 'colation',
+	// 			},
+	// 			{
+	// 				type: 'name',
+	// 				selector: {
+	// 					name: 'locations',
+	// 				},
+	// 				to: 'colations',
+	// 			},
+	// 			{
+	// 				type: 'attribute',
+	// 				selector: {
+	// 					attribute: 'xml:id',
+	// 				},
+	// 				to: 'id',
+	// 			},
+	// 			{
+	// 				type: 'value',
+	// 				selector: {
+	// 					attribute: 'id',
+	// 					value: '15',
+	// 				},
+	// 				to: '41',
+	// 			},
+	// 		]
+	// 	})
+
+	// 	expect(response[0]).toBe(xml
+	// 		.replace(/location/g, 'colation')
+	// 		.replace(/locations/g, 'colations')
+	// 		.replace(/xml:id/g, 'id')
+	// 		.replace(/15/g, '41')
+	// 	)
+	// })
 })
 
-describe('xml2html { parent }', () => {
-	test('{name: "locations"}', async () => {
-		const response = await xml2html(xml, {
-			outputType: 'jsx',
-			parent: {
-				name: 'locations',
-			},
-		})
-
-		const output =
-			`<Locations>
-				<Location xmlId="14">Aurora</Location>
-				<Location xmlId="15">
-					<Name>Buenos "Bono" Aires</Name>
-					<Size>12.000.000</Size>
-				</Location>
-			</Locations>`
-
-		expect(clean(response.result)).toBe(clean(output))
-	})
-
-	test('{name: "location"}', async () => {
-		const response = await xml2html(xml, {
-			outputType: 'jsx',
-			parent: {
-				name: 'location',
-			},
-		})
-
-		const output =
-			`<Location xmlId="14">Aurora</Location>
-			<Location xmlId="15">
-				<Name>Buenos "Bono" Aires</Name>
-				<Size>12.000.000</Size>
-			</Location>`
-
-		expect(clean(response.result)).toBe(clean(output))
-	})
-
-	test('{name: "location", attribute: "xml:id", value: "15"}', async () => {
-		const response = await xml2html(xml, {
-			outputType: 'jsx',
-			parent: {
-				name: 'location',
-				attribute: 'xml:id',
-				value: '15',
-			},
-		})
-
-		const output =
-			`<Location xmlId="15">
-				<Name>Buenos "Bono" Aires</Name>
-				<Size>12.000.000</Size>
-			</Location>`
-
-		expect(clean(response.result)).toBe(clean(output))
-	})
-})
-
-
-describe('xml2html { outputType: json, parent }', () => {
-	test('json', async () => {
-		const response = await xml2html(xml, {
-			outputType: 'json',
-			parent: { name: 'location' },
-		})
-
-		const expected = {
-			root: {
-				location: [{
-					_: 'Aurora',
-					$: {
-						'xml:id': '14',
-					}
-				}, {
-					$: {
-						'xml:id': '15',
-					},
-					name: ['Buenos "Bono" Aires'],
-					size: ['12.000.000'],
-				}]
-			}
-		}
-
-		expect(JSON.stringify(response.result)).toBe(JSON.stringify(expected))
-	})
-})
-
-const clean = (xml) => xml.replace(/>(\s*)</g, '><')

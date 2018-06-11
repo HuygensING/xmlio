@@ -1,6 +1,5 @@
 import { SaxTagSelector } from "./types"
 import {Tag as SaxTag} from "sax"
-import { parseString } from 'xml2js'
 
 const capitalize = (str: string): string =>
 	str.charAt(0).toUpperCase() + str.slice(1);
@@ -25,18 +24,28 @@ export const formatTagName = (str: string): string => {
 };
 
 export const compareNodeToSelector = (node: SaxTag) => (selector: SaxTagSelector): boolean => {
-	const name = selector.name  === node.name;
-	const attribute = selector.attribute == null || Object.keys(node.attributes).indexOf(selector.attribute) > -1;
-	const value = selector.value == null || (attribute && selector.value === node.attributes[selector.attribute]);
-	return name && attribute && value;
-};
+	const nameMatched = selector.name == null || selector.name  === node.name
+	if (selector.attributes == null) return nameMatched
 
-export const ignoreNode = (ignore: SaxTagSelector[], node: SaxTag): boolean =>
-	ignore.some(compareNodeToSelector(node));
+	const attributesMatched = (attrs: { [key: string]: string }) => {
+		if (attrs == null) return false
 
-export const xml2json = (xml: string) => new Promise<Object>((resolve, reject) => {
-	parseString(xml, (err, result: Object) => {
-		if (err) return reject(err);
-		resolve(result);
-	});
-});
+		return Object.keys(attrs).some(key => {
+			const value = attrs[key]
+			if (key == '__' && value == null) return true
+			if (value == null && Object.keys(node.attributes).indexOf(key) > -1) return true
+			if (key == '__' && Object.keys(node.attributes).map(k => node.attributes[k]).indexOf(value) > -1) return true
+			if (node.hasOwnProperty('attributes')) {
+				return Object.keys(node.attributes)
+					.reduce((prev, currKey) => {
+						const currValue = node.attributes[currKey]
+						const curr = attrs[currKey] === currValue
+						return prev || curr
+					}, false)
+			}
+			return false
+		})
+	}
+
+	return nameMatched && (attributesMatched(selector.attributes) && !attributesMatched(selector.notAttributes))
+}

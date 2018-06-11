@@ -2,7 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = require("./utils");
 const constants_1 = require("./constants");
+const rename_node_1 = require("./rename-node");
 exports.default = (state) => (node) => {
+    node = rename_node_1.default(node, state.settings.rename);
     if (state.settings.parent != null &&
         utils_1.compareNodeToSelector(node)(state.settings.parent)) {
         state.settings.writeToOutput = true;

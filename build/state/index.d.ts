@@ -1,14 +1,18 @@
 import OpenTags from './open-tags';
 import PreviousNodes from './previous-nodes';
-import Settings from './setttings';
+import Settings, { SettingsConfig } from './setttings';
+import BaseTag from '../tags/base';
+export interface CustomState {
+    [key: string]: any;
+}
 declare class State {
-    settings: Partial<Settings>;
-    custom: {};
+    custom: CustomState;
     openTags: OpenTags;
     output: string;
     previousNodes: PreviousNodes;
-    usedTags: Set<any>;
-    constructor(settings: Partial<Settings>);
-    appendHtml(str: string): void;
+    settings: Settings;
+    tree: BaseTag[];
+    usedTags: Set<string>;
+    constructor(settingsConfig: SettingsConfig);
 }
 export default State;

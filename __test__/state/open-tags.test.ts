@@ -77,21 +77,21 @@ describe('OpenTags', () => {
 
 	test('.containsBy', () => {
 		expect(openTags.containsBy({ name: 'div' })).toBeTruthy();
-		expect(openTags.containsBy({ name: 'div', attribute: 'type' })).toBeTruthy();
-		expect(openTags.containsBy({ name: 'div', attribute: 'type', value: 'edsNotes' })).toBeTruthy();
+		expect(openTags.containsBy({ name: 'div', attributes: { 'type': null } })).toBeTruthy();
+		expect(openTags.containsBy({ name: 'div', attributes: { 'type': 'edsNotes' } })).toBeTruthy();
 
-		expect(openTags.containsBy({ name: 'div', attribute: 'type', value: 'origNotes' })).toBeFalsy();
-		expect(openTags.containsBy({ name: 'div', attribute: 'tipe' })).toBeFalsy();
+		expect(openTags.containsBy({ name: 'div', attributes: { type: 'origNotes' } })).toBeFalsy();
+		expect(openTags.containsBy({ name: 'div', attributes: { 'tipe': null } })).toBeFalsy();
 		expect(openTags.containsBy({ name: 'lb' })).toBeFalsy();
 	});
 
 	test('.containsOneOf', () => {
 		expect(openTags.containsOneOf([{ name: 'div' }])).toBeTruthy();
-		expect(openTags.containsOneOf([{ name: 'div', attribute: 'type' }])).toBeTruthy();
-		expect(openTags.containsOneOf([{ name: 'div', attribute: 'type', value: 'edsNotes' }])).toBeTruthy();
+		expect(openTags.containsOneOf([{ name: 'div', attributes: { 'type': null } }])).toBeTruthy();
+		expect(openTags.containsOneOf([{ name: 'div', attributes: { 'type': 'edsNotes' } }])).toBeTruthy();
 		expect(openTags.containsOneOf([{ name: 'hi' }, { name: 'boo'} ])).toBeTruthy();
 
-		expect(openTags.containsOneOf([{ name: 'div', attribute: 'type', value: 'origNotes' }])).toBeFalsy();
+		expect(openTags.containsOneOf([{ name: 'div', attributes: { type: 'origNotes' } }])).toBeFalsy();
 		expect(openTags.containsOneOf([{ name: 'choice' }])).toBeFalsy()
 	});
 

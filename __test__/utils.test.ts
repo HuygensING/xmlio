@@ -1,10 +1,4 @@
-import {formatTagName, ignoreNode} from "../src/utils";
-
-const ignore = [
-	{ name: 'div', attribute: 'type', value: 'edsNotes' },
-	{ name: 'hi', attribute: 'rend' },
-	{ name: 'lb' }
-];
+import {formatTagName, compareNodeToSelector} from "../src/utils";
 
 const div = {
 	attributes: {
@@ -17,6 +11,15 @@ const div = {
 const div2 = {
 	attributes: {
 		type: 'origNotes',
+	},
+	isSelfClosing: false,
+	name: 'div',
+};
+
+const div3 = {
+	attributes: {
+		type: 'origNotes',
+		tape: 'notesOrig',
 	},
 	isSelfClosing: false,
 	name: 'div',
@@ -58,35 +61,99 @@ const choice = {
 	name: 'choice',
 };
 
-describe('ignoreNode', () => {
-	test('div should be ignored', () => {
-		expect(ignoreNode(ignore, div)).toBeTruthy();
-	});
+// describe('renameNode', () => {
+// 	test('1', () => {
+// 		const config = [{ type: 'name', to: 'dav' }]
+// 		expect(renameNode(div2, config)).toEqual(
+// 			{
+// 				attributes: { type: 'origNotes' },
+// 				isSelfClosing: false,
+// 				name: 'dav',
+// 			}
+// 		)
+// 	})
 
-	test('div2 should not be ignored', () => {
-		expect(ignoreNode(ignore, div2)).toBeFalsy();
-	});
+// 	test('2', () => {
+// 		const config = [{ type: 'name', to: (t: string) => t.toUpperCase() }]
+// 		expect(renameNode(div2, config)).toEqual(
+// 			{
+// 				attributes: { type: 'origNotes' },
+// 				isSelfClosing: false,
+// 				name: 'DIV',
+// 			}
+// 		)
+// 	})
 
-	test('hi should be ignored', () => {
-		expect(ignoreNode(ignore, hi)).toBeTruthy();
-	});
+// 	test('3', () => {
+// 		const config = [{ type: 'attribute', to: (t: string) => t.toUpperCase() }]
+// 		expect(renameNode(div2, config)).toEqual(
+// 			{
+// 				attributes: { TYPE: 'origNotes' },
+// 				isSelfClosing: false,
+// 				name: 'div',
+// 			}
+// 		)
+// 	})
 
-	test('hi2 should not be ignored', () => {
-		expect(ignoreNode(ignore, hi2)).toBeFalsy();
-	});
+// 	test('4', () => {
+// 		const config = [{ type: 'value', to: (t: string) => t.toUpperCase() }]
+// 		expect(renameNode(div2, config)).toEqual(
+// 			{
+// 				attributes: { type: 'ORIGNOTES' },
+// 				isSelfClosing: false,
+// 				name: 'div',
+// 			}
+// 		)
+// 	})
 
-	test('lb should be ignored', () => {
-		expect(ignoreNode(ignore, lb)).toBeTruthy();
-	});
+// 	test('5', () => {
+// 		const config = [
+// 			{ type: 'name', to: (t: string) => t.toUpperCase() },
+// 			{ type: 'attribute', to: (t: string) => t.toUpperCase() },
+// 			{ type: 'value', to: (t: string) => t.toUpperCase(), selector: { attribute: 'TYPE' } },
+// 		]
+// 		expect(renameNode(div3, config)).toEqual(
+// 			{
+// 				attributes: { TYPE: 'ORIGNOTES', TAPE: 'notesOrig' },
+// 				isSelfClosing: false,
+// 				name: 'DIV',
+// 			}
+// 		)
+// 	})
+// })
 
-	test('lb2 should be ignored', () => {
-		expect(ignoreNode(ignore, lb2)).toBeTruthy();
-	});
+describe('compareNodeToSelector', () => {
+	// test('empty comparator', () => expect(compareNodeToSelector(div2)({})).toBeTruthy())
+	// test('name only', () => expect(compareNodeToSelector(div2)({ name: 'div' })).toBeTruthy())
+	// test('name only', () => expect(compareNodeToSelector(div2)({ name: 'dav' })).toBeFalsy())
+	// test('attribute only', () => expect(compareNodeToSelector(div2)({ attributes: { 'type': null } })).toBeTruthy())
+	// test('attribute only', () => expect(compareNodeToSelector(div2)({ attributes: { 'tope': null } })).toBeFalsy())
+	// test('value only', () => expect(compareNodeToSelector(div2)({ attributes: { __: 'origNotes' } })).toBeTruthy())
+	// test('value only', () => expect(compareNodeToSelector(div2)({ attributes: { __: 'oragNotes' } })).toBeFalsy())
+	// test('name & attribute', () => expect(compareNodeToSelector(div2)({ name: 'div', attributes: { 'type': null } })).toBeTruthy())
+	// test('name & attribute', () => expect(compareNodeToSelector(div2)({ name: 'div', attributes: { 'tope': null } })).toBeFalsy())
+	// test('attribute & value', () => expect(compareNodeToSelector(div2)({ attributes: { type: 'origNotes' }})).toBeTruthy())
+	// test('attribute & value', () => expect(compareNodeToSelector(div2)({ attributes: { type: 'oragNotes' }})).toBeFalsy())
+	// test('attribute & value', () => expect(compareNodeToSelector(div2)({ attributes: { tope: 'origNotes' }})).toBeFalsy())
+	// test('attribute & value', () => expect(compareNodeToSelector(div2)({ attributes: { tope: 'oragNotes' }})).toBeFalsy())
+	// test('name & value', () => expect(compareNodeToSelector(div2)({ name: 'div', attributes: { __: 'origNotes' } })).toBeTruthy())
+	// test('name & value', () => expect(compareNodeToSelector(div2)({ name: 'div', attributes: { __: 'oragNotes' } })).toBeFalsy())
+	// test('name & value', () => expect(compareNodeToSelector(div2)({ name: 'dav', attributes: { __: 'origNotes' } })).toBeFalsy())
+	// test('name & value', () => expect(compareNodeToSelector(div2)({ name: 'dav', attributes: { __: 'oragNotes' } })).toBeFalsy())
+	// test('name, attribute & value', () => expect(compareNodeToSelector(div2)({ name: 'div', attributes: { 'type': 'origNotes' } })).toBeTruthy())
+	// test('name, attribute & value', () => expect(compareNodeToSelector(div2)({ name: 'div', attributes: { 'type': 'oragNotes' } })).toBeFalsy())
 
-	test('choice should not be ignored', () => {
-		expect(ignoreNode(ignore, choice)).toBeFalsy();
-	});
-});
+	test('name, attribute & value', () =>
+		expect(
+			compareNodeToSelector(div3)({ name: 'div', attributes: { 'type': 'origNotes' }, notAttributes: { tape: 'noteasOrig'} })
+		).toBeTruthy()
+	)
+	test('name, attribute & value', () =>
+		expect(
+			compareNodeToSelector(div3)({ name: 'div', attributes: { 'type': 'origNotes' }, notAttributes: { tape: 'notesOrig'} })
+		).toBeFalsy()
+	)
+})
 
 describe('formatTagName', () => {
 	test('div => Div', () => {

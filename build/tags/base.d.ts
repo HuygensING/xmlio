@@ -5,6 +5,7 @@ declare abstract class BaseTag {
     state: State;
     protected className: string;
     protected classNames: Set<string>;
+    children: BaseTag[];
     abstract close(): string;
     abstract open(): string;
     constructor(data: SaxTag, state: State);

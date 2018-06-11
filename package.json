@@ -3,6 +3,7 @@
   "version": "2.1.0",
   "description": "",
   "main": "build/index.js",
+  "types": "build/index.d.ts",
   "scripts": {
     "build": "tsc",
     "bump": "hi-bump",
@@ -12,19 +13,18 @@
   "author": "Gijsjan Brouwer (https://github.com/Gijsjan)",
   "license": "ISC",
   "dependencies": {
-    "sax": "^1.2.4",
-    "xml2js": "^0.4.19"
+    "immutable": "^4.0.0-rc.9",
+    "sax": "^1.2.4"
   },
   "devDependencies": {
-    "@types/jest": "^21.1.8",
+    "@types/jest": "^23.0.0",
     "@types/sax": "^1.0.0",
-    "@types/xml2js": "^0.4.2",
+    "@types/xml2js": "^0.4.3",
     "hi-bump": "^1.1.1",
-    "jest": "^21.2.1",
-    "ts-jest": "^21.2.4",
-    "typescript": "^2.6.2"
+    "jest": "^23.1.0",
+    "ts-jest": "^22.4.6",
+    "typescript": "^2.9.1"
   },
-  "types": "build/index",
   "jest": {
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"

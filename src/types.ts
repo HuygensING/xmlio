@@ -9,9 +9,15 @@ export interface ICustomTag {
 }
 
 export interface SaxTagSelector {
-	attribute?: string;
-	name: string;
-	value?: string;
+	// attribute?: string;
+	name?: string;
+	// value?: string;
+	attributes?: {
+		[key: string]: string
+	}
+	notAttributes?: {
+		[key: string]: string
+	}
 }
 // export interface IState {
 // 	appendHtml(str: string): void;

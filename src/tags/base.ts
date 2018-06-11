@@ -2,8 +2,9 @@ import {Tag as SaxTag} from "sax"
 import State from '../state'
 
 abstract class BaseTag {
-	protected className: string;
-	protected classNames: Set<string> = new Set();
+	protected className: string
+	protected classNames: Set<string> = new Set()
+	public children: BaseTag[]
 
 	public abstract close(): string
 	public abstract open(): string
@@ -11,6 +12,7 @@ abstract class BaseTag {
 	// ToDo rename data to node
 	constructor(public data: SaxTag, public state: State) {}
 
+	// Move to HtmlTag and let JsxTag extend from HtmlTag
 	protected classNamesToString() {
 		const className = (this.className == null) ?
 			this.data.name.replace(':', '').toLowerCase() :

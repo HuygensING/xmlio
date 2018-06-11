@@ -1,0 +1,1 @@
+export const clean = (str) => str.replace(/>(\s*)</g, '><')

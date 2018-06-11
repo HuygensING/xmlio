@@ -1,33 +1,28 @@
 import OpenTags from './open-tags';
 import PreviousNodes from './previous-nodes';
-import Settings from './setttings'
+import Settings, { SettingsConfig } from './setttings'
+import BaseTag from '../tags/base'
+
+export interface CustomState {
+	[key: string]: any
+}
 
 class State {
-	public custom = {}
+	public custom: CustomState = {}
 	public openTags = new OpenTags()
 	public output: string = ''
 	public previousNodes = new PreviousNodes()
-	public usedTags = new Set()
-	// public writeToOutput = false;
+	public settings: Settings
+	public tree: BaseTag[]
+	public usedTags: Set<string> = new Set()
 
-	constructor(public settings: Partial<Settings>) {
-
-		// if (this.settings.componentsPath == null) this.settings.componentsPath = 'components';
-		// if (this.settings.parent == null) this.writeToOutput = true;
-		// if (this.settings.ignore == null) this.settings.ignore = [];
-		// if (this.settings.outputType == null) this.settings.outputType = 'html';
-		// if (this.settings.transformTextNode == null) this.settings.transformTextNode = (t) => t;
-		if (this.settings.state != null) {
-			this.custom = { ...this.settings.state };
-			delete this.settings.state;
+	constructor(settingsConfig: SettingsConfig) {
+		if (settingsConfig != null && settingsConfig.customState != null) {
+			this.custom = { ...settingsConfig.customState };
+			delete settingsConfig.customState;
 		}
 
-		this.settings = new Settings(settings)
-	}
-
-	// ToDo rename to appendString
-	public appendHtml(str: string) {
-		if (this.settings.writeToOutput) this.output += str;
+		this.settings = new Settings(settingsConfig)
 	}
 }
 

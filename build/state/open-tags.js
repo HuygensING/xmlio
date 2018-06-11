@@ -26,6 +26,9 @@ class OpenTags {
     countType(tagName) {
         return this.tags.filter((tag) => tag.data.name === tagName).length;
     }
+    last() {
+        return this.tags[this.count() - 1];
+    }
     lastOfType(tagName) {
         return [...this.tags].reverse().find((tag) => tag.data.name === tagName);
     }

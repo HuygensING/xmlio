@@ -33,6 +33,10 @@ class OpenTags {
 		return this.tags.filter((tag) => tag.data.name === tagName).length;
 	}
 
+	public last(): TagInstance {
+		return this.tags[this.count() - 1]
+	}
+
 	public lastOfType(tagName: string): TagInstance {
 		return [...this.tags].reverse().find((tag) => tag.data.name === tagName);
 	}

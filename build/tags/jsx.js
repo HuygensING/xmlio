@@ -3,18 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = require("../utils");
 const base_1 = require("./base");
 class JsxTag extends base_1.default {
-    constructor(data, state) {
-        super(data, state);
-        this.passProps = false;
-        if (state.settings.writeToOutput)
-            state.usedTags.add(this.name());
-    }
     open() {
         const slash = this.data.isSelfClosing ? '/' : '';
         const className = (this.className != null) ?
             ` className="${this.className}"` :
             '';
-        const props = this.passProps ? ' {...props}' : '';
+        const props = this.state.settings.passProps ? ' {...props}' : '';
         return `<${this.name()}${className}${this.getAttributes()}${props}${slash}>${this.openAfter()}`;
     }
     close() {
@@ -34,6 +28,8 @@ class JsxTag extends base_1.default {
             key = utils_1.convertColon(key);
             if (key === 'key')
                 key = 'xmlKey';
+            else if (key === 'ref')
+                key = 'xmlRef';
             return ` ${key}="${value}"`;
         })
             .join('');

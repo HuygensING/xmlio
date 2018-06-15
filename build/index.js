@@ -12,6 +12,7 @@ const xml2tree_1 = require("xml2tree");
 const utils_1 = require("./utils");
 const _index_1 = require("./_index");
 exports.JsxTag = _index_1.JsxTag;
+exports.iterateTree = _index_1.iterateTree;
 const state_1 = require("./state");
 const analyze_1 = require("./analyze");
 function fromString(input) {

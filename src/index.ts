@@ -1,12 +1,23 @@
-import xml2tree, { SaxTag } from 'xml2tree'
+import xml2tree, { SaxTag, SaxNode } from 'xml2tree'
 import { SaxTagSelector } from './types'
 import { castArray } from './utils'
 import { SettingsConfig } from './state/setttings'
-import { fromTree, wrapNodes, filterFromTree, NodesToAdd, addToTree, JsxTag, TargetSelectorFunc, replaceNodes, moveNode } from './_index';
+import {
+	JsxTag,
+	NodesToAdd,
+	TargetSelectorFunc,
+	addToTree,
+	filterFromTree,
+	fromTree,
+	iterateTree,
+	moveNode,
+	replaceNodes,
+	wrapNodes,
+} from './_index';
 import State from './state';
 import analyzer, { Stats } from './analyze'
 
-export { JsxTag, SaxTag }
+export { iterateTree, JsxTag, SaxTag, SaxNode }
 
 export type Value = SaxTag | SaxTag[]
 interface XmlioApi {
@@ -29,7 +40,7 @@ export async function fromString(input: string): Promise<XmlioApi> {
 	return xmlioApi(tree)
 }
 
-export default function xmlioApi(tree: SaxTag): XmlioApi {
+export default function xmlioApi(tree: SaxTag | SaxTag[]): XmlioApi {
 	let _value: Value = tree
 
 	return {
@@ -95,8 +106,8 @@ export default function xmlioApi(tree: SaxTag): XmlioApi {
 			return _value
 		},
 		wrap: function wrap(selector: SaxTagSelector, parent: Partial<SaxTag>): XmlioApi {
-			_value = castArray(_value).map(v => wrapNodes(v, selector, parent))	
+			_value = castArray(_value).map(v => wrapNodes(v, selector, parent))
 			return this
 		}
-	}	
+	}
 }

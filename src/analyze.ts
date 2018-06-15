@@ -68,6 +68,7 @@ const mergeAttributes = (attrs1: Stats, attrs2: Stats) => {
 	Object.keys(attrs1).forEach(attrs1Key => {
 		aggr[attrs1Key] = { ...attrs1[attrs1Key] }
 	})
+
 	if (attrs2 == null) return aggr
 	Object.keys(attrs2).forEach(attrs2Key => {
 		if (!aggr.hasOwnProperty(attrs2Key)) {
@@ -75,7 +76,7 @@ const mergeAttributes = (attrs1: Stats, attrs2: Stats) => {
 		} else {
 			aggr[attrs2Key].count = aggr[attrs2Key].count + attrs2[attrs2Key].count
 		}
-
+		if (!attrs1.hasOwnProperty(attrs2Key)) attrs1[attrs2Key] = { count: 0 }
 		const values = mergeValues(attrs1[attrs2Key].values, attrs2[attrs2Key].values)
 		if (Object.keys(values).length) aggr[attrs2Key].values = values
 	})

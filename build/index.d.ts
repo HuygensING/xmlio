@@ -1,9 +1,9 @@
-import { SaxTag } from 'xml2tree';
+import { SaxTag, SaxNode } from 'xml2tree';
 import { SaxTagSelector } from './types';
 import { SettingsConfig } from './state/setttings';
-import { NodesToAdd, JsxTag, TargetSelectorFunc } from './_index';
+import { JsxTag, NodesToAdd, TargetSelectorFunc, iterateTree } from './_index';
 import { Stats } from './analyze';
-export { JsxTag, SaxTag };
+export { iterateTree, JsxTag, SaxTag, SaxNode };
 export declare type Value = SaxTag | SaxTag[];
 interface XmlioApi {
     analyze: () => Stats;
@@ -20,4 +20,4 @@ interface XmlioApi {
     wrap: (selector: SaxTagSelector, parent: Partial<SaxTag>) => XmlioApi;
 }
 export declare function fromString(input: string): Promise<XmlioApi>;
-export default function xmlioApi(tree: SaxTag): XmlioApi;
+export default function xmlioApi(tree: SaxTag | SaxTag[]): XmlioApi;

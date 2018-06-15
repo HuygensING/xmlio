@@ -76,6 +76,8 @@ const mergeAttributes = (attrs1, attrs2) => {
         else {
             aggr[attrs2Key].count = aggr[attrs2Key].count + attrs2[attrs2Key].count;
         }
+        if (!attrs1.hasOwnProperty(attrs2Key))
+            attrs1[attrs2Key] = { count: 0 };
         const values = mergeValues(attrs1[attrs2Key].values, attrs2[attrs2Key].values);
         if (Object.keys(values).length)
             aggr[attrs2Key].values = values;

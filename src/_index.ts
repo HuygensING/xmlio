@@ -17,7 +17,7 @@ export interface ReturnType {
 	state: State
 }
 
-export function iterateTree<T>(node: SaxTag, func: (node: SaxTag) => T): any {
+export function iterateTree<T>(node: SaxTag, func: (node: SaxNode) => T): any {
 	const iterate = (n: SaxTag): T => {
 		if (n == null) return
 		if (typeof n !== 'string') n = cloneNode(n)

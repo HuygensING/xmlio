@@ -1,5 +1,5 @@
 import State from "./state";
-import { SaxTag } from 'xml2tree';
+import { SaxTag, SaxNode } from 'xml2tree';
 import { SaxTagSelector } from "./types";
 import XmlTag from './tags/xml';
 import EmptyTag from './tags/empty';
@@ -10,7 +10,7 @@ export interface ReturnType {
     result: string | string[] | Object;
     state: State;
 }
-export declare function iterateTree<T>(node: SaxTag, func: (node: SaxTag) => T): any;
+export declare function iterateTree<T>(node: SaxTag, func: (node: SaxNode) => T): any;
 export declare const fromTree: (node: SaxTag, state: State) => string;
 export declare const filterFromTree: (node: SaxTag, selector: SaxTagSelector) => SaxTag[];
 export declare const removeFromTree: (tree: SaxTag, selector: SaxTagSelector) => [SaxTag, SaxTag[]];

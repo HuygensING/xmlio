@@ -28,34 +28,32 @@ export function iterateTree<T>(node: SaxTag, func: (node: SaxNode) => T): any {
 }
 
 export const fromTree = (node: SaxTag, state: State): string => {
-	const usedTags = new Set()
-
-	let str = iterateTree(node, (n: SaxTag) => {
-		if (typeof n === 'string') return state.settings.transformTextNode(n)
+	//let str = iterateTree(node, (n: SaxTag) => {
+	const convertSaxTag = (n: SaxTag): string => {
+		if (typeof n === 'string') return state.settings.transformTextNode(n, state)
 		if (state.settings.ignore.some(selector => compareNodeToSelector(n)(selector))) {
 			return ''
 		}
+
+		// The node is passed to user defined functions (transformNode, getComponent),
+		// so we clone the node to keep xmlio immutable
+		n = cloneNode(n)
 
 		n = state.settings.transformNode(n)
 
 		const Tag: TagType = state.settings.getComponent(n)
 		const tag: TagInstance = new Tag(n, state)
 
-		if (state.settings.outputType === 'jsx') usedTags.add(tag.name())
+		state.openTags.add(tag)
+		const open = tag.open()
+		const children = n.hasOwnProperty('children') ? n.children.map(convertSaxTag).join('') : ''
+		const close = tag.close()
+		state.openTags.remove()
 
-		const children = n.hasOwnProperty('children') ? n.children.join('') : ''
-
-		return `${tag.open()}${children}${tag.close()}`
-	})
-
-
-	if (state.settings.outputType === 'jsx') {
-		str = `import * as React from 'react'
-import {${[...usedTags].join(', ')}} from '${state.settings.componentPath}'
-export default (${state.settings.passProps ? 'props' : ''}) => ${str}`
+		return `${open}${children}${close}`
 	}
 
-	return str
+	return convertSaxTag(node)
 }
 
 // export const treeToString = (tree: SaxTag, settings: SettingsConfig): string => fromTree(tree, new State(settings))
@@ -84,7 +82,7 @@ export const removeFromTree = (tree: SaxTag, selector: SaxTagSelector): [SaxTag,
 		const found = compareNodeToSelector(n)(selector)
 
 		if (!found) {
-			if (n.hasOwnProperty('children')) n.children = n.children.filter((x: any) => x != null) 
+			if (n.hasOwnProperty('children')) n.children = n.children.filter((x: any) => x != null)
 			return n
 		} else {
 			removed.push(n)
@@ -111,7 +109,7 @@ export const addToTree = (tree: SaxTag, nodesToAdd: NodesToAdd, parent: SaxTagSe
 	})
 
 export const moveNode = (tree: SaxTag, selector: SaxTagSelector, parentSelector: SaxTagSelector, append?: boolean) => {
-	const [nextTree, removedNodes] = removeFromTree(tree, selector)	
+	const [nextTree, removedNodes] = removeFromTree(tree, selector)
 	return addToTree(nextTree, removedNodes, parentSelector, append)
 }
 

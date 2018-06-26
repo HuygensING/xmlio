@@ -12,9 +12,7 @@ class JsxTag extends base_1.default {
         return `<${this.name()}${className}${this.getAttributes()}${props}${slash}>${this.openAfter()}`;
     }
     close() {
-        return this.data.isSelfClosing ?
-            '' :
-            `${this.closeBefore()}</${this.name()}>`;
+        return this.data.isSelfClosing ? '' : `${this.closeBefore()}</${this.name()}>`;
     }
     name() {
         return utils_1.formatTagName(this.data.name);

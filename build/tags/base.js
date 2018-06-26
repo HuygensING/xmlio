@@ -5,6 +5,7 @@ class BaseTag {
         this.data = data;
         this.state = state;
         this.classNames = new Set();
+        state.usedTags.add(this.name());
     }
     classNamesToString() {
         const className = (this.className == null) ?

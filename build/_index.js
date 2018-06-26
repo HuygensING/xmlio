@@ -24,27 +24,24 @@ function iterateTree(node, func) {
 }
 exports.iterateTree = iterateTree;
 exports.fromTree = (node, state) => {
-    const usedTags = new Set();
-    let str = iterateTree(node, (n) => {
+    const convertSaxTag = (n) => {
         if (typeof n === 'string')
-            return state.settings.transformTextNode(n);
+            return state.settings.transformTextNode(n, state);
         if (state.settings.ignore.some(selector => utils_1.compareNodeToSelector(n)(selector))) {
             return '';
         }
+        n = cloneNode(n);
         n = state.settings.transformNode(n);
         const Tag = state.settings.getComponent(n);
         const tag = new Tag(n, state);
-        if (state.settings.outputType === 'jsx')
-            usedTags.add(tag.name());
-        const children = n.hasOwnProperty('children') ? n.children.join('') : '';
-        return `${tag.open()}${children}${tag.close()}`;
-    });
-    if (state.settings.outputType === 'jsx') {
-        str = `import * as React from 'react'
-import {${[...usedTags].join(', ')}} from '${state.settings.componentPath}'
-export default (${state.settings.passProps ? 'props' : ''}) => ${str}`;
-    }
-    return str;
+        state.openTags.add(tag);
+        const open = tag.open();
+        const children = n.hasOwnProperty('children') ? n.children.map(convertSaxTag).join('') : '';
+        const close = tag.close();
+        state.openTags.remove();
+        return `${open}${children}${close}`;
+    };
+    return convertSaxTag(node);
 };
 exports.filterFromTree = (node, selector) => {
     const found = [];

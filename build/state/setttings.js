@@ -3,9 +3,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const html_1 = require("../tags/html");
 const jsx_1 = require("../tags/jsx");
 const xml_1 = require("../tags/xml");
-const empty_1 = require("../tags/empty");
-class SettingsConfig {
+class Settings {
     constructor(config) {
+        this.customState = null;
+        this.genericTag = xml_1.default;
+        this.ignore = [];
+        this.move = null;
+        this.outputType = 'xml';
+        this.parent = null;
+        this.wrapNodes = null;
         for (const property in config) {
             this[property] = config[property];
         }
@@ -16,42 +22,36 @@ class SettingsConfig {
     transformNode(node) {
         return node;
     }
-    transformTextNode(text) {
+    transformTextNode(text, state) {
         return text;
     }
 }
-exports.SettingsConfig = SettingsConfig;
-const defaultConfig = {
-    componentPath: './components',
-    customState: null,
-    genericTag: xml_1.default,
-    ignore: [],
-    move: null,
-    outputType: 'xml',
-    parent: null,
-    passProps: false,
-    wrapNodes: null
-};
-class Settings extends SettingsConfig {
+exports.Settings = Settings;
+class JsxSettings extends Settings {
     constructor(config) {
-        super(Object.assign({}, defaultConfig, config));
-        this.setTag();
-    }
-    setTag() {
-        switch (this.outputType) {
-            case 'html':
-                this.genericTag = html_1.default;
-                break;
-            case 'jsx':
-                this.genericTag = jsx_1.default;
-                break;
-            case 'empty':
-                this.genericTag = empty_1.default;
-                break;
-            default:
-                this.genericTag = xml_1.default;
-                break;
+        super(config);
+        this.bare = false;
+        this.componentPath = './components';
+        this.concat = true;
+        this.export = 'export default';
+        this.genericTag = jsx_1.default;
+        this.outputType = 'jsx';
+        this.passProps = false;
+        for (const property in config) {
+            this[property] = config[property];
         }
     }
 }
+exports.JsxSettings = JsxSettings;
+class HtmlSettings extends Settings {
+    constructor(config) {
+        super(config);
+        this.genericTag = html_1.default;
+        this.outputType = 'html';
+        for (const property in config) {
+            this[property] = config[property];
+        }
+    }
+}
+exports.HtmlSettings = HtmlSettings;
 exports.default = Settings;

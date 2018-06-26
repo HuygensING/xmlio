@@ -10,7 +10,9 @@ abstract class BaseTag {
 	public abstract open(): string
 
 	// ToDo rename data to node
-	constructor(public data: SaxTag, public state: State) {}
+	constructor(public data: SaxTag, public state: State) {
+		state.usedTags.add(this.name())
+	}
 
 	// Move to HtmlTag and let JsxTag extend from HtmlTag
 	protected classNamesToString() {

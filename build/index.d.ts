@@ -1,9 +1,10 @@
 import { SaxTag, SaxNode } from 'xml2tree';
 import { SaxTagSelector } from './types';
-import { SettingsConfig } from './state/setttings';
-import { JsxTag, NodesToAdd, TargetSelectorFunc, iterateTree } from './_index';
+import { Settings, JsxSettings, HtmlSettings } from './state/setttings';
+import { EmptyTag, HtmlTag, JsxTag, NodesToAdd, TargetSelectorFunc, iterateTree } from './_index';
+import State from './state';
 import { Stats } from './analyze';
-export { iterateTree, JsxTag, SaxTag, SaxNode };
+export { EmptyTag, HtmlTag, iterateTree, JsxTag, SaxTag, SaxNode, State as XmlioState };
 export declare type Value = SaxTag | SaxTag[];
 interface XmlioApi {
     analyze: () => Stats;
@@ -12,9 +13,9 @@ interface XmlioApi {
     move: (sourceSelector: SaxTagSelector, targetSelector: SaxTagSelector) => XmlioApi;
     replace: (sourceSelector: SaxTagSelector, targetSelectorFunc: TargetSelectorFunc) => XmlioApi;
     split: (selector: SaxTagSelector) => XmlioApi;
-    toHtml: (settings?: SettingsConfig) => string | string[];
-    toJsx: (settings?: SettingsConfig) => string | string[];
-    toXml: (settings?: SettingsConfig) => string | string[];
+    toHtml: (settings?: HtmlSettings) => string | string[];
+    toJsx: (settings?: JsxSettings) => [string, State] | [string[], State];
+    toXml: (settings?: Settings) => string | string[];
     value: () => SaxTag;
     values: () => SaxTag[];
     wrap: (selector: SaxTagSelector, parent: Partial<SaxTag>) => XmlioApi;

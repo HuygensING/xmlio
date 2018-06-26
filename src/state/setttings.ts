@@ -1,9 +1,10 @@
+import { SaxTag } from 'xml2tree'
+import State from './index'
 import HtmlTag from '../tags/html'
 import JsxTag from '../tags/jsx'
 import XmlTag from '../tags/xml'
 import EmptyTag from '../tags/empty'
 import { SaxTagSelector } from "../types"
-import { SaxTag } from 'xml2tree'
 
 export type OutputType = 'html' | 'jsx' | 'xml' | 'empty'
 export type TagType = typeof HtmlTag | typeof JsxTag | typeof XmlTag | typeof EmptyTag
@@ -16,26 +17,30 @@ export interface RenameConfig {
 	type: 'name' | 'attribute' | 'value'
 }
 
-export class SettingsConfig {
-	componentPath?: string
+export class Settings {
 	customState?: {
 		[key: string]: any
-	}
-	genericTag?: TagType
-	ignore?: SaxTagSelector[]
+	} = null
+
+	genericTag?: TagType = XmlTag
+
+	ignore?: SaxTagSelector[] = []
+
 	move?: {
 		selector: SaxTagSelector
 		parentSelector: SaxTagSelector
-	}
-	outputType?: OutputType
-	parent?: SaxTagSelector
-	passProps?: boolean
+	} = null
+
+	outputType?: OutputType = 'xml'
+
+	parent?: SaxTagSelector = null
+
 	wrapNodes?: {
 		selector: SaxTagSelector
 		parent: Partial<SaxTag>
-	}
+	} = null
 
-	constructor(config: SettingsConfig) {
+	constructor(config: Settings) {
 		for (const property in config) {
 			(this as any)[property] = (config as any)[property]
 		}
@@ -50,52 +55,83 @@ export class SettingsConfig {
 	// Called on all nodes to transform a node (change the name, add an attribute, etc)
 	transformNode?(node: SaxTag): SaxTag {
 		return node
-	} 
+	}
 
 	// Called on all text nodes to transform the text
-	transformTextNode?(text: string): string {
+	transformTextNode?(text: string, state: State): string {
 		return text
 	}
 }
 
-const defaultConfig: SettingsConfig = {
-	componentPath: './components',
-	customState: null,
-	genericTag: XmlTag,
-	ignore: [],
-	move: null,
-	outputType: 'xml',
-	parent: null,
-	passProps: false,
-	wrapNodes: null
-}
+export class JsxSettings extends Settings {
+	bare?: boolean = false
+	componentPath?: string = './components'
+	concat?: boolean = true
+	export?: string = 'export default'
+	genericTag?: TagType = JsxTag
+	outputType?: OutputType = 'jsx'
+	passProps?: boolean = false
 
-class Settings extends SettingsConfig {
-	constructor(config: SettingsConfig) {
-		super({ ...defaultConfig, ...config })
-		this.setTag()
-	}
+	constructor(config: JsxSettings) {
+		super(config)
 
-	private setTag() {
-		switch (this.outputType) {
-			case 'html':
-				this.genericTag = HtmlTag	
-				break
-
-			case 'jsx':
-				this.genericTag = JsxTag	
-				break
-
-			case 'empty':
-				this.genericTag = EmptyTag
-				break
-
-			// Case 'xml' and 'json' default to XmlTag
-			default:
-				this.genericTag = XmlTag
-				break;
+		for (const property in config) {
+			(this as any)[property] = (config as any)[property]
 		}
 	}
 }
+
+export class HtmlSettings extends Settings {
+	genericTag?: TagType = HtmlTag
+	outputType?: OutputType = 'html'
+
+	constructor(config: HtmlSettings) {
+		super(config)
+
+		for (const property in config) {
+			(this as any)[property] = (config as any)[property]
+		}
+	}
+}
+
+// const defaultConfig: SettingsConfig = {
+// 	// componentPath: './components',
+// 	customState: null,
+// 	genericTag: XmlTag,
+// 	ignore: [],
+// 	move: null,
+// 	outputType: 'xml',
+// 	parent: null,
+// 	// passProps: false,
+// 	wrapNodes: null
+// }
+
+// class Settings extends SettingsConfig {
+// 	constructor(config: SettingsConfig) {
+// 		super({ ...defaultConfig, ...config })
+// 		this.setTag()
+// 	}
+
+// 	private setTag() {
+// 		switch (this.outputType) {
+// 			case 'html':
+// 				this.genericTag = HtmlTag
+// 				break
+
+// 			case 'jsx':
+// 				this.genericTag = JsxTag
+// 				break
+
+// 			case 'empty':
+// 				this.genericTag = EmptyTag
+// 				break
+
+// 			// Case 'xml' and 'json' default to XmlTag
+// 			default:
+// 				this.genericTag = XmlTag
+// 				break;
+// 		}
+// 	}
+// }
 
 export default Settings

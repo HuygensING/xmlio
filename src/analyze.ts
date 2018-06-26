@@ -59,7 +59,7 @@ const mergeValues = (values1: Stats, values2: Stats) => {
 			aggr[values2Key].count = aggr[values2Key].count + values2[values2Key].count
 		}
 	})
-	return aggr	
+	return aggr
 }
 
 const mergeAttributes = (attrs1: Stats, attrs2: Stats) => {
@@ -80,7 +80,7 @@ const mergeAttributes = (attrs1: Stats, attrs2: Stats) => {
 		const values = mergeValues(attrs1[attrs2Key].values, attrs2[attrs2Key].values)
 		if (Object.keys(values).length) aggr[attrs2Key].values = values
 	})
-	return aggr	
+	return aggr
 }
 
 export default function analyzeAll(nodes: SaxTag[]): Stats {
@@ -100,7 +100,7 @@ export default function analyzeAll(nodes: SaxTag[]): Stats {
 						if (Object.keys(attributes).length) prev[k].attributes = attributes
 					}
 				})
-				return prev	
+				return prev
 			}, {}
 		)
 }

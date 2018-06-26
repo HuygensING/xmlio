@@ -98,12 +98,12 @@ describe('xmlio', () => {
 	})
 
 	test('toJsx', async () => {
-		const expected = (await fromString('<text><line>haha</line><line>hihi</line></text>'))
+		const [expected] = (await fromString('<text><line>haha</line><line>hihi</line></text>'))
 			.toJsx()
 
 		const received = [
 			"import * as React from 'react'",
-			"import {Line, Text} from './components'",
+			"import {Text, Line} from './components'",
 			'export default () => <Text><Line>haha</Line><Line>hihi</Line></Text>'
 		].join('\n')
 
@@ -111,12 +111,12 @@ describe('xmlio', () => {
 	})
 
 	test('toJsx - componentPath', async () => {
-		const expected = (await fromString('<text><line>haha</line><line>hihi</line></text>'))
+		const [expected] = (await fromString('<text><line>haha</line><line>hihi</line></text>'))
 			.toJsx({ componentPath: 'my-component-package' })
 
 		const received = [
 			"import * as React from 'react'",
-			"import {Line, Text} from 'my-component-package'",
+			"import {Text, Line} from 'my-component-package'",
 			'export default () => <Text><Line>haha</Line><Line>hihi</Line></Text>'
 		].join('\n')
 
@@ -124,12 +124,12 @@ describe('xmlio', () => {
 	})
 
 	test('toJsx - passProps', async () => {
-		const expected = (await fromString('<text><line>haha</line><line>hihi</line></text>'))
+		const [expected] = (await fromString('<text><line>haha</line><line>hihi</line></text>'))
 			.toJsx({ passProps: true })
 
 		const received = [
 			"import * as React from 'react'",
-			"import {Line, Text} from './components'",
+			"import {Text, Line} from './components'",
 			'export default (props) => <Text {...props}><Line {...props}>haha</Line><Line {...props}>hihi</Line></Text>'
 		].join('\n')
 

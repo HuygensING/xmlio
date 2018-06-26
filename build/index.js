@@ -10,10 +10,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const xml2tree_1 = require("xml2tree");
 const utils_1 = require("./utils");
+const setttings_1 = require("./state/setttings");
 const _index_1 = require("./_index");
+exports.EmptyTag = _index_1.EmptyTag;
+exports.HtmlTag = _index_1.HtmlTag;
 exports.JsxTag = _index_1.JsxTag;
 exports.iterateTree = _index_1.iterateTree;
 const state_1 = require("./state");
+exports.XmlioState = state_1.default;
 const analyze_1 = require("./analyze");
 function fromString(input) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -55,22 +59,31 @@ function xmlioApi(tree) {
             _value = _index_1.filterFromTree(_value, selector);
             return this;
         },
-        toHtml: function toHtml(settings = {}) {
-            settings = Object.assign({}, settings, { outputType: 'html' });
+        toHtml: function toHtml(settings) {
+            settings = new setttings_1.HtmlSettings(settings);
             const html = utils_1.castArray(_value).map(v => _index_1.fromTree(v, new state_1.default(settings)));
             if (html.length === 1)
                 return html[0];
             return html;
         },
-        toJsx: function toJsx(settings = {}) {
-            settings = Object.assign({}, settings, { outputType: 'jsx' });
-            const jsx = utils_1.castArray(_value).map(v => _index_1.fromTree(v, new state_1.default(settings)));
-            if (jsx.length === 1)
-                return jsx[0];
-            return jsx;
+        toJsx: function toJsx(settings) {
+            settings = new setttings_1.JsxSettings(settings);
+            const state = new state_1.default(settings);
+            const jsx = utils_1.castArray(_value).map(v => {
+                let str = _index_1.fromTree(v, state);
+                if (settings.bare)
+                    return str;
+                const props = settings.passProps ? 'props' : '';
+                return [
+                    `import * as React from 'react'`,
+                    `import {${[...state.usedTags].join(', ')}} from '${settings.componentPath}'`,
+                    `${settings.export} (${props}) => ${str}`
+                ].join('\n');
+            });
+            return (jsx.length === 1) ? [jsx[0], state] : [jsx, state];
         },
-        toXml: function toXml(settings = {}) {
-            settings = Object.assign({}, settings, { outputType: 'xml' });
+        toXml: function toXml(settings) {
+            settings = new setttings_1.Settings(settings);
             const xml = utils_1.castArray(_value).map(v => _index_1.fromTree(v, new state_1.default(settings)));
             if (xml.length === 1)
                 return xml[0];

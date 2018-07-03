@@ -5,12 +5,12 @@ import { SaxTag, SaxNode } from 'xml2tree'
 import { SaxTagSelector } from "./types"
 
 import XmlTag from './tags/xml'
-import EmptyTag from './tags/empty'
+import StringTag from './tags/string'
 import HtmlTag from "./tags/html";
 import JsxTag from "./tags/jsx";
-export { EmptyTag, SaxTag, XmlTag, HtmlTag, JsxTag }
+export { StringTag, SaxTag, XmlTag, HtmlTag, JsxTag }
 
-const cloneNode = (node: SaxTag): SaxTag => JSON.parse(JSON.stringify(node))
+export const cloneNode = (node: SaxTag): SaxTag => JSON.parse(JSON.stringify(node))
 
 export interface ReturnType {
 	result: string | string[] | Object
@@ -18,10 +18,10 @@ export interface ReturnType {
 }
 
 export function iterateTree<T>(node: SaxTag, func: (node: SaxNode) => T): any {
-	const iterate = (n: SaxTag): T => {
+	const iterate = (n: SaxNode): T => {
 		if (n == null) return
 		if (typeof n !== 'string') n = cloneNode(n)
-		if (n.hasOwnProperty('children')) (n.children as any) = n.children.map(iterate)
+		if (typeof n !== 'string' && n.hasOwnProperty('children')) (n.children as any) = n.children.map(iterate)
 		return func(n)
 	}
 	return iterate(node)
@@ -143,11 +143,14 @@ export const wrapNodes = (tree: SaxTag, selector: SaxTagSelector, parent: Partia
 }
 
 function createSaxTag(tag: Partial<SaxTag>): SaxTag {
+	// TODO move to xml2tree
+	// TODO use crypto to create ID
 	const defaultTagNode: SaxTag = {
 		attributes: {},
+		id: 'some-id',
 		isSelfClosing: false,
 		name: null,
-		parent: null
+		parents: []
 	}
 
 	if (tag.hasOwnProperty('children')) {

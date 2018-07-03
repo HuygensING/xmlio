@@ -3,11 +3,11 @@ import State from './index';
 import HtmlTag from '../tags/html';
 import JsxTag from '../tags/jsx';
 import XmlTag from '../tags/xml';
-import EmptyTag from '../tags/empty';
+import StringTag from '../tags/string';
 import { SaxTagSelector } from "../types";
-export declare type OutputType = 'html' | 'jsx' | 'xml' | 'empty';
-export declare type TagType = typeof HtmlTag | typeof JsxTag | typeof XmlTag | typeof EmptyTag;
-export declare type TagInstance = HtmlTag | JsxTag | XmlTag | EmptyTag;
+export declare type OutputType = 'html' | 'jsx' | 'xml' | 'string';
+export declare type TagType = typeof HtmlTag | typeof JsxTag | typeof XmlTag | typeof StringTag;
+export declare type TagInstance = HtmlTag | JsxTag | XmlTag | StringTag;
 export declare type Convertor = (str: string) => string;
 export interface RenameConfig {
     to: string | Convertor;
@@ -38,7 +38,6 @@ export declare class Settings {
 export declare class JsxSettings extends Settings {
     bare?: boolean;
     componentPath?: string;
-    concat?: boolean;
     export?: string;
     genericTag?: TagType;
     outputType?: OutputType;
@@ -49,5 +48,11 @@ export declare class HtmlSettings extends Settings {
     genericTag?: TagType;
     outputType?: OutputType;
     constructor(config: HtmlSettings);
+}
+export declare class StringSettings extends Settings {
+    genericTag?: TagType;
+    outputType?: OutputType;
+    join?: string;
+    constructor(config: StringSettings);
 }
 export default Settings;

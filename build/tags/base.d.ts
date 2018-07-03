@@ -1,5 +1,5 @@
-import { Tag as SaxTag } from "sax";
 import State from '../state';
+import { SaxTag } from 'xml2tree';
 declare abstract class BaseTag {
     data: SaxTag;
     state: State;

@@ -11,7 +11,6 @@ class State {
 	public custom: CustomState = {}
 	public openTags = new OpenTags()
 	public previousNodes = new PreviousNodes()
-	// public settings: Settings | JsxSettings | HtmlSettings
 	public tree: BaseTag[]
 	public usedTags: Set<string> = new Set()
 
@@ -19,7 +18,6 @@ class State {
 	constructor(public settings: Settings | HtmlSettings | JsxSettings) {
 		if (settings != null && settings.customState != null) {
 			this.custom = { ...settings.customState };
-			// delete settings.customState;
 		}
 	}
 }

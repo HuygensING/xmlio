@@ -2,10 +2,11 @@ import State from "./state";
 import { SaxTag, SaxNode } from 'xml2tree';
 import { SaxTagSelector } from "./types";
 import XmlTag from './tags/xml';
-import EmptyTag from './tags/empty';
+import StringTag from './tags/string';
 import HtmlTag from "./tags/html";
 import JsxTag from "./tags/jsx";
-export { EmptyTag, SaxTag, XmlTag, HtmlTag, JsxTag };
+export { StringTag, SaxTag, XmlTag, HtmlTag, JsxTag };
+export declare const cloneNode: (node: SaxTag) => SaxTag;
 export interface ReturnType {
     result: string | string[] | Object;
     state: State;

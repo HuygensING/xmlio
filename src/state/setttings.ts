@@ -3,12 +3,12 @@ import State from './index'
 import HtmlTag from '../tags/html'
 import JsxTag from '../tags/jsx'
 import XmlTag from '../tags/xml'
-import EmptyTag from '../tags/empty'
+import StringTag from '../tags/string'
 import { SaxTagSelector } from "../types"
 
-export type OutputType = 'html' | 'jsx' | 'xml' | 'empty'
-export type TagType = typeof HtmlTag | typeof JsxTag | typeof XmlTag | typeof EmptyTag
-export type TagInstance = HtmlTag | JsxTag | XmlTag | EmptyTag
+export type OutputType = 'html' | 'jsx' | 'xml' | 'string'
+export type TagType = typeof HtmlTag | typeof JsxTag | typeof XmlTag | typeof StringTag
+export type TagInstance = HtmlTag | JsxTag | XmlTag | StringTag
 
 export type Convertor = (str: string) => string
 export interface RenameConfig {
@@ -66,7 +66,6 @@ export class Settings {
 export class JsxSettings extends Settings {
 	bare?: boolean = false
 	componentPath?: string = './components'
-	concat?: boolean = true
 	export?: string = 'export default'
 	genericTag?: TagType = JsxTag
 	outputType?: OutputType = 'jsx'
@@ -94,44 +93,17 @@ export class HtmlSettings extends Settings {
 	}
 }
 
-// const defaultConfig: SettingsConfig = {
-// 	// componentPath: './components',
-// 	customState: null,
-// 	genericTag: XmlTag,
-// 	ignore: [],
-// 	move: null,
-// 	outputType: 'xml',
-// 	parent: null,
-// 	// passProps: false,
-// 	wrapNodes: null
-// }
+export class StringSettings extends Settings {
+	genericTag?: TagType = StringTag
+	outputType?: OutputType = 'string'
+	join?: string = ''
 
-// class Settings extends SettingsConfig {
-// 	constructor(config: SettingsConfig) {
-// 		super({ ...defaultConfig, ...config })
-// 		this.setTag()
-// 	}
+	constructor(config: StringSettings) {
+		super(config)
 
-// 	private setTag() {
-// 		switch (this.outputType) {
-// 			case 'html':
-// 				this.genericTag = HtmlTag
-// 				break
-
-// 			case 'jsx':
-// 				this.genericTag = JsxTag
-// 				break
-
-// 			case 'empty':
-// 				this.genericTag = EmptyTag
-// 				break
-
-// 			// Case 'xml' and 'json' default to XmlTag
-// 			default:
-// 				this.genericTag = XmlTag
-// 				break;
-// 		}
-// 	}
-// }
-
+		for (const property in config) {
+			(this as any)[property] = (config as any)[property]
+		}
+	}
+}
 export default Settings

@@ -1,10 +1,10 @@
-import { fromString } from '../src'
+import xmlio, { xmlToTree } from '../src'
 
 describe('xmlio', () => {
 	// Split the tree in subtrees by a parent selector
 	test('split', async () => {
-		const tree = await fromString('<text><line>haha</line><line>hihi</line></text>')
-		const expected = tree
+		const tree = await xmlToTree('<text><line>haha</line><line>hihi</line></text>')
+		const expected = xmlio(tree)
 			.split({ name: 'line' })
 			.toXml()
 
@@ -13,7 +13,8 @@ describe('xmlio', () => {
 
 	// Wrap a node with a new node
 	test('wrap', async () => {
-		const expected = (await fromString('<text><line>haha</line><line>hihi</line></text>'))
+		const tree = await xmlToTree('<text><line>haha</line><line>hihi</line></text>')
+		const expected = xmlio(tree)
 			.wrap({ name: 'line' }, { name: 'p' })
 			.toXml()
 
@@ -22,7 +23,8 @@ describe('xmlio', () => {
 
 	// Add a new tag to the beginning of the children of a parent
 	test('prepend', async () => {
-		const expected = (await fromString('<text><line id="1">haha</line><line id="2">hihi</line></text>'))
+		const tree = await xmlToTree('<text><line id="1">haha</line><line id="2">hihi</line></text>')
+		const expected = xmlio(tree)
 			.prepend({ name: 'hi', children: [{ name: 'b', children: ['dit'] }, 'dat'] }, { name: 'line', attributes: { id: "1" } })
 			.prepend({ name: 'hi', children: [{ name: 'i', children: ['dot'] }, 'det'] }, { name: 'line', attributes: { id: "2" } })
 			.toXml()
@@ -32,7 +34,8 @@ describe('xmlio', () => {
 
 	// Add a new tag to the end of the children of a parent
 	test('append', async () => {
-		const expected = (await fromString('<text><line id="1">haha</line><line id="2">hihi</line></text>'))
+		const tree = await xmlToTree('<text><line id="1">haha</line><line id="2">hihi</line></text>')
+		const expected = xmlio(tree)
 			.append({ name: 'hi', children: [{ name: 'b', children: ['dit'] }, 'dat'] }, { name: 'line', attributes: { id: "1" } })
 			.append({ name: 'hi', children: [{ name: 'i', children: ['dot'] }, 'det'] }, { name: 'line', attributes: { id: "2" } })
 			.toXml()
@@ -42,7 +45,8 @@ describe('xmlio', () => {
 
 	// Move the hi[on=1] tag to the line[id=1] tag
 	test('move - append', async () => {
-		const expected = (await fromString('<text><line id="1">haha</line><line>hihi</line><hi on="1">here</hi></text>'))
+		const tree = await xmlToTree('<text><line id="1">haha</line><line>hihi</line><hi on="1">here</hi></text>')
+		const expected = xmlio(tree)
 			.move({ name: 'hi', attributes: { on: "1" } }, { name: 'line', attributes: { id: "1" } })
 			.toXml()
 
@@ -51,7 +55,8 @@ describe('xmlio', () => {
 
 	// Move the hi[on=1] tag to the line[id=1] tag
 	test('move - prepend', async () => {
-		const expected = (await fromString('<text><line id="1">haha</line><line>hihi</line><hi on="1">here</hi></text>'))
+		const tree = await xmlToTree('<text><line id="1">haha</line><line>hihi</line><hi on="1">here</hi></text>')
+		const expected = xmlio(tree)
 			.move({ name: 'hi', attributes: { on: "1" } }, { name: 'line', attributes: { id: "1" } }, false)
 			.toXml()
 
@@ -60,7 +65,8 @@ describe('xmlio', () => {
 
 	// Replace the line[id=1] tag with the hi[on=1] tag
 	test('replace', async () => {
-		const expected = (await fromString('<text><line id="1">haha</line><line>hihi</line><hi on="1">here</hi></text>'))
+		const tree = await xmlToTree('<text><line id="1">haha</line><line>hihi</line><hi on="1">here</hi></text>')
+		const expected = xmlio(tree)
 			.replace({ name: 'hi', attributes: { on: "1" } }, (hiNode) => {
 				return { name: 'line', attributes: { id: hiNode.attributes.on } }
 			})
@@ -71,7 +77,8 @@ describe('xmlio', () => {
 
 	// First split and than wrap
 	test('split => wrap', async () => {
-		const expected = (await fromString('<text><line>haha</line><line>hihi</line></text>'))
+		const tree = await xmlToTree('<text><line>haha</line><line>hihi</line></text>')
+		const expected = xmlio(tree)
 			.split({ name: 'line' })
 			.wrap({ name: 'line' }, { name: 'p' })
 			.toXml()
@@ -82,7 +89,8 @@ describe('xmlio', () => {
 	// First wrap and than split
 	// Should have the same result as first split and than wrap
 	test('wrap => split', async () => {
-		const expected = (await fromString('<text><line>haha</line><line>hihi</line></text>'))
+		const tree = await xmlToTree('<text><line>haha</line><line>hihi</line></text>')
+		const expected = xmlio(tree)
 			.wrap({ name: 'line' }, { name: 'p' })
 			.split({ name: 'p' })
 			.toXml()
@@ -91,14 +99,41 @@ describe('xmlio', () => {
 	})
 
 	test('toHtml', async () => {
-		const expected = (await fromString('<text><line>haha</line><line>hihi</line></text>'))
+		const tree = await xmlToTree('<text><line>haha</line><line>hihi</line></text>')
+		const expected = xmlio(tree)
 			.toHtml()
 
 		expect(expected).toEqual('<div class="text"><div class="line">haha</div><div class="line">hihi</div></div>')
 	})
 
+	test('toString', async () => {
+		const tree = await xmlToTree('<text><line>haha</line><line>hihi</line></text>')
+		const expected = xmlio(tree)
+			.toString()
+
+		expect(expected).toEqual('hahahihi')
+	})
+
+	test('toString - join', async () => {
+		const tree = await xmlToTree('<text><line>haha</line><line>hihi</line></text>')
+		const expected = xmlio(tree)
+			.toString({ join: ', ' })
+
+		expect(expected).toEqual('haha, hihi')
+	})
+
+	test('toString - join', async () => {
+		const tree = await xmlToTree('<text><line>haha</line><line>hihi</line></text>')
+		const expected = xmlio(tree)
+			.split({ name: 'line'})
+			.toString({ join: ', ' })
+
+		expect(expected).toEqual(['haha', 'hihi'])
+	})
+
 	test('toJsx', async () => {
-		const [expected] = (await fromString('<text><line>haha</line><line>hihi</line></text>'))
+		const tree = await xmlToTree('<text><line>haha</line><line>hihi</line></text>')
+		const [expected] = xmlio(tree)
 			.toJsx()
 
 		const received = [
@@ -111,7 +146,8 @@ describe('xmlio', () => {
 	})
 
 	test('toJsx - componentPath', async () => {
-		const [expected] = (await fromString('<text><line>haha</line><line>hihi</line></text>'))
+		const tree = await xmlToTree('<text><line>haha</line><line>hihi</line></text>')
+		const [expected] = xmlio(tree)
 			.toJsx({ componentPath: 'my-component-package' })
 
 		const received = [
@@ -124,7 +160,8 @@ describe('xmlio', () => {
 	})
 
 	test('toJsx - passProps', async () => {
-		const [expected] = (await fromString('<text><line>haha</line><line>hihi</line></text>'))
+		const tree = await xmlToTree('<text><line>haha</line><line>hihi</line></text>')
+		const [expected] = xmlio(tree)
 			.toJsx({ passProps: true })
 
 		const received = [

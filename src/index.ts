@@ -1,9 +1,9 @@
-import xml2tree, { SaxTag, SaxNode } from 'xml2tree'
+import xml2tree, { SaxTag, SaxNode, XMLToTreeOptions } from 'xml2tree'
 import { SaxTagSelector } from './types'
 import { castArray } from './utils'
-import { Settings, JsxSettings, HtmlSettings } from './state/setttings'
+import { Settings, JsxSettings, HtmlSettings, StringSettings } from './state/setttings'
 import {
-	EmptyTag,
+	StringTag,
 	HtmlTag,
 	JsxTag,
 	NodesToAdd,
@@ -19,17 +19,7 @@ import {
 import State from './state';
 import analyzer, { Stats } from './analyze'
 
-export {
-	EmptyTag,
-	HtmlTag,
-	iterateTree,
-	JsxTag,
-	SaxTag,
-	SaxNode,
-	State as XmlioState
-}
-
-export type Value = SaxTag | SaxTag[]
+type Value = SaxTag | SaxTag[]
 interface XmlioApi {
 	analyze: () => Stats
 	append: (nodesToAdd: NodesToAdd, selector: SaxTagSelector) => XmlioApi
@@ -39,18 +29,31 @@ interface XmlioApi {
 	split: (selector: SaxTagSelector) => XmlioApi
 	toHtml: (settings?: HtmlSettings) => string | string[]
 	toJsx: (settings?: JsxSettings) => [string, State] | [string[], State]
+	toString: (settings?: StringSettings) => string | string[]
 	toXml: (settings?: Settings) => string | string[]
+	transformNode: (func: (node: SaxNode) => SaxNode) => XmlioApi
 	value: () => SaxTag
 	values: () => SaxTag[]
 	wrap: (selector: SaxTagSelector, parent: Partial<SaxTag>) => XmlioApi
 }
 
-export async function fromString(input: string): Promise<XmlioApi> {
-	const tree = await xml2tree(input)
-	return xmlioApi(tree)
+async function xmlToTree(input: string, options?: XMLToTreeOptions): Promise<SaxTag> {
+	return await xml2tree(input, options)
 }
 
-export default function xmlioApi(tree: SaxTag | SaxTag[]): XmlioApi {
+export {
+	HtmlTag,
+	JsxTag,
+	SaxNode,
+	SaxTag,
+	State as XmlioState,
+	StringTag,
+	XmlioApi,
+	xmlToTree,
+	iterateTree,
+}
+
+export default function xmlioApi(tree: Value): XmlioApi {
 	let _value: Value = tree
 
 	return {
@@ -74,15 +77,9 @@ export default function xmlioApi(tree: SaxTag | SaxTag[]): XmlioApi {
 			return this
 		},
 		split: function split(selector: SaxTagSelector): XmlioApi {
-			if (Array.isArray(_value) && _value.length !== 1) {
-				if (_value.length > 1) console.error('Cannot split splitted tree')
-				return this
-			}
-
-			if (Array.isArray(_value)) _value = _value[0]
-
-			_value = filterFromTree(_value, selector)
-
+			_value = castArray(_value)
+				.map(v => filterFromTree(v, selector))
+				.reduce((prev, curr) => prev.concat(curr), [])
 			return this
 		},
 		toHtml: function toHtml(settings: HtmlSettings): string | string[] {
@@ -107,11 +104,32 @@ export default function xmlioApi(tree: SaxTag | SaxTag[]): XmlioApi {
 			})
 			return (jsx.length === 1) ? [jsx[0], state] : [jsx, state]
 		},
+		toString: function toString(settings: StringSettings): string | string[] {
+			settings = new StringSettings(settings)
+			const strArr = castArray(_value).map(v => {
+				let str = fromTree(v, new State(settings))
+
+				const joinIndex = str.length - settings.join.length
+				if (str.slice(joinIndex) === settings.join) {
+					str = str.slice(0, joinIndex)
+				}
+
+				return str
+			})
+
+			if (!strArr.length) return ''
+			if (strArr.length === 1) return strArr[0]
+			return strArr
+		},
 		toXml: function toXml(settings: Settings): string | string[] {
 			settings = new Settings(settings)
 			const xml = castArray(_value).map(v => fromTree(v, new State(settings)))
 			if (xml.length === 1) return xml[0]
 			return xml
+		},
+		transformNode: function transformNode(func: (node: SaxNode) => SaxNode): XmlioApi {
+			_value = castArray(_value).map((node) => iterateTree(node, func))
+			return this
 		},
 		value: function value(): SaxTag {
 			if (Array.isArray(_value)) {

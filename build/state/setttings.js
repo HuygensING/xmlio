@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const html_1 = require("../tags/html");
 const jsx_1 = require("../tags/jsx");
 const xml_1 = require("../tags/xml");
+const string_1 = require("../tags/string");
 class Settings {
     constructor(config) {
         this.customState = null;
@@ -32,7 +33,6 @@ class JsxSettings extends Settings {
         super(config);
         this.bare = false;
         this.componentPath = './components';
-        this.concat = true;
         this.export = 'export default';
         this.genericTag = jsx_1.default;
         this.outputType = 'jsx';
@@ -54,4 +54,16 @@ class HtmlSettings extends Settings {
     }
 }
 exports.HtmlSettings = HtmlSettings;
+class StringSettings extends Settings {
+    constructor(config) {
+        super(config);
+        this.genericTag = string_1.default;
+        this.outputType = 'string';
+        this.join = '';
+        for (const property in config) {
+            this[property] = config[property];
+        }
+    }
+}
+exports.StringSettings = StringSettings;
 exports.default = Settings;

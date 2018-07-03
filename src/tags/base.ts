@@ -1,5 +1,5 @@
-import {Tag as SaxTag} from "sax"
 import State from '../state'
+import { SaxTag } from 'xml2tree';
 
 abstract class BaseTag {
 	protected className: string

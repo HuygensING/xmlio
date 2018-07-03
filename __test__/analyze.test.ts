@@ -1,10 +1,10 @@
-import { fromString } from '../src'
+import xmlio, { xmlToTree } from '../src'
 import xml from './data/xml'
 
 describe('analyze', () => {
 	test('analyze a tree', async () => {
-		const tree = await fromString(xml)	
-		const received = tree.analyze()
+		const tree = await xmlToTree(xml)	
+		const received = xmlio(tree).analyze()
 		const expected = {
 			__textNode: { count: 3 },
 			location: {
@@ -29,8 +29,8 @@ describe('analyze', () => {
 	})
 
 	test('analyze split tree', async () => {
-		const tree = await fromString(xml)	
-		const received = tree
+		const tree = await xmlToTree(xml)	
+		const received = xmlio(tree)
 			.split({ name: 'location' })
 			.analyze()
 		const expected = {

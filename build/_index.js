@@ -3,20 +3,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = require("./utils");
 const xml_1 = require("./tags/xml");
 exports.XmlTag = xml_1.default;
-const empty_1 = require("./tags/empty");
-exports.EmptyTag = empty_1.default;
+const string_1 = require("./tags/string");
+exports.StringTag = string_1.default;
 const html_1 = require("./tags/html");
 exports.HtmlTag = html_1.default;
 const jsx_1 = require("./tags/jsx");
 exports.JsxTag = jsx_1.default;
-const cloneNode = (node) => JSON.parse(JSON.stringify(node));
+exports.cloneNode = (node) => JSON.parse(JSON.stringify(node));
 function iterateTree(node, func) {
     const iterate = (n) => {
         if (n == null)
             return;
         if (typeof n !== 'string')
-            n = cloneNode(n);
-        if (n.hasOwnProperty('children'))
+            n = exports.cloneNode(n);
+        if (typeof n !== 'string' && n.hasOwnProperty('children'))
             n.children = n.children.map(iterate);
         return func(n);
     };
@@ -30,7 +30,7 @@ exports.fromTree = (node, state) => {
         if (state.settings.ignore.some(selector => utils_1.compareNodeToSelector(n)(selector))) {
             return '';
         }
-        n = cloneNode(n);
+        n = exports.cloneNode(n);
         n = state.settings.transformNode(n);
         const Tag = state.settings.getComponent(n);
         const tag = new Tag(n, state);
@@ -79,7 +79,7 @@ exports.addToTree = (tree, nodesToAdd, parent, append = true) => iterateTree(tre
     if (typeof n === 'string')
         return n;
     const found = utils_1.compareNodeToSelector(n)(parent);
-    const nextNode = cloneNode(n);
+    const nextNode = exports.cloneNode(n);
     if (!Array.isArray(nodesToAdd))
         nodesToAdd = [nodesToAdd];
     const nodes = nodesToAdd.map((n) => {
@@ -125,9 +125,10 @@ exports.wrapNodes = (tree, selector, parent) => {
 function createSaxTag(tag) {
     const defaultTagNode = {
         attributes: {},
+        id: 'some-id',
         isSelfClosing: false,
         name: null,
-        parent: null
+        parents: []
     };
     if (tag.hasOwnProperty('children')) {
         tag.children = tag.children.map((child) => {

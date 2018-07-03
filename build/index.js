@@ -12,20 +12,19 @@ const xml2tree_1 = require("xml2tree");
 const utils_1 = require("./utils");
 const setttings_1 = require("./state/setttings");
 const _index_1 = require("./_index");
-exports.EmptyTag = _index_1.EmptyTag;
+exports.StringTag = _index_1.StringTag;
 exports.HtmlTag = _index_1.HtmlTag;
 exports.JsxTag = _index_1.JsxTag;
 exports.iterateTree = _index_1.iterateTree;
 const state_1 = require("./state");
 exports.XmlioState = state_1.default;
 const analyze_1 = require("./analyze");
-function fromString(input) {
+function xmlToTree(input, options) {
     return __awaiter(this, void 0, void 0, function* () {
-        const tree = yield xml2tree_1.default(input);
-        return xmlioApi(tree);
+        return yield xml2tree_1.default(input, options);
     });
 }
-exports.fromString = fromString;
+exports.xmlToTree = xmlToTree;
 function xmlioApi(tree) {
     let _value = tree;
     return {
@@ -49,14 +48,9 @@ function xmlioApi(tree) {
             return this;
         },
         split: function split(selector) {
-            if (Array.isArray(_value) && _value.length !== 1) {
-                if (_value.length > 1)
-                    console.error('Cannot split splitted tree');
-                return this;
-            }
-            if (Array.isArray(_value))
-                _value = _value[0];
-            _value = _index_1.filterFromTree(_value, selector);
+            _value = utils_1.castArray(_value)
+                .map(v => _index_1.filterFromTree(v, selector))
+                .reduce((prev, curr) => prev.concat(curr), []);
             return this;
         },
         toHtml: function toHtml(settings) {
@@ -82,12 +76,32 @@ function xmlioApi(tree) {
             });
             return (jsx.length === 1) ? [jsx[0], state] : [jsx, state];
         },
+        toString: function toString(settings) {
+            settings = new setttings_1.StringSettings(settings);
+            const strArr = utils_1.castArray(_value).map(v => {
+                let str = _index_1.fromTree(v, new state_1.default(settings));
+                const joinIndex = str.length - settings.join.length;
+                if (str.slice(joinIndex) === settings.join) {
+                    str = str.slice(0, joinIndex);
+                }
+                return str;
+            });
+            if (!strArr.length)
+                return '';
+            if (strArr.length === 1)
+                return strArr[0];
+            return strArr;
+        },
         toXml: function toXml(settings) {
             settings = new setttings_1.Settings(settings);
             const xml = utils_1.castArray(_value).map(v => _index_1.fromTree(v, new state_1.default(settings)));
             if (xml.length === 1)
                 return xml[0];
             return xml;
+        },
+        transformNode: function transformNode(func) {
+            _value = utils_1.castArray(_value).map((node) => _index_1.iterateTree(node, func));
+            return this;
         },
         value: function value() {
             if (Array.isArray(_value)) {

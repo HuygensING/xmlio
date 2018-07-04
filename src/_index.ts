@@ -1,5 +1,5 @@
 import State from "./state"
-import {compareNodeToSelector} from "./utils"
+import {compareNodeToSelector, castArray} from "./utils"
 import { TagType, TagInstance } from './state/setttings'
 import { SaxTag, SaxNode } from 'xml2tree'
 import { SaxTagSelector } from "./types"
@@ -97,15 +97,18 @@ export type NodesToAdd = PartialSaxNode | PartialSaxNode[]
 export const addToTree = (tree: SaxTag, nodesToAdd: NodesToAdd, parent: SaxTagSelector, append = true) =>
 	iterateTree(tree, (n: SaxTag) => {
 		if (typeof n === 'string') return n
-		const found = compareNodeToSelector(n)(parent)
-		const nextNode = cloneNode(n)
-		if (!Array.isArray(nodesToAdd)) nodesToAdd = [nodesToAdd]
-		const nodes: SaxNode[] = nodesToAdd.map((n: PartialSaxNode) => {
-			if (typeof n === 'string') return n
-			return createSaxTag(n)
-		})
-		if (found) nextNode.children = append ? nextNode.children.concat(nodes) : nodes.concat(nextNode.children)
-		return nextNode
+
+		if (compareNodeToSelector(n)(parent)) {
+			const nodes: SaxNode[] = castArray(nodesToAdd).map((n: PartialSaxNode) => {
+				if (typeof n === 'string') return n
+				const tmp = new SaxTag(n)
+				return tmp
+			})
+
+			n.children = append ? n.children.concat(nodes) : nodes.concat(n.children)
+		}
+
+		return n
 	})
 
 export const moveNode = (tree: SaxTag, selector: SaxTagSelector, parentSelector: SaxTagSelector, append?: boolean) => {
@@ -138,27 +141,8 @@ export const wrapNodes = (tree: SaxTag, selector: SaxTagSelector, parent: Partia
 		if (typeof n === 'string') return n
 
 		const found = compareNodeToSelector(n)(selector)
-		return (found) ? { ...createSaxTag(parent), children: [{...n}] } : { ...n }
+		if (found) parent.children = [{...n}]
+		// return (found) ? { ...createSaxTag(parent), children: [{...n}] } : { ...n }
+		return (found) ? new SaxTag(parent) : new SaxTag(n)
 	})
-}
-
-function createSaxTag(tag: Partial<SaxTag>): SaxTag {
-	// TODO move to xml2tree
-	// TODO use crypto to create ID
-	const defaultTagNode: SaxTag = {
-		attributes: {},
-		id: 'some-id',
-		isSelfClosing: false,
-		name: null,
-		parents: []
-	}
-
-	if (tag.hasOwnProperty('children')) {
-		tag.children = tag.children.map((child: SaxNode) => {
-			if (typeof child === 'string') return child
-			return createSaxTag(child)
-		})
-	}
-
-	return { ...defaultTagNode, ...tag }
 }

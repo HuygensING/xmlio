@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = require("./utils");
+const xml2tree_1 = require("xml2tree");
+exports.SaxTag = xml2tree_1.SaxTag;
 const xml_1 = require("./tags/xml");
 exports.XmlTag = xml_1.default;
 const string_1 = require("./tags/string");
@@ -78,18 +80,16 @@ exports.removeFromTree = (tree, selector) => {
 exports.addToTree = (tree, nodesToAdd, parent, append = true) => iterateTree(tree, (n) => {
     if (typeof n === 'string')
         return n;
-    const found = utils_1.compareNodeToSelector(n)(parent);
-    const nextNode = exports.cloneNode(n);
-    if (!Array.isArray(nodesToAdd))
-        nodesToAdd = [nodesToAdd];
-    const nodes = nodesToAdd.map((n) => {
-        if (typeof n === 'string')
-            return n;
-        return createSaxTag(n);
-    });
-    if (found)
-        nextNode.children = append ? nextNode.children.concat(nodes) : nodes.concat(nextNode.children);
-    return nextNode;
+    if (utils_1.compareNodeToSelector(n)(parent)) {
+        const nodes = utils_1.castArray(nodesToAdd).map((n) => {
+            if (typeof n === 'string')
+                return n;
+            const tmp = new xml2tree_1.SaxTag(n);
+            return tmp;
+        });
+        n.children = append ? n.children.concat(nodes) : nodes.concat(n.children);
+    }
+    return n;
 });
 exports.moveNode = (tree, selector, parentSelector, append) => {
     const [nextTree, removedNodes] = exports.removeFromTree(tree, selector);
@@ -119,23 +119,8 @@ exports.wrapNodes = (tree, selector, parent) => {
         if (typeof n === 'string')
             return n;
         const found = utils_1.compareNodeToSelector(n)(selector);
-        return (found) ? Object.assign({}, createSaxTag(parent), { children: [Object.assign({}, n)] }) : Object.assign({}, n);
+        if (found)
+            parent.children = [Object.assign({}, n)];
+        return (found) ? new xml2tree_1.SaxTag(parent) : new xml2tree_1.SaxTag(n);
     });
 };
-function createSaxTag(tag) {
-    const defaultTagNode = {
-        attributes: {},
-        id: 'some-id',
-        isSelfClosing: false,
-        name: null,
-        parents: []
-    };
-    if (tag.hasOwnProperty('children')) {
-        tag.children = tag.children.map((child) => {
-            if (typeof child === 'string')
-                return child;
-            return createSaxTag(child);
-        });
-    }
-    return Object.assign({}, defaultTagNode, tag);
-}

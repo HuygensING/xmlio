@@ -15,7 +15,7 @@
   "dependencies": {
     "immutable": "^4.0.0-rc.9",
     "sax": "^1.2.4",
-    "xml2tree": "^1.0.0"
+    "xml2tree": "^2.1.0"
   },
   "devDependencies": {
     "@types/jest": "^23.0.0",

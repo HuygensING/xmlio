@@ -153,10 +153,9 @@ function compareNodeToSelector(node: SaxTag, selector: string): boolean {
 	return combinators && compareNodeToSimpleSelector(node, selector)
 }
 
-const defaultNode: SaxTag = {
+const defaultNode = new SaxTag({
 	name: 'article',
 	attributes: { type: 'letter', rend: 'dark' },
-	isSelfClosing: false,
 	parents: [
 		{
 			name: 'text',
@@ -167,7 +166,7 @@ const defaultNode: SaxTag = {
 			attributes: {}
 		}
 	],
-}
+})
 
 describe('compareNodeToSelector', () => {
 	test('universal selector', () => {

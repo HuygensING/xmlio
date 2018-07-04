@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const xml2tree_1 = require("xml2tree");
+exports.SaxTag = xml2tree_1.SaxTag;
 const utils_1 = require("./utils");
 const setttings_1 = require("./state/setttings");
 const _index_1 = require("./_index");

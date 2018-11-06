@@ -1,4 +1,4 @@
-import xmlio, { xmlToTree } from '../src'
+import xmlio, { xmlToTree, SaxTag } from '../src'
 
 describe('xmlio', () => {
 	// Split the tree in subtrees by a parent selector
@@ -25,8 +25,8 @@ describe('xmlio', () => {
 	test('prepend', async () => {
 		const tree = await xmlToTree('<text><line id="1">haha</line><line id="2">hihi</line></text>')
 		const expected = xmlio(tree)
-			.prepend({ name: 'hi', children: [{ name: 'b', children: ['dit'] }, 'dat'] }, { name: 'line', attributes: { id: "1" } })
-			.prepend({ name: 'hi', children: [{ name: 'i', children: ['dot'] }, 'det'] }, { name: 'line', attributes: { id: "2" } })
+			.prepend({ name: 'hi', children: [{ name: 'b', children: ['dit'] } as SaxTag, 'dat'] }, { name: 'line', attributes: { id: "1" } })
+			.prepend({ name: 'hi', children: [{ name: 'i', children: ['dot'] } as SaxTag, 'det'] }, { name: 'line', attributes: { id: "2" } })
 			.toXml()
 
 		expect(expected).toEqual('<text><line id="1"><hi><b>dit</b>dat</hi>haha</line><line id="2"><hi><i>dot</i>det</hi>hihi</line></text>')
@@ -36,8 +36,8 @@ describe('xmlio', () => {
 	test('append', async () => {
 		const tree = await xmlToTree('<text><line id="1">haha</line><line id="2">hihi</line></text>')
 		const expected = xmlio(tree)
-			.append({ name: 'hi', children: [{ name: 'b', children: ['dit'] }, 'dat'] }, { name: 'line', attributes: { id: "1" } })
-			.append({ name: 'hi', children: [{ name: 'i', children: ['dot'] }, 'det'] }, { name: 'line', attributes: { id: "2" } })
+			.append({ name: 'hi', children: [{ name: 'b', children: ['dit'] } as SaxTag, 'dat'] }, { name: 'line', attributes: { id: "1" } })
+			.append({ name: 'hi', children: [{ name: 'i', children: ['dot'] } as SaxTag, 'det'] }, { name: 'line', attributes: { id: "2" } })
 			.toXml()
 
 		expect(expected).toEqual('<text><line id="1">haha<hi><b>dit</b>dat</hi></line><line id="2">hihi<hi><i>dot</i>det</hi></line></text>')

@@ -13,18 +13,17 @@
   "author": "Gijsjan Brouwer (https://github.com/Gijsjan)",
   "license": "ISC",
   "dependencies": {
-    "immutable": "^4.0.0-rc.9",
     "sax": "^1.2.4",
     "xml2tree": "^2.1.0"
   },
   "devDependencies": {
-    "@types/jest": "^23.0.0",
-    "@types/sax": "^1.0.0",
+    "@types/jest": "^23.3.9",
+    "@types/sax": "^1.0.1",
     "@types/xml2js": "^0.4.3",
     "hi-bump": "^1.1.1",
-    "jest": "^23.1.0",
-    "ts-jest": "^22.4.6",
-    "typescript": "^2.9.1"
+    "jest": "^23.6.0",
+    "ts-jest": "^23.10.4",
+    "typescript": "^3.1.6"
   },
   "jest": {
     "transform": {

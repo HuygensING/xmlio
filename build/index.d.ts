@@ -9,7 +9,7 @@ interface XmlioApi {
     analyze: () => Stats;
     append: (nodesToAdd: NodesToAdd, selector: SaxTagSelector) => XmlioApi;
     prepend: (nodesToAdd: NodesToAdd, selector: SaxTagSelector) => XmlioApi;
-    move: (sourceSelector: SaxTagSelector, targetSelector: SaxTagSelector) => XmlioApi;
+    move: (sourceSelector: SaxTagSelector, targetSelector: SaxTagSelector, append?: boolean) => XmlioApi;
     replace: (sourceSelector: SaxTagSelector, targetSelectorFunc: TargetSelectorFunc) => XmlioApi;
     split: (selector: SaxTagSelector) => XmlioApi;
     toHtml: (settings?: HtmlSettings) => string | string[];

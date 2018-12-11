@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = require("../utils");
 const base_1 = require("./base");
+exports.JSON_PREFIX = '__json__';
 class JsxTag extends base_1.default {
     open() {
         const slash = this.data.isSelfClosing ? '/' : '';
@@ -22,13 +23,20 @@ class JsxTag extends base_1.default {
         const keys = Object.keys(attrs);
         return keys
             .map((key) => {
-            const value = attrs[key];
+            let value = attrs[key];
             key = utils_1.convertColon(key);
             if (key === 'key')
                 key = 'xmlKey';
             else if (key === 'ref')
                 key = 'xmlRef';
-            return ` ${key}="${value}"`;
+            if (key.slice(0, exports.JSON_PREFIX.length) === exports.JSON_PREFIX) {
+                key = key.slice(exports.JSON_PREFIX.length);
+                value = `{${value}}`;
+            }
+            else {
+                value = `"${value}"`;
+            }
+            return ` ${key}=${value}`;
         })
             .join('');
     }

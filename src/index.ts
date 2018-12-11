@@ -3,11 +3,11 @@ import { SaxTagSelector } from './types'
 import { castArray } from './utils'
 import { Settings, JsxSettings, HtmlSettings, StringSettings } from './state/setttings'
 import {
-	StringTag,
 	HtmlTag,
 	JsxTag,
 	NodesToAdd,
-	TargetSelectorFunc,
+	SourceSelectorFunc,
+	StringTag,
 	addToTree,
 	filterFromTree,
 	fromTree,
@@ -18,6 +18,7 @@ import {
 } from './_index';
 import State from './state';
 import analyzer, { Stats } from './analyze'
+import { JSON_PREFIX } from './tags/jsx'
 
 type Value = SaxTag | SaxTag[]
 interface XmlioApi {
@@ -25,7 +26,7 @@ interface XmlioApi {
 	append: (nodesToAdd: NodesToAdd, selector: SaxTagSelector) => XmlioApi
 	prepend: (nodesToAdd: NodesToAdd, selector: SaxTagSelector) => XmlioApi
 	move: (sourceSelector: SaxTagSelector, targetSelector: SaxTagSelector, append?: boolean) => XmlioApi
-	replace: (sourceSelector: SaxTagSelector, targetSelectorFunc: TargetSelectorFunc) => XmlioApi
+	replace: (sourceSelector: SaxTagSelector, targetSelectorFunc: SourceSelectorFunc, removeSourceNode?: boolean) => XmlioApi
 	split: (selector: SaxTagSelector) => XmlioApi
 	toHtml: (settings?: HtmlSettings) => string | string[]
 	toJsx: (settings?: JsxSettings) => [string, State] | [string[], State]
@@ -43,7 +44,9 @@ async function xmlToTree(input: string, options?: XMLToTreeOptions): Promise<Sax
 
 export {
 	HtmlTag,
+	JSON_PREFIX,
 	JsxTag,
+	JsxSettings,
 	SaxNode,
 	SaxTag,
 	State as XmlioState,
@@ -72,8 +75,8 @@ export default function xmlioApi(tree: Value): XmlioApi {
 			_value = castArray(_value).map(v => addToTree(v, nodesToAdd, parent, false))
 			return this
 		},
-		replace: function replace(sourceSelector: SaxTagSelector, targetSelectorFunc: TargetSelectorFunc) {
-			_value = castArray(_value).map(v => replaceNodes(v, sourceSelector, targetSelectorFunc))
+		replace: function replace(targetSelector: SaxTagSelector, sourceSelectorFunc: SourceSelectorFunc, removeSourceNode: boolean = true) {
+			_value = castArray(_value).map(v => replaceNodes(v, targetSelector, sourceSelectorFunc, removeSourceNode))
 			return this
 		},
 		split: function split(selector: SaxTagSelector): XmlioApi {

@@ -67,12 +67,32 @@ describe('xmlio', () => {
 	test('replace', async () => {
 		const tree = await xmlToTree('<text><line id="1">haha</line><line>hihi</line><hi on="1">here</hi></text>')
 		const expected = xmlio(tree)
-			.replace({ name: 'hi', attributes: { on: "1" } }, (hiNode) => {
-				return { name: 'line', attributes: { id: hiNode.attributes.on } }
-			})
+			.replace(
+				{ name: 'line', attributes: { id: "1" } },
+				(lineNode) => ({
+					name: 'hi',
+					attributes: { on: lineNode.attributes.id }
+				})
+			)
 			.toXml()
 
 		expect(expected).toEqual('<text><hi on="1">here</hi><line>hihi</line></text>')
+	})
+
+	test('replace (copy)', async () => {
+		const tree = await xmlToTree('<text><line id="1">haha</line><line>hihi</line><hi on="1">here</hi></text>')
+		const expected = xmlio(tree)
+			.replace(
+				{ name: 'line', attributes: { id: "1" } },
+				(lineNode) => ({
+					name: 'hi',
+					attributes: { on: lineNode.attributes.id }
+				}),
+				false
+			)
+			.toXml()
+
+		expect(expected).toEqual('<text><hi on="1">here</hi><line>hihi</line><hi on="1">here</hi></text>')
 	})
 
 	// First split and than wrap

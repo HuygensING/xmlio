@@ -20,7 +20,7 @@ exports.compareNodeToSelector = (node) => (selector) => {
     const attributesMatched = (attrs) => {
         if (attrs == null)
             return false;
-        return Object.keys(attrs).some(key => {
+        return Object.keys(attrs).every(key => {
             const value = attrs[key];
             if (key == '__' && value == null)
                 return true;
@@ -29,15 +29,14 @@ exports.compareNodeToSelector = (node) => (selector) => {
             if (key == '__' && Object.keys(node.attributes).map(k => node.attributes[k]).indexOf(value) > -1)
                 return true;
             if (node.hasOwnProperty('attributes')) {
-                return Object.keys(node.attributes)
-                    .reduce((prev, currKey) => {
-                    const currValue = node.attributes[currKey];
-                    const curr = attrs[currKey] === currValue;
-                    return prev || curr;
-                }, false);
+                return node.attributes.hasOwnProperty(key) && node.attributes[key] === attrs[key];
             }
             return false;
         });
     };
     return nameMatched && (attributesMatched(selector.attributes) && !attributesMatched(selector.notAttributes));
+};
+exports.logError = (label, ...lines) => {
+    console.log(`[ERROR] ${label}`);
+    lines.forEach(l => console.log(JSON.stringify(l)));
 };

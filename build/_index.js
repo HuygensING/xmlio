@@ -95,24 +95,40 @@ exports.moveNode = (tree, selector, parentSelector, append) => {
     const [nextTree, removedNodes] = exports.removeFromTree(tree, selector);
     return exports.addToTree(nextTree, removedNodes, parentSelector, append);
 };
-exports.replaceNode = (tree, sourceNode, targetSelector) => {
-    if (sourceNode == null || targetSelector == null)
+exports.replaceNodes = (tree, targetSelector, sourceSelectorFunc, removeSourceNode = true) => {
+    const pairs = exports.filterFromTree(tree, targetSelector)
+        .map(target => {
+        const sourceSelector = sourceSelectorFunc(target);
+        let sources;
+        if (removeSourceNode) {
+            const removed = exports.removeFromTree(tree, sourceSelector);
+            tree = removed[0];
+            sources = removed[1];
+        }
+        else {
+            sources = exports.filterFromTree(tree, sourceSelector);
+        }
+        if (sources.length !== 1) {
+            utils_1.logError(`replaceNodes`, [`sources length: ${sources.length}`, target.name, target.attributes]);
+            if (sources.length > 1)
+                return [target, sources[0]];
+            else
+                return null;
+        }
+        return [target, sources[0]];
+    })
+        .filter(x => x != null);
+    if (!pairs.length)
         return tree;
     return iterateTree(tree, (n) => {
         if (typeof n === 'string')
             return n;
-        const isTarget = utils_1.compareNodeToSelector(n)(targetSelector);
-        if (isTarget)
-            return sourceNode;
-        return n;
+        const pair = pairs.find(p => p[0].id === n.id);
+        if (pair == null)
+            return n;
+        else
+            return pair[1];
     });
-};
-exports.replaceNodes = (tree, sourceSelector, targetSelectorFunc) => {
-    let [nextTree, removedNodes] = exports.removeFromTree(tree, sourceSelector);
-    for (const node of removedNodes) {
-        nextTree = exports.replaceNode(nextTree, node, targetSelectorFunc(node));
-    }
-    return nextTree;
 };
 exports.wrapNodes = (tree, selector, parent) => {
     return iterateTree(tree, (n) => {

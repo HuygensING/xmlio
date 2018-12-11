@@ -1,5 +1,5 @@
 import State from "./state"
-import {compareNodeToSelector, castArray} from "./utils"
+import {compareNodeToSelector, castArray, logError} from "./utils"
 import { TagType, TagInstance } from './state/setttings'
 import { SaxTag, SaxNode } from 'xml2tree'
 import { SaxTagSelector } from "./types"
@@ -116,24 +116,62 @@ export const moveNode = (tree: SaxTag, selector: SaxTagSelector, parentSelector:
 	return addToTree(nextTree, removedNodes, parentSelector, append)
 }
 
-export const replaceNode = (tree: SaxTag, sourceNode: SaxTag, targetSelector: SaxTagSelector) => {
-	if (sourceNode == null || targetSelector == null) return tree
+/** Replace target (selector) with source (node) */
+// export const replaceNode = (tree: SaxTag, targetSelector: SaxTagSelector, sourceNode: SaxTag) => {
+// 	if (sourceNode == null || targetSelector == null) return tree
 
+// 	return iterateTree(tree, (n: SaxTag) => {
+// 		if (typeof n === 'string') return n
+// 		const isTarget = compareNodeToSelector(n)(targetSelector)
+// 		if (isTarget) return sourceNode
+// 		return n
+// 	})
+// }
+
+export type SourceSelectorFunc = (targetNode: SaxTag) => SaxTagSelector
+export const replaceNodes = (
+	tree: SaxTag,
+	targetSelector: SaxTagSelector,
+	sourceSelectorFunc: SourceSelectorFunc,
+	removeSourceNode: boolean = true
+): SaxTag => {
+	// Create an array of pairs: [[target, source], [target, source], ...]
+	// While creating the pairs, the source nodes are removed from the tree
+	const pairs = filterFromTree(tree, targetSelector)
+		.map(target => {
+			const sourceSelector = sourceSelectorFunc(target)
+			let sources: SaxTag[]
+
+			if (removeSourceNode) {
+				const removed = removeFromTree(tree, sourceSelector) 
+				tree = removed[0]
+				sources = removed[1]
+			} else {
+				sources = filterFromTree(tree, sourceSelector)
+			}
+
+			// console.log(JSON.stringify(target.attributes), sources.map(s => JSON.stringify(s.attributes)))
+
+			if (sources.length !== 1) {
+				logError(`replaceNodes`, [`sources length: ${sources.length}`, target.name, target.attributes])
+				if (sources.length > 1) return [target, sources[0]]
+				else return null
+			}
+
+			return [target, sources[0]]
+		})
+		.filter(x => x != null)
+
+	if (!pairs.length) return tree
+
+	// Iterate the tree to put the sources at the places of the targets
 	return iterateTree(tree, (n: SaxTag) => {
 		if (typeof n === 'string') return n
-		const isTarget = compareNodeToSelector(n)(targetSelector)
-		if (isTarget) return sourceNode
-		return n
+		// Find a pair of wich the target is equal to n 
+		const pair = pairs.find(p => p[0].id === n.id)
+		if (pair == null) return n
+		else return pair[1]
 	})
-}
-
-export type TargetSelectorFunc = (sourceNode: SaxTag) => SaxTagSelector
-export const replaceNodes = (tree: SaxTag, sourceSelector: SaxTagSelector, targetSelectorFunc: TargetSelectorFunc): SaxTag => {
-	let [nextTree, removedNodes] = removeFromTree(tree, sourceSelector)
-	for (const node of removedNodes) {
-		nextTree = replaceNode(nextTree, node, targetSelectorFunc(node))
-	}
-	return nextTree
 }
 
 export const wrapNodes = (tree: SaxTag, selector: SaxTagSelector, parent: Partial<SaxTag> ) => {

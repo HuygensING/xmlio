@@ -1,6 +1,6 @@
-import { SaxTag } from 'xml2tree'
+import { SaxTag, SaxTagSimple } from 'xml2tree'
 
-function matchAttr(node: SaxTag, regexResult: RegExpMatchArray, predicate: (key, value) => boolean): boolean {
+function matchAttr(node: SaxTag | SaxTagSimple, regexResult: RegExpMatchArray, predicate: (key: string, value: string) => boolean): boolean {
 	const key = regexResult[1]
 	const value = regexResult[2]
 	if (key === '') {
@@ -10,11 +10,11 @@ function matchAttr(node: SaxTag, regexResult: RegExpMatchArray, predicate: (key,
 	}
 }
 
-function partition(arr, predicate) {
+function partition(arr: any[], predicate: (item: any) => boolean) {
 	return [arr.filter(predicate), arr.filter(a => !predicate(a))]
 }
 
-function splitSelector(selector) {
+function splitSelector(selector: string) {
 	const parts = selector
 		.split(/(\:not\(.+\))/)
 		.filter(p => p !== '')
@@ -28,7 +28,7 @@ function splitSelector(selector) {
 	return [nots, attrs, attrsRest]
 }
 
-function testNodeName(node, selector) {
+function testNodeName(node: SaxTag | SaxTagSimple, selector: string) {
 	let nodeName = false
 
 	const nodeNameResult = /^([a-z]+)/.exec(selector)
@@ -38,7 +38,7 @@ function testNodeName(node, selector) {
 	return nodeName
 } 
 
-function testAttribute(node, selector) {
+function testAttribute(node: SaxTag | SaxTagSimple, selector: string) {
 	let attr = false
 
 	const hasAttr = /\[(.+)\]/.exec(selector)
@@ -49,25 +49,25 @@ function testAttribute(node, selector) {
 		if (attrNameOnly) attr = Object.keys(node.attributes).indexOf(attrBody) > -1
 
 		const attrNameAndValue = /^([a-z]*)="?([a-z]+)"?$/.exec(attrBody)
-		const nameAndValuePredicate = (key, value) => node.attributes[key] === value
+		const nameAndValuePredicate = (key: string, value: string) => node.attributes[key] === value
 		if (attrNameAndValue != null) {
 			attr = matchAttr(node, attrNameAndValue, nameAndValuePredicate)
 		}
 
 		const attrStartsWith = /^([a-z]*)\^="?([a-z]+)"?$/.exec(attrBody)
-		const startsWithPredicate = (key, value) => node.attributes[key].slice(0, value.length) === value
+		const startsWithPredicate = (key: string, value: string) => node.attributes[key].slice(0, value.length) === value
 		if (attrStartsWith != null) {
 			attr = matchAttr(node, attrStartsWith, startsWithPredicate)
 		}
 
 		const attrEndsWith = /^([a-z]*)\$="?([a-z]+)"?$/.exec(attrBody)
-		const endsWithPredicate = (key, value) => node.attributes[key].slice(-1 * value.length) === value
+		const endsWithPredicate = (key: string, value: string) => node.attributes[key].slice(-1 * value.length) === value
 		if (attrEndsWith != null) {
 			attr = matchAttr(node, attrEndsWith, endsWithPredicate)
 		}
 
 		const attrContains = /^([a-z]*)\*="?([a-z]+)"?$/.exec(attrBody)
-		const containsPredicate = (key, value) => node.attributes[key].indexOf(value) > -1
+		const containsPredicate = (key: string, value: string) => node.attributes[key].indexOf(value) > -1
 		if (attrContains != null) {
 			attr = matchAttr(node, attrContains, containsPredicate)
 		}
@@ -79,12 +79,12 @@ function testAttribute(node, selector) {
 	return attr
 }
 
-function testNot(node, selector) {
+function testNot(node: SaxTag | SaxTagSimple, selector: string) {
 	let pseudoNot = false
 
 	const hasPseudoNot = /\:not\((.+)\)/.exec(selector)
 	if (hasPseudoNot != null) {
-		pseudoNot = !compareNodeToSelector(node, hasPseudoNot[1])
+		pseudoNot = !compareNodeToSimpleSelector(node, hasPseudoNot[1])
 	} else {
 		pseudoNot = true
 	}
@@ -92,52 +92,8 @@ function testNot(node, selector) {
 	return pseudoNot
 }
 
-function splitCombinator(node, selector) {
-	// const adjacentParts = selector
-	// 	.split(/(.+\s+\s.+)/)
-	// 	.filter(p => p !== '')
-	// const [adjacents, adjacentsRest] = partition(adjacentParts, p => /^\:not/.test(p))
 
-	// const siblingParts = selector
-	// 	.split(/(\s~\s)/)
-	// 	.filter(p => p !== '')
-	// const [siblings, siblingsRest] = partition(siblingParts, p => /^\:not/.test(p))
-
-	const childParts = selector
-		.split(/\s>\s/)
-		.filter(p => p !== '')
-
-	const firstIndex = childParts.length - 1
-	for (let index = firstIndex; index >= 0; index--) {
-		if (index === firstIndex) {
- 			if (!compareNodeToSimpleSelector(node, childParts[index])) {
-				 break
-				 return false
-			}
-		}
-
-		// const selector = childParts[index];
-	}
-	// console.log(childParts
-	// 	.reduce((prev, curr, index, array) => {
-	// 		if (index === 0) return true	
-	// 		const parentSelector = array[index - 1]
-				
-	// 	}, true)
-				
-	// )//, children, childrenRest)
-
-	// const descendantParts = selector
-	// 	.split(/(\s)/)
-	// 	.filter(p => p !== '')
-
-	// console.log(adjacentParts, siblingParts, childParts, descendantParts)
-
-	// return [null, null, null, null]
-	return true
-}
-
-function compareNodeToSimpleSelector(node, selector): boolean {
+function compareNodeToSimpleSelector(node: SaxTag | SaxTagSimple, selector: string): boolean {
 	const [nots, attrs, other] = splitSelector(selector)
 	const nodeName = other.every(o => testNodeName(node, o))
 	const attr = attrs.every(o => testAttribute(node, o))
@@ -148,9 +104,39 @@ function compareNodeToSimpleSelector(node, selector): boolean {
 function compareNodeToSelector(node: SaxTag, selector: string): boolean {
 	if (selector === '*') return true
 
-	const combinators = splitCombinator(node, selector)
+	if (selector.indexOf(' > ') > -1) {
+		const selectors = selector.split(' > ')
+		const currentNodeSelector = selectors.slice(-1)[0]
+		const isCurrentNode = compareNodeToSimpleSelector(node, currentNodeSelector)
+		const parentSelectors = selectors.slice(0, -1)
+		const parents = node.parents.slice(-1 * parentSelectors.length)
+		const hasParents = parentSelectors.every((sel, index) => {
+			return compareNodeToSimpleSelector(parents[index], sel)	
+		})
 
-	return combinators && compareNodeToSimpleSelector(node, selector)
+		return isCurrentNode && hasParents
+	}
+
+	if (selector.indexOf(' ') > -1) {
+		const selectors = selector.split(' ')
+		const currentNodeSelector = selectors.slice(-1)[0]
+		const isCurrentNode = compareNodeToSimpleSelector(node, currentNodeSelector)
+
+		const parentSelectors = selectors.slice(0, -1)
+		const hasParents = parentSelectors
+			.map((sel) =>
+				node.parents.findIndex(parent => compareNodeToSimpleSelector(parent, sel))	
+			)
+			.reduce((isOrdered, curr, index, array) => {
+				const prev = array[index - 1]
+				if (prev == null) return isOrdered
+				return isOrdered && curr > prev
+			}, true)
+
+		return isCurrentNode && hasParents
+	}
+
+	return compareNodeToSimpleSelector(node, selector)
 }
 
 const defaultNode = new SaxTag({
@@ -227,12 +213,16 @@ describe('compareNodeToSelector', () => {
 
 	test('attribute selector - not)', () => {
 		expect(compareNodeToSelector(defaultNode, '[type="letter"]:not([type="target"])')).toBeTruthy()
+		expect(compareNodeToSelector(defaultNode, '[type="letter"]:not([type="target"][rend="light"])')).toBeTruthy()
+		expect(compareNodeToSelector(defaultNode, '[type="letter"]:not([rend="dark"][rend="light"])')).toBeTruthy()
 		expect(compareNodeToSelector(defaultNode, '[type="letter"]:not([type="letter"])')).toBeFalsy()
+		expect(compareNodeToSelector(defaultNode, '[type="letter"]:not([rend="dark"])')).toBeFalsy()
 	})
 
 	test('multiple attribute selectors)', () => {
 		expect(compareNodeToSelector(defaultNode, '[type="letter"][rend="dark"]')).toBeTruthy()
-		expect(compareNodeToSelector(defaultNode, '[type="letter"][type="target"]')).toBeFalsy()
+		expect(compareNodeToSelector(defaultNode, '[type="letter"][rend="light"]')).toBeFalsy()
+		expect(compareNodeToSelector(defaultNode, '[type="target"][rend="dark"]')).toBeFalsy()
 	})
 
 	test('mixing', () => {
@@ -243,7 +233,23 @@ describe('compareNodeToSelector', () => {
 		expect(compareNodeToSelector(defaultNode, '[type="letter"]article[rend="dark"]:not(section)')).toBeTruthy()
 	})
 
-	// test('direct child', () => {
-	// 	expect(compareNodeToSelector(defaultNode, 'text > body > article')).toBeTruthy()
-	// })
+	test('child', () => {
+		expect(compareNodeToSelector(defaultNode, 'text body article')).toBeTruthy()
+		expect(compareNodeToSelector(defaultNode, 'body article')).toBeTruthy()
+		expect(compareNodeToSelector(defaultNode, '[type="main"] body article')).toBeTruthy()
+		expect(compareNodeToSelector(defaultNode, 'text article')).toBeTruthy()
+		expect(compareNodeToSelector(defaultNode, 'body text article')).toBeFalsy()
+		expect(compareNodeToSelector(defaultNode, 'text falsebody article')).toBeFalsy()
+		expect(compareNodeToSelector(defaultNode, 'text [type="sub"] article')).toBeFalsy()
+	})
+
+	test('direct child', () => {
+		expect(compareNodeToSelector(defaultNode, 'text > body > article')).toBeTruthy()
+		expect(compareNodeToSelector(defaultNode, 'body > article')).toBeTruthy()
+		expect(compareNodeToSelector(defaultNode, '[type="main"] > body > article')).toBeTruthy()
+		expect(compareNodeToSelector(defaultNode, 'body > text > article')).toBeFalsy()
+		expect(compareNodeToSelector(defaultNode, 'text > falsebody > article')).toBeFalsy()
+		expect(compareNodeToSelector(defaultNode, 'text > [type="sub"] > article')).toBeFalsy()
+		expect(compareNodeToSelector(defaultNode, 'text > article')).toBeFalsy()
+	})
 })

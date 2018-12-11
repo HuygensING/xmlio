@@ -12,14 +12,17 @@ const xml2tree_1 = require("xml2tree");
 exports.SaxTag = xml2tree_1.SaxTag;
 const utils_1 = require("./utils");
 const setttings_1 = require("./state/setttings");
+exports.JsxSettings = setttings_1.JsxSettings;
 const _index_1 = require("./_index");
-exports.StringTag = _index_1.StringTag;
 exports.HtmlTag = _index_1.HtmlTag;
 exports.JsxTag = _index_1.JsxTag;
+exports.StringTag = _index_1.StringTag;
 exports.iterateTree = _index_1.iterateTree;
 const state_1 = require("./state");
 exports.XmlioState = state_1.default;
 const analyze_1 = require("./analyze");
+const jsx_1 = require("./tags/jsx");
+exports.JSON_PREFIX = jsx_1.JSON_PREFIX;
 function xmlToTree(input, options) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield xml2tree_1.default(input, options);
@@ -44,8 +47,8 @@ function xmlioApi(tree) {
             _value = utils_1.castArray(_value).map(v => _index_1.addToTree(v, nodesToAdd, parent, false));
             return this;
         },
-        replace: function replace(sourceSelector, targetSelectorFunc) {
-            _value = utils_1.castArray(_value).map(v => _index_1.replaceNodes(v, sourceSelector, targetSelectorFunc));
+        replace: function replace(targetSelector, sourceSelectorFunc, removeSourceNode = true) {
+            _value = utils_1.castArray(_value).map(v => _index_1.replaceNodes(v, targetSelector, sourceSelectorFunc, removeSourceNode));
             return this;
         },
         split: function split(selector) {

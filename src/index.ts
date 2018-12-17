@@ -1,154 +1,94 @@
-import xml2tree, { SaxTag, SaxNode, XMLToTreeOptions } from 'xml2tree'
-import { SaxTagSelector } from './types'
-import { castArray } from './utils'
-import { Settings, JsxSettings, HtmlSettings, StringSettings } from './state/setttings'
-import {
-	HtmlTag,
-	JsxTag,
-	NodesToAdd,
-	SourceSelectorFunc,
-	StringTag,
-	addToTree,
-	filterFromTree,
-	fromTree,
-	iterateTree,
-	moveNode,
-	replaceNodes,
-	wrapNodes,
-} from './_index';
-import State from './state';
-import analyzer, { Stats } from './analyze'
-import { JSON_PREFIX } from './tags/jsx'
+/// <reference path="./default.d.ts" />
+/// <reference path="./exporters.d.ts" />
+/// <reference path="./actions.d.ts" />
 
-type Value = SaxTag | SaxTag[]
-interface XmlioApi {
-	analyze: () => Stats
-	append: (nodesToAdd: NodesToAdd, selector: SaxTagSelector) => XmlioApi
-	prepend: (nodesToAdd: NodesToAdd, selector: SaxTagSelector) => XmlioApi
-	move: (sourceSelector: SaxTagSelector, targetSelector: SaxTagSelector, append?: boolean) => XmlioApi
-	replace: (sourceSelector: SaxTagSelector, targetSelectorFunc: SourceSelectorFunc, removeSourceNode?: boolean) => XmlioApi
-	split: (selector: SaxTagSelector) => XmlioApi
-	toHtml: (settings?: HtmlSettings) => string | string[]
-	toJsx: (settings?: JsxSettings) => [string, State] | [string[], State]
-	toString: (settings?: StringSettings) => string | string[]
-	toXml: (settings?: Settings) => string | string[]
-	transformNode: (func: (node: SaxNode) => SaxNode) => XmlioApi
-	value: () => SaxTag
-	values: () => SaxTag[]
-	wrap: (selector: SaxTagSelector, parent: Partial<SaxTag>) => XmlioApi
+import puppeteer from 'puppeteer'
+import evaluator from './evaluator'
+
+export function logWarning(warning: string) {
+	console.log(`[WARNING] ${warning}`)
 }
 
-async function xmlToTree(input: string, options?: XMLToTreeOptions): Promise<SaxTag> {
-	return await xml2tree(input, options)
-}
+export default class Xmlio {
+	private transforms: Transform[] = []
 
-export {
-	HtmlTag,
-	JSON_PREFIX,
-	JsxTag,
-	JsxSettings,
-	SaxNode,
-	SaxTag,
-	State as XmlioState,
-	StringTag,
-	XmlioApi,
-	xmlToTree,
-	iterateTree,
-}
+	constructor(private xml: string, private parserOptions?: DomParserOptions) {}
 
-export default function xmlioApi(tree: Value): XmlioApi {
-	let _value: Value = tree
+	async export(options: DataExporterOptions): Promise<DataNode | DataNode[]>
+	async export(options: TextExporterOptions): Promise<string | string[]>
+	async export(options: XmlExporterOptions): Promise<string | string[]>
+	async export(options: [DataExporterOptions, XmlExporterOptions]): Promise<[DataNode | DataNode[], string | string[]]>
+	async export(options: Options[]): Promise<ExporterReturnValue[]>
+	async export(): Promise<string | string[]>
+	async export(options?: Options | Options[]): Promise<ExporterReturnValue | ExporterReturnValue[]> {
+		const browser = await puppeteer.launch({
+			args: [
+				'--no-sandbox',
+				'--disable-setuid-sandbox'
+			]
+		})
 
-	return {
-		analyze: function analyze() {
-			return analyzer(castArray(_value))
-		},
-		append: function append(nodesToAdd: NodesToAdd, parent: SaxTagSelector) {
-			_value = castArray(_value).map(v => addToTree(v, nodesToAdd, parent))
-			return this
-		},
-		move: function move(sourceSelector: SaxTagSelector, targetSelector: SaxTagSelector, append?: boolean) {
-			_value = castArray(_value).map(v => moveNode(v, sourceSelector, targetSelector, append))
-			return this
-		},
-		prepend: function prepend(nodesToAdd: NodesToAdd, parent: SaxTagSelector) {
-			_value = castArray(_value).map(v => addToTree(v, nodesToAdd, parent, false))
-			return this
-		},
-		replace: function replace(targetSelector: SaxTagSelector, sourceSelectorFunc: SourceSelectorFunc, removeSourceNode: boolean = true) {
-			_value = castArray(_value).map(v => replaceNodes(v, targetSelector, sourceSelectorFunc, removeSourceNode))
-			return this
-		},
-		split: function split(selector: SaxTagSelector): XmlioApi {
-			_value = castArray(_value)
-				.map(v => filterFromTree(v, selector))
-				.reduce((prev, curr) => prev.concat(curr), [])
-			return this
-		},
-		toHtml: function toHtml(settings: HtmlSettings): string | string[] {
-			settings = new HtmlSettings(settings)
-			const html = castArray(_value).map(v => fromTree(v, new State(settings)))
-			if (html.length === 1) return html[0]
-			return html
-		},
-		toJsx: function toJsx(settings: JsxSettings): [string, State] | [string[], State] {
-			settings = new JsxSettings(settings)
-			const state = new State(settings)
-			const jsx = castArray(_value).map(v => {
-				let str = fromTree(v, state)
-				if (settings.bare) return str
+		const page = await browser.newPage()
+		page.on('console', (msg: any) => {
+			msg = msg.text()
+			if (msg.slice(0, 7) === 'WARNING') logWarning(msg.slice(7))
+			else console.log('From page: ', msg)
+		})
 
-				const props = settings.passProps ? 'props' : ''
-				return [
-					`import * as React from 'react'`,
-					`import {${[...state.usedTags].join(', ')}} from '${settings.componentPath}'`,
-					`${settings.export} (${props}) => ${str}`
-				].join('\n')
-			})
-			return (jsx.length === 1) ? [jsx[0], state] : [jsx, state]
-		},
-		toString: function toString(settings: StringSettings): string | string[] {
-			settings = new StringSettings(settings)
-			const strArr = castArray(_value).map(v => {
-				let str = fromTree(v, new State(settings))
+		const output: string = await page.evaluate(
+			evaluator,
+			this.xml,
+			this.transforms,
+			this.parserOptions,
+			options
+		)
 
-				const joinIndex = str.length - settings.join.length
-				if (str.slice(joinIndex) === settings.join) {
-					str = str.slice(0, joinIndex)
-				}
+		browser.close()
 
-				return str
-			})
+		return output
+	}
 
-			if (!strArr.length) return ''
-			if (strArr.length === 1) return strArr[0]
-			return strArr
-		},
-		toXml: function toXml(settings: Settings): string | string[] {
-			settings = new Settings(settings)
-			const xml = castArray(_value).map(v => fromTree(v, new State(settings)))
-			if (xml.length === 1) return xml[0]
-			return xml
-		},
-		transformNode: function transformNode(func: (node: SaxNode) => SaxNode): XmlioApi {
-			_value = castArray(_value).map((node) => iterateTree(node, func))
-			return this
-		},
-		value: function value(): SaxTag {
-			if (Array.isArray(_value)) {
-				if (_value.length === 1) return _value[0]
-				else console.error('Cannot return a value from an array with size > 1')
-			} else {
-				return _value
-			}
-		},
-		values: function values(): SaxTag[] {
-			if (!Array.isArray(_value)) return [_value]
-			return _value
-		},
-		wrap: function wrap(selector: SaxTagSelector, parent: Partial<SaxTag>): XmlioApi {
-			_value = castArray(_value).map(v => wrapNodes(v, selector, parent))
-			return this
-		}
+	change(selector: string, changeFunc: (target: HTMLElement) => HTMLElement): Xmlio {
+		this.transforms.push({
+			selector,
+			changeFunc: changeFunc.toString(),
+			type: 'change',
+		})
+		return this
+	}
+
+	rename(selector: string, newName: string): Xmlio {
+		this.transforms.push({
+			selector,
+			newName,
+			type: 'rename',
+		})
+		return this
+	}
+
+	exclude(selector: string | string[]): Xmlio {
+		this.transforms.push({
+			selector,
+			type: 'exclude'
+		})
+		return this
+	}
+
+	replace(targetSelector: string, sourceSelectorFunc: (target: HTMLElement) => string, removeSource: boolean = true): Xmlio {
+		this.transforms.push({
+			removeSource,
+			sourceSelectorFunc: sourceSelectorFunc.toString(),
+			targetSelector,
+			type: 'replace',
+		})	
+		return this
+	}
+
+	select(selector: string): Xmlio {
+		this.transforms.push({
+			selector,
+			type: 'select',
+		})
+		return this
 	}
 }

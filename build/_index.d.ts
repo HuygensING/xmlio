@@ -12,6 +12,7 @@ export interface ReturnType {
     state: State;
 }
 export declare function iterateTree<T>(node: SaxTag, func: (node: SaxNode) => T): any;
+export declare function iterateTreePure<T>(node: SaxTag, func: (node: SaxNode) => T): any;
 export declare const fromTree: (node: SaxTag, state: State) => string;
 export declare const filterFromTree: (node: SaxTag, selector: SaxTagSelector) => SaxTag[];
 export declare const removeFromTree: (tree: SaxTag, selector: SaxTagSelector) => [SaxTag, SaxTag[]];

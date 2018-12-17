@@ -1,10 +1,13 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "declaration": true,
-    "noImplicitAny": true,
+    "esModuleInterop": true,
+    "importHelpers": true,
     "module": "commonjs",
+    "noImplicitAny": true,
     "noUnusedLocals": true,
-    "outDir": "build",
+    "outDir": "./build",
     "removeComments": true,
     "target": "es6"
   },
@@ -12,7 +15,9 @@
     "node_modules"
   ],
   "include": [
-    "./src/index.ts",
-    "./src/types.d.ts"
+    "src/index.ts",
+    "src/default.d.ts",
+    "src/actions.d.ts",
+    "src/exporters.d.ts",
   ]
 }

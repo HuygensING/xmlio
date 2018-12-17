@@ -1,132 +1,77 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const xml2tree_1 = require("xml2tree");
-exports.SaxTag = xml2tree_1.SaxTag;
-const utils_1 = require("./utils");
-const setttings_1 = require("./state/setttings");
-exports.JsxSettings = setttings_1.JsxSettings;
-const _index_1 = require("./_index");
-exports.HtmlTag = _index_1.HtmlTag;
-exports.JsxTag = _index_1.JsxTag;
-exports.StringTag = _index_1.StringTag;
-exports.iterateTree = _index_1.iterateTree;
-const state_1 = require("./state");
-exports.XmlioState = state_1.default;
-const analyze_1 = require("./analyze");
-const jsx_1 = require("./tags/jsx");
-exports.JSON_PREFIX = jsx_1.JSON_PREFIX;
-function xmlToTree(input, options) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return yield xml2tree_1.default(input, options);
-    });
+const tslib_1 = require("tslib");
+const puppeteer_1 = tslib_1.__importDefault(require("puppeteer"));
+const evaluator_1 = tslib_1.__importDefault(require("./evaluator"));
+function logWarning(warning) {
+    console.log(`[WARNING] ${warning}`);
 }
-exports.xmlToTree = xmlToTree;
-function xmlioApi(tree) {
-    let _value = tree;
-    return {
-        analyze: function analyze() {
-            return analyze_1.default(utils_1.castArray(_value));
-        },
-        append: function append(nodesToAdd, parent) {
-            _value = utils_1.castArray(_value).map(v => _index_1.addToTree(v, nodesToAdd, parent));
-            return this;
-        },
-        move: function move(sourceSelector, targetSelector, append) {
-            _value = utils_1.castArray(_value).map(v => _index_1.moveNode(v, sourceSelector, targetSelector, append));
-            return this;
-        },
-        prepend: function prepend(nodesToAdd, parent) {
-            _value = utils_1.castArray(_value).map(v => _index_1.addToTree(v, nodesToAdd, parent, false));
-            return this;
-        },
-        replace: function replace(targetSelector, sourceSelectorFunc, removeSourceNode = true) {
-            _value = utils_1.castArray(_value).map(v => _index_1.replaceNodes(v, targetSelector, sourceSelectorFunc, removeSourceNode));
-            return this;
-        },
-        split: function split(selector) {
-            _value = utils_1.castArray(_value)
-                .map(v => _index_1.filterFromTree(v, selector))
-                .reduce((prev, curr) => prev.concat(curr), []);
-            return this;
-        },
-        toHtml: function toHtml(settings) {
-            settings = new setttings_1.HtmlSettings(settings);
-            const html = utils_1.castArray(_value).map(v => _index_1.fromTree(v, new state_1.default(settings)));
-            if (html.length === 1)
-                return html[0];
-            return html;
-        },
-        toJsx: function toJsx(settings) {
-            settings = new setttings_1.JsxSettings(settings);
-            const state = new state_1.default(settings);
-            const jsx = utils_1.castArray(_value).map(v => {
-                let str = _index_1.fromTree(v, state);
-                if (settings.bare)
-                    return str;
-                const props = settings.passProps ? 'props' : '';
-                return [
-                    `import * as React from 'react'`,
-                    `import {${[...state.usedTags].join(', ')}} from '${settings.componentPath}'`,
-                    `${settings.export} (${props}) => ${str}`
-                ].join('\n');
+exports.logWarning = logWarning;
+class Xmlio {
+    constructor(xml, parserOptions) {
+        this.xml = xml;
+        this.parserOptions = parserOptions;
+        this.transforms = [];
+    }
+    export(options) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const browser = yield puppeteer_1.default.launch({
+                args: [
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox'
+                ]
             });
-            return (jsx.length === 1) ? [jsx[0], state] : [jsx, state];
-        },
-        toString: function toString(settings) {
-            settings = new setttings_1.StringSettings(settings);
-            const strArr = utils_1.castArray(_value).map(v => {
-                let str = _index_1.fromTree(v, new state_1.default(settings));
-                const joinIndex = str.length - settings.join.length;
-                if (str.slice(joinIndex) === settings.join) {
-                    str = str.slice(0, joinIndex);
-                }
-                return str;
-            });
-            if (!strArr.length)
-                return '';
-            if (strArr.length === 1)
-                return strArr[0];
-            return strArr;
-        },
-        toXml: function toXml(settings) {
-            settings = new setttings_1.Settings(settings);
-            const xml = utils_1.castArray(_value).map(v => _index_1.fromTree(v, new state_1.default(settings)));
-            if (xml.length === 1)
-                return xml[0];
-            return xml;
-        },
-        transformNode: function transformNode(func) {
-            _value = utils_1.castArray(_value).map((node) => _index_1.iterateTree(node, func));
-            return this;
-        },
-        value: function value() {
-            if (Array.isArray(_value)) {
-                if (_value.length === 1)
-                    return _value[0];
+            const page = yield browser.newPage();
+            page.on('console', (msg) => {
+                msg = msg.text();
+                if (msg.slice(0, 7) === 'WARNING')
+                    logWarning(msg.slice(7));
                 else
-                    console.error('Cannot return a value from an array with size > 1');
-            }
-            else {
-                return _value;
-            }
-        },
-        values: function values() {
-            if (!Array.isArray(_value))
-                return [_value];
-            return _value;
-        },
-        wrap: function wrap(selector, parent) {
-            _value = utils_1.castArray(_value).map(v => _index_1.wrapNodes(v, selector, parent));
-            return this;
-        }
-    };
+                    console.log('From page: ', msg);
+            });
+            const output = yield page.evaluate(evaluator_1.default, this.xml, this.transforms, this.parserOptions, options);
+            browser.close();
+            return output;
+        });
+    }
+    change(selector, changeFunc) {
+        this.transforms.push({
+            selector,
+            changeFunc: changeFunc.toString(),
+            type: 'change',
+        });
+        return this;
+    }
+    rename(selector, newName) {
+        this.transforms.push({
+            selector,
+            newName,
+            type: 'rename',
+        });
+        return this;
+    }
+    exclude(selector) {
+        this.transforms.push({
+            selector,
+            type: 'exclude'
+        });
+        return this;
+    }
+    replace(targetSelector, sourceSelectorFunc, removeSource = true) {
+        this.transforms.push({
+            removeSource,
+            sourceSelectorFunc: sourceSelectorFunc.toString(),
+            targetSelector,
+            type: 'replace',
+        });
+        return this;
+    }
+    select(selector) {
+        this.transforms.push({
+            selector,
+            type: 'select',
+        });
+        return this;
+    }
 }
-exports.default = xmlioApi;
+exports.default = Xmlio;

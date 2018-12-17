@@ -16,6 +16,17 @@ function iterateTree(node, func) {
     const iterate = (n) => {
         if (n == null)
             return;
+        if (typeof n !== 'string' && n.hasOwnProperty('children'))
+            n.children = n.children.map(iterate);
+        return func(n);
+    };
+    return iterate(node);
+}
+exports.iterateTree = iterateTree;
+function iterateTreePure(node, func) {
+    const iterate = (n) => {
+        if (n == null)
+            return;
         if (typeof n !== 'string')
             n = exports.cloneNode(n);
         if (typeof n !== 'string' && n.hasOwnProperty('children'))
@@ -24,7 +35,7 @@ function iterateTree(node, func) {
     };
     return iterate(node);
 }
-exports.iterateTree = iterateTree;
+exports.iterateTreePure = iterateTreePure;
 exports.fromTree = (node, state) => {
     const convertSaxTag = (n) => {
         if (typeof n === 'string')

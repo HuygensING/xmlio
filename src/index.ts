@@ -48,6 +48,11 @@ export default class Xmlio {
 		return output
 	}
 
+	addTransform(transform: Transform) {
+		this.transforms.push(transform)
+		return this
+	}
+
 	change(selector: string, changeFunc: (target: HTMLElement) => HTMLElement): Xmlio {
 		this.transforms.push({
 			selector,

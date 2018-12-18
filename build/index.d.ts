@@ -13,6 +13,7 @@ export default class Xmlio {
     export(options: [DataExporterOptions, XmlExporterOptions]): Promise<[DataNode | DataNode[], string | string[]]>;
     export(options: Options[]): Promise<ExporterReturnValue[]>;
     export(): Promise<string | string[]>;
+    addTransform(transform: Transform): this;
     change(selector: string, changeFunc: (target: HTMLElement) => HTMLElement): Xmlio;
     rename(selector: string, newName: string): Xmlio;
     exclude(selector: string | string[]): Xmlio;

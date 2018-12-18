@@ -34,6 +34,10 @@ class Xmlio {
             return output;
         });
     }
+    addTransform(transform) {
+        this.transforms.push(transform);
+        return this;
+    }
     change(selector, changeFunc) {
         this.transforms.push({
             selector,

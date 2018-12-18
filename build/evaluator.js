@@ -190,6 +190,15 @@ function evaluator(xml, transforms, parserOptions, options) {
         return outerFunc();
     }
     function createOutput(exporterOptions) {
+        if (exporterOptions == null || exporterOptions.type === 'xml') {
+            exporterOptions = Object.assign({ type: 'xml' }, exporterOptions);
+        }
+        if (exporterOptions.type === 'data') {
+            exporterOptions = Object.assign({ deep: true, text: true }, exporterOptions);
+        }
+        if (exporterOptions.type === 'text') {
+            exporterOptions = Object.assign({ join: ' ' }, exporterOptions);
+        }
         const output = trees
             .map(removeProxies)
             .map(unwrap)
@@ -228,16 +237,12 @@ function evaluator(xml, transforms, parserOptions, options) {
         return newEl;
     }
     function replaceElement(oldEl, newEl) {
+        if (oldEl.parentElement == null) {
+            console.log('fail', oldEl.nodeName, Array.from(oldEl.attributes).map(a => a.value).join(', '));
+            return;
+        }
+        console.log('ok', oldEl.nodeName, Array.from(oldEl.attributes).map(a => a.value).join(', '));
         oldEl.parentElement.replaceChild(newEl, oldEl);
-    }
-    if (options == null || options.type === 'xml') {
-        options = Object.assign({ type: 'xml' }, options);
-    }
-    if (options.type === 'data') {
-        options = Object.assign({ deep: true, text: true }, options);
-    }
-    if (options.type === 'text') {
-        options = Object.assign({ join: ' ' }, options);
     }
     const parser = new DOMParser();
     const doc = parser.parseFromString(wrapXml(xml), 'application/xml');

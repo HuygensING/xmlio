@@ -2,7 +2,7 @@ export default function evaluator(
 	xml: string,
 	transforms: Transform[],
 	parserOptions: DomParserOptions,
-	options: Options
+	options: Options | Options[]
 ): ExporterReturnValue | ExporterReturnValue[] {
 	const COLON_REPLACE = '_-_-_-_'
 	const proxyElements: Map<Element, Element> = new Map()
@@ -248,6 +248,17 @@ export default function evaluator(
 	}
 
 	function createOutput(exporterOptions: Options): any[] {
+		// Extend the options with default values
+		if (exporterOptions == null || exporterOptions.type === 'xml') {
+			exporterOptions = { type: 'xml', ...exporterOptions } as XmlExporterOptions
+		}
+		if (exporterOptions.type === 'data') {
+			exporterOptions = { deep: true, text: true, ...exporterOptions } as DataExporterOptions
+		}
+		if (exporterOptions.type === 'text') {
+			exporterOptions = { join: ' ', ...exporterOptions } as TextExporterOptions
+		}
+
 		const output: any[] = trees
 			.map(removeProxies)
 			.map(unwrap)
@@ -295,21 +306,14 @@ export default function evaluator(
 	}
 
 	function replaceElement(oldEl: Element, newEl: Element) {
+		if (oldEl.parentElement == null) {
+			console.log('fail', oldEl.nodeName, Array.from(oldEl.attributes).map(a => a.value).join(', '))
+			return
+		}
+		console.log('ok', oldEl.nodeName, Array.from(oldEl.attributes).map(a => a.value).join(', '))
 		oldEl.parentElement.replaceChild(newEl, oldEl)
 	}
 	//###### /UTILS ######\\
-
-
-	// Extend the options with default values
-	if (options == null || options.type === 'xml') {
-		options = { type: 'xml', ...options } as XmlExporterOptions
-	}
-	if (options.type === 'data') {
-		options = { deep: true, text: true, ...options } as DataExporterOptions
-	}
-	if (options.type === 'text') {
-		options = { join: ' ', ...options } as TextExporterOptions
-	}
 
 	// Create the DOMParser and create the trees array. The trees array is initialized with the parsed tree.
 	// An array is used, because the select transform can create multiple trees.

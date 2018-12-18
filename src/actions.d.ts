@@ -2,10 +2,12 @@
 // (target: HTMLElement) => string
 declare type FunctionString = string
 
+declare type TransformType = 'rename' | 'select' | 'replace' | 'exclude' | 'change'
+
 declare type Transform = ChangeTransform | ExcludeTransform | RenameTransform | ReplaceTransform | SelectTransform
 
 declare interface BaseTransform {
-	type: string
+	type: TransformType
 }
 
 declare interface RenameTransform extends BaseTransform {
@@ -15,8 +17,8 @@ declare interface RenameTransform extends BaseTransform {
 }
 
 declare interface ReplaceTransform extends BaseTransform {
-	removeSource: boolean
-	sourceSelectorFunc: FunctionString 
+	removeSource?: boolean
+	sourceSelectorFunc: string // (target: HTMLElement) => string 
 	targetSelector: string
 	type: 'replace'
 }
@@ -28,7 +30,7 @@ declare interface SelectTransform extends BaseTransform {
 
 declare interface ChangeTransform extends BaseTransform {
 	selector: string
-	changeFunc: FunctionString
+	changeFunc: string // (target: HTMLElement) => HTMLElement
 	type: 'change'
 }
 

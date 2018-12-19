@@ -15,7 +15,8 @@
     "node_modules"
   ],
   "include": [
-    "src/index.ts",
+    "src/index.node.ts",
+    "src/index.browser.ts",
     "src/default.d.ts",
     "src/actions.d.ts",
     "src/exporters.d.ts",

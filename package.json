@@ -2,8 +2,9 @@
   "name": "xmlio",
   "version": "4.0.0",
   "description": "",
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
+  "browser": "build/index.browser.js",
+  "main": "build/index.node.js",
+  "types": "build/index.browser.d.ts",
   "scripts": {
     "build": "tsc",
     "bump": "hi-bump",

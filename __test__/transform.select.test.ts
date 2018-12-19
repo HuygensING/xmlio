@@ -1,4 +1,4 @@
-import Xmlio from '../src'
+import Xmlio from '../src/index.node'
 
 const xml = `<xml>
 	<locs>

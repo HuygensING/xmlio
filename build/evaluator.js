@@ -134,6 +134,9 @@ function evaluator(xml, transforms, parserOptions, options) {
             .filter(t => t != null && t.length)
             .join(textOptions.join);
     }
+    function createProxyName(name) {
+        return name.replace(/:/usg, COLON_REPLACE);
+    }
     function addProxyAttributes(el) {
         if (!parserOptions.handleNamespaces)
             return;
@@ -145,7 +148,7 @@ function evaluator(xml, transforms, parserOptions, options) {
                 const colonIndex = attr.name.indexOf(':');
                 if (colonIndex > 0 &&
                     attr.name.slice(0, colonIndex + 1) !== 'xmlns:') {
-                    node.setAttribute(attr.name.replace(/:/usg, COLON_REPLACE), node.getAttribute(attr.name));
+                    node.setAttribute(createProxyName(attr.name), node.getAttribute(attr.name));
                     proxyAttributeElements.push(node);
                 }
             }
@@ -154,7 +157,7 @@ function evaluator(xml, transforms, parserOptions, options) {
             }
         }
         toReplace.forEach(node => {
-            const proxyElement = renameElement(node, node.nodeName.replace(/:/usg, COLON_REPLACE));
+            const proxyElement = renameElement(node, createProxyName(node.nodeName));
             proxyElements.set(proxyElement, node);
             replaceElement(node, proxyElement);
         });
@@ -226,7 +229,7 @@ function evaluator(xml, transforms, parserOptions, options) {
         const colonIndex = selector.indexOf(':');
         if (colonIndex > 0 &&
             pseudos.every(pseudo => selector.slice(colonIndex, colonIndex + pseudo.length) !== pseudo)) {
-            selector = selector.replace(/:/usg, COLON_REPLACE);
+            selector = selector.replace(/:/usg, COLON_REPLACE).toLowerCase();
         }
         const elements = el.querySelectorAll(selector);
         return Array.from(elements);

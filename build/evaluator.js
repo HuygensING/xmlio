@@ -137,6 +137,7 @@ function evaluator(xml, transforms, parserOptions, options) {
     function addProxyAttributes(el) {
         if (!parserOptions.handleNamespaces)
             return;
+        const toReplace = [];
         var treeWalker = document.createTreeWalker(el, NodeFilter.SHOW_ELEMENT);
         while (treeWalker.nextNode()) {
             const node = treeWalker.currentNode;
@@ -149,11 +150,14 @@ function evaluator(xml, transforms, parserOptions, options) {
                 }
             }
             if (node.nodeName.indexOf(':') > 0) {
-                const proxyElement = renameElement(node, node.nodeName.replace(/:/usg, COLON_REPLACE));
-                proxyElements.set(proxyElement, node);
-                replaceElement(node, proxyElement);
+                toReplace.push(node);
             }
         }
+        toReplace.forEach(node => {
+            const proxyElement = renameElement(node, node.nodeName.replace(/:/usg, COLON_REPLACE));
+            proxyElements.set(proxyElement, node);
+            replaceElement(node, proxyElement);
+        });
         return el;
     }
     function removeProxies(el) {
@@ -164,7 +168,9 @@ function evaluator(xml, transforms, parserOptions, options) {
                 }
             }
         });
-        Array.from(proxyElements.entries()).forEach(([proxyEl, origEl]) => replaceElement(proxyEl, origEl));
+        Array.from(proxyElements.entries()).forEach(([proxyEl, origEl]) => {
+            replaceElement(proxyEl, origEl);
+        });
         return el;
     }
     function wrapXml(xml) {
@@ -231,17 +237,14 @@ function evaluator(xml, transforms, parserOptions, options) {
         newEl.className = el.className;
         let nextNode = el.firstChild;
         while (nextNode) {
-            newEl.appendChild(nextNode);
+            newEl.appendChild(nextNode.cloneNode(true));
             nextNode = nextNode.nextSibling;
         }
         return newEl;
     }
     function replaceElement(oldEl, newEl) {
-        if (oldEl.parentElement == null) {
-            console.log('fail', oldEl.nodeName, Array.from(oldEl.attributes).map(a => a.value).join(', '));
+        if (oldEl.parentElement == null)
             return;
-        }
-        console.log('ok', oldEl.nodeName, Array.from(oldEl.attributes).map(a => a.value).join(', '));
         oldEl.parentElement.replaceChild(newEl, oldEl);
     }
     const parser = new DOMParser();

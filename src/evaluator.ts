@@ -171,9 +171,12 @@ export default function evaluator(
 	function addProxyAttributes(el: HTMLElement): HTMLElement {
 		if (!parserOptions.handleNamespaces) return
 
+		const toReplace: Element[] = []
+
 		var treeWalker = document.createTreeWalker(el, NodeFilter.SHOW_ELEMENT)
 		while (treeWalker.nextNode()) {
 			const node = treeWalker.currentNode as Element
+
 			for (const attr of node.attributes) {
 				const colonIndex = attr.name.indexOf(':')
 				if (
@@ -186,11 +189,14 @@ export default function evaluator(
 			}
 
 			if (node.nodeName.indexOf(':') > 0) {
-				const proxyElement = renameElement(node, node.nodeName.replace(/:/usg, COLON_REPLACE))
-				proxyElements.set(proxyElement, node)
-				replaceElement(node, proxyElement)
+				toReplace.push(node)
 			}
 		}
+		toReplace.forEach(node => {
+			const proxyElement = renameElement(node, node.nodeName.replace(/:/usg, COLON_REPLACE))
+			proxyElements.set(proxyElement, node)
+			replaceElement(node, proxyElement)
+		})
 		return el
 	}
 
@@ -205,7 +211,9 @@ export default function evaluator(
 		})
 
 		// Replace the proxy elements
-		Array.from(proxyElements.entries()).forEach(([proxyEl, origEl]) => replaceElement(proxyEl, origEl))
+		Array.from(proxyElements.entries()).forEach(([proxyEl, origEl]) => {
+			replaceElement(proxyEl, origEl)
+		})
 
 		return el
 	}
@@ -298,7 +306,7 @@ export default function evaluator(
 		// Transfer children
 		let nextNode = el.firstChild as Node
 		while (nextNode) {
-			newEl.appendChild(nextNode);
+			newEl.appendChild(nextNode.cloneNode(true))
 			nextNode = nextNode.nextSibling
 		}
 
@@ -306,11 +314,7 @@ export default function evaluator(
 	}
 
 	function replaceElement(oldEl: Element, newEl: Element) {
-		if (oldEl.parentElement == null) {
-			console.log('fail', oldEl.nodeName, Array.from(oldEl.attributes).map(a => a.value).join(', '))
-			return
-		}
-		console.log('ok', oldEl.nodeName, Array.from(oldEl.attributes).map(a => a.value).join(', '))
+		if (oldEl.parentElement == null) return
 		oldEl.parentElement.replaceChild(newEl, oldEl)
 	}
 	//###### /UTILS ######\\

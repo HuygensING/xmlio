@@ -29,7 +29,7 @@ class BaseXmlio {
         return this.addTransform(transformer);
     }
     replace(targetSelector, sourceSelectorFunc, removeSource = true) {
-        const transformer = Object.assign({}, handler_defaults_1.default.change, { removeSource, sourceSelectorFunc: sourceSelectorFunc.toString(), targetSelector });
+        const transformer = Object.assign({}, handler_defaults_1.default.replace, { removeSource, sourceSelectorFunc: sourceSelectorFunc.toString(), targetSelector });
         return this.addTransform(transformer);
     }
     select(selector) {

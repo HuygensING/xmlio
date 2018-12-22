@@ -63,7 +63,7 @@ describe('xmlio - replace', () => {
 </xml>`)
 	})
 
-	test('Replace multiple targets with a single source. Keep the source', async () => {
+	test('Replace multiple targets with a single source. Keep the source abcd', async () => {
 		const xmlio = new Xmlio(xml)
 		const output = await xmlio
 			.replace('location', () => 'size', false)

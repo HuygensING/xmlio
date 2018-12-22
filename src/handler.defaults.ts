@@ -19,6 +19,7 @@ const handlerDefaults: HandlerDefaults = {
 	},
 	replace: {
 		active: true,
+		removeSource: true,
 		sourceSelectorFunc: '',
 		targetSelector: '',
 		type: 'replace',

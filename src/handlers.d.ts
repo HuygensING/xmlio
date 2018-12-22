@@ -14,6 +14,6 @@ declare type HandlerType = TransformerType | ExporterType
 declare type Handler = Exporter | XMLioTransformer
 
 declare interface BaseHandler<T> {
-	active: boolean
+	active?: boolean
 	type: T
 }

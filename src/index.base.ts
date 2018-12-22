@@ -54,7 +54,7 @@ export default abstract class BaseXmlio {
 
 	replace(targetSelector: string, sourceSelectorFunc: (target: HTMLElement) => string, removeSource: boolean = true): Api {
 		const transformer = {
-			...handlerDefaults.change,
+			...handlerDefaults.replace,
 			removeSource,
 			sourceSelectorFunc: sourceSelectorFunc.toString(),
 			targetSelector,

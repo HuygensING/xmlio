@@ -199,15 +199,6 @@ function evaluator(xml, transforms, parserOptions, options) {
         return outerFunc();
     }
     function createOutput(exporterOptions) {
-        if (exporterOptions == null || exporterOptions.type === 'xml') {
-            exporterOptions = Object.assign({ type: 'xml' }, exporterOptions);
-        }
-        if (exporterOptions.type === 'data') {
-            exporterOptions = Object.assign({ deep: true, text: true }, exporterOptions);
-        }
-        if (exporterOptions.type === 'text') {
-            exporterOptions = Object.assign({ join: ' ' }, exporterOptions);
-        }
         const output = trees
             .map(removeProxies)
             .map(unwrap)
@@ -266,8 +257,11 @@ function evaluator(xml, transforms, parserOptions, options) {
         if (transform.type === 'rename')
             rename(transform);
     });
-    return Array.isArray(options) ?
+    const output = Array.isArray(options) ?
         options.map(createOutput) :
         createOutput(options);
+    return Array.isArray(output) && output.length === 1 ?
+        output[0] :
+        output;
 }
 exports.default = evaluator;

@@ -1,8 +1,8 @@
 export default function evaluator(
 	xml: string,
-	transforms: Transform[],
+	transforms: XMLioTransformer[],
 	parserOptions: DomParserOptions,
-	options: Options | Options[]
+	options: Exporter | Exporter[]
 ): ExporterReturnValue | ExporterReturnValue[] {
 	const COLON_REPLACE = '_-_-_-_'
 	const proxyElements: Map<Element, Element> = new Map()
@@ -12,7 +12,7 @@ export default function evaluator(
 	parserOptions = { handleNamespaces: true, namespaces: [], ...parserOptions }
 
 	//###### TRANSFORMS ######\\
-	function exclude(data: ExcludeTransform) {
+	function exclude(data: ExcludeTransformer) {
 		trees = trees.map(tree => {
 			const selector = (Array.isArray(data.selector)) ? data.selector : [data.selector]
 
@@ -25,7 +25,7 @@ export default function evaluator(
 		})
 	}
 
-	function change(data: ChangeTransform) {
+	function change(data: ChangeTransformer) {
 		trees = trees.map(tree => {
 			const changeFunc = unwrapStringFunction(data.changeFunc)
 			const targets = selectElements(tree, data.selector)
@@ -34,7 +34,7 @@ export default function evaluator(
 		})
 	}
 
-	function rename(data: RenameTransform) {
+	function rename(data: RenameTransformer) {
 		trees = trees.map(tree => {
 			const oldEls = selectElements(tree, data.selector)
 			oldEls.forEach(oldEl => {
@@ -45,10 +45,10 @@ export default function evaluator(
 		})
 	}
 
-	function replace(data: ReplaceTransform) {
+	function replace(data: ReplaceTransformer) {
 		trees = trees.map(tree => replaceInTree(tree, data))
 	}
-	function replaceInTree(tree: Element, data: ReplaceTransform) {
+	function replaceInTree(tree: Element, data: ReplaceTransformer) {
 		const sourceSelectorFunc = unwrapStringFunction(data.sourceSelectorFunc)
 
 		// Retrieve the targets from the document
@@ -94,7 +94,7 @@ export default function evaluator(
 		return tree
 	}
 
-	function select(data: SelectTransform): void {
+	function select(data: SelectTransformer): void {
 		trees = trees
 			.map(tree => {
 				const found = selectElements(tree, data.selector)
@@ -108,7 +108,7 @@ export default function evaluator(
 
 
 	//###### EXPORTERS ######\\
-	function exportAsXml(tree: Element, _xmlOptions: XmlExporterOptions): string {
+	function exportAsXml(tree: Element, _xmlOptions: XmlExporter): string {
 		if (tree == null) return ''
 		const xml = new XMLSerializer().serializeToString(tree)
 		return (parserOptions.namespaces.length || !Array.from(tree.attributes).some(attr => /^xmlns/.test(attr.name))) ?
@@ -116,7 +116,7 @@ export default function evaluator(
 			xml
 	}
 
-	function exportAsData(tree: Element, dataOptions: DataExporterOptions): DataNode {
+	function exportAsData(tree: Element, dataOptions: DataExporter): DataNode {
 		function elementToDataElement(el: Node) {
 			const node = el as Element
 			const attributes = Array.from(node.attributes)
@@ -152,7 +152,7 @@ export default function evaluator(
 		return output
 	}
 
-	function exportAsText(tree: Element, textOptions: TextExporterOptions): string {
+	function exportAsText(tree: Element, textOptions: TextExporter): string {
 		var treeWalker = document.createTreeWalker(tree, NodeFilter.SHOW_TEXT)
 		const text: string[] = []
 		const firstText = treeWalker.currentNode.nodeValue != null ? treeWalker.currentNode.nodeValue.trim() : ''
@@ -254,22 +254,22 @@ export default function evaluator(
 	// The function is restored to a real function by using the Function constructor,
 	// but because the Function constructor only takes the function body, the function created
 	// by the Function constructor (outerFunc) returns the function that is needed (sourceSelectorFunc)
-	function unwrapStringFunction(func: FunctionString) {
+	function unwrapStringFunction(func: string) {
 		const outerFunc = new Function(`return ${func}`)
 		return outerFunc() // Return the inner function, because that is what the user passed
 	}
 
-	function createOutput(exporterOptions: Options): any[] {
-		// Extend the options with default values
-		if (exporterOptions == null || exporterOptions.type === 'xml') {
-			exporterOptions = { type: 'xml', ...exporterOptions } as XmlExporterOptions
-		}
-		if (exporterOptions.type === 'data') {
-			exporterOptions = { deep: true, text: true, ...exporterOptions } as DataExporterOptions
-		}
-		if (exporterOptions.type === 'text') {
-			exporterOptions = { join: ' ', ...exporterOptions } as TextExporterOptions
-		}
+	function createOutput(exporterOptions: Exporter): any[] {
+		// // Extend the options with default values
+		// if (exporterOptions == null || exporterOptions.type === 'xml') {
+		// 	exporterOptions = { type: 'xml', ...exporterOptions } as XmlExporter
+		// }
+		// if (exporterOptions.type === 'data') {
+		// 	exporterOptions = { deep: true, text: true, ...exporterOptions } as DataExporter
+		// }
+		// if (exporterOptions.type === 'text') {
+		// 	exporterOptions = { join: ' ', ...exporterOptions } as TextExporter
+		// }
 
 		const output: any[] = trees
 			.map(removeProxies)
@@ -334,7 +334,7 @@ export default function evaluator(
 	let trees: Element[] = [preparedXml]
 
 	// Apply the transforms
-	transforms.forEach((transform: Transform) => {
+	transforms.forEach((transform: XMLioTransformer) => {
 		if (transform.type === 'exclude') exclude(transform)
 		if (transform.type === 'replace') replace(transform)
 		if (transform.type === 'select') select(transform)
@@ -343,7 +343,11 @@ export default function evaluator(
 	})	
 
 	// Export the trees as configured by the user
-	return Array.isArray(options) ?
+	const output = Array.isArray(options) ?
 		options.map(createOutput) :
 		createOutput(options)
+
+	return Array.isArray(output) && output.length === 1 ?
+		output[0] :
+		output
 }

@@ -1,1 +1,1 @@
-export default function evaluator(xml: string, transforms: Transform[], parserOptions: DomParserOptions, options: Options | Options[]): ExporterReturnValue | ExporterReturnValue[];
+export default function evaluator(xml: string, transforms: XMLioTransformer[], parserOptions: DomParserOptions, options: Exporter | Exporter[]): ExporterReturnValue | ExporterReturnValue[];

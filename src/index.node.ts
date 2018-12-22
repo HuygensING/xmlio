@@ -1,19 +1,24 @@
 import puppeteer from 'puppeteer'
 import evaluator from './evaluator'
 import BaseXmlio from './index.base'
+import handlerDefaults from './handler.defaults';
 
 function logWarning(warning: string) {
 	console.log(`[WARNING] ${warning}`)
 }
 
 export default class Xmlio extends BaseXmlio {
-	async export(options: DataExporterOptions): Promise<DataNode | DataNode[]>
-	async export(options: TextExporterOptions): Promise<string | string[]>
-	async export(options: XmlExporterOptions): Promise<string | string[]>
-	async export(options: [DataExporterOptions, XmlExporterOptions]): Promise<[DataNode | DataNode[], string | string[]]>
-	async export(options: Options[]): Promise<ExporterReturnValue[]>
+	async export(options: DataExporter): Promise<DataNode | DataNode[]>
+	async export(options: TextExporter): Promise<string | string[]>
+	async export(options: XmlExporter): Promise<string | string[]>
+	async export(options: [DataExporter, XmlExporter]): Promise<[DataNode | DataNode[], string | string[]]>
+	async export(options: Exporter[]): Promise<ExporterReturnValue[]>
 	async export(): Promise<string | string[]>
-	async export(options?: Options | Options[]): Promise<ExporterReturnValue | ExporterReturnValue[]> {
+	async export(options?: Exporter | Exporter[]): Promise<ExporterReturnValue | ExporterReturnValue[]> {
+		if (options == null) options = handlerDefaults.xml
+		else if (Array.isArray(options)) options = options.map(option => ({...handlerDefaults[option.type], ...option}))
+		else options = {...handlerDefaults[options.type], ...options}
+
 		const browser = await puppeteer.launch({
 			args: [
 				'--no-sandbox',
@@ -31,7 +36,7 @@ export default class Xmlio extends BaseXmlio {
 		const output: string = await page.evaluate(
 			evaluator,
 			this.xml,
-			this.transforms,
+			this.transformers,
 			this.parserOptions,
 			options
 		)

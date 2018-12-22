@@ -1,53 +1,40 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const handler_defaults_1 = tslib_1.__importDefault(require("./handler.defaults"));
+const validators_1 = tslib_1.__importDefault(require("./validators"));
 class BaseXmlio {
     constructor(xml, parserOptions) {
         this.xml = xml;
         this.parserOptions = parserOptions;
-        this.transforms = [];
+        this.transformers = [];
     }
     addTransform(transform) {
-        this.transforms.push(transform);
+        const validate = validators_1.default[transform.type];
+        if (validate(transform))
+            this.transformers.push(transform);
         return this;
     }
     change(selector, changeFunc) {
-        this.transforms.push({
-            selector,
-            changeFunc: changeFunc.toString(),
-            type: 'change',
-        });
-        return this;
+        const transformer = Object.assign({}, handler_defaults_1.default.change, { selector, changeFunc: changeFunc.toString() });
+        return this.addTransform(transformer);
     }
     rename(selector, newName) {
-        this.transforms.push({
-            selector,
-            newName,
-            type: 'rename',
-        });
-        return this;
+        const transformer = Object.assign({}, handler_defaults_1.default.rename, { selector,
+            newName });
+        return this.addTransform(transformer);
     }
     exclude(selector) {
-        this.transforms.push({
-            selector,
-            type: 'exclude'
-        });
-        return this;
+        const transformer = Object.assign({}, handler_defaults_1.default.exclude, { selector });
+        return this.addTransform(transformer);
     }
     replace(targetSelector, sourceSelectorFunc, removeSource = true) {
-        this.transforms.push({
-            removeSource,
-            sourceSelectorFunc: sourceSelectorFunc.toString(),
-            targetSelector,
-            type: 'replace',
-        });
-        return this;
+        const transformer = Object.assign({}, handler_defaults_1.default.change, { removeSource, sourceSelectorFunc: sourceSelectorFunc.toString(), targetSelector });
+        return this.addTransform(transformer);
     }
     select(selector) {
-        this.transforms.push({
-            selector,
-            type: 'select',
-        });
-        return this;
+        const transformer = Object.assign({}, handler_defaults_1.default.select, { selector });
+        return this.addTransform(transformer);
     }
 }
 exports.default = BaseXmlio;

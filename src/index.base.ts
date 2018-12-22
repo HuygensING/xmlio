@@ -1,64 +1,74 @@
 /// <reference path="./default.d.ts" />
+/// <reference path="./handlers.d.ts" />
 /// <reference path="./exporters.d.ts" />
-/// <reference path="./actions.d.ts" />
+/// <reference path="./transformers.d.ts" />
 
 import BrowserXmlio from './index.browser'
-import NodeXmlio from './index.browser'
+import NodeXmlio from './index.node'
+import handlerDefaults from './handler.defaults'
+import validators from './validators'
+
 type Api = BrowserXmlio | NodeXmlio
 
 export default abstract class BaseXmlio {
-	protected transforms: Transform[] = []
+	protected transformers: XMLioTransformer[] = []
 
 	constructor(protected xml: string, protected parserOptions?: DomParserOptions) {}
 
 	abstract export(options?: any): any
 
-	addTransform(transform: Transform) {
-		this.transforms.push(transform)
+	addTransform(transform: XMLioTransformer) {
+		const validate = validators[transform.type]
+		if (validate(transform)) this.transformers.push(transform)
 		return this
 	}
 
 	change(selector: string, changeFunc: (target: HTMLElement) => HTMLElement): Api {
-		this.transforms.push({
+		const transformer = {
+			...handlerDefaults.change,
 			selector,
 			changeFunc: changeFunc.toString(),
-			type: 'change',
-		})
-		return this
+		}
+
+		return this.addTransform(transformer)
 	}
 
 	rename(selector: string, newName: string): Api {
-		this.transforms.push({
+		const transformer = {
+			...handlerDefaults.rename,
 			selector,
 			newName,
-			type: 'rename',
-		})
-		return this
+		}
+
+		return this.addTransform(transformer)
 	}
 
 	exclude(selector: string | string[]): Api {
-		this.transforms.push({
+		const transformer = {
+			...handlerDefaults.exclude,
 			selector,
-			type: 'exclude'
-		})
-		return this
+		}
+
+		return this.addTransform(transformer)
 	}
 
 	replace(targetSelector: string, sourceSelectorFunc: (target: HTMLElement) => string, removeSource: boolean = true): Api {
-		this.transforms.push({
+		const transformer = {
+			...handlerDefaults.change,
 			removeSource,
 			sourceSelectorFunc: sourceSelectorFunc.toString(),
 			targetSelector,
-			type: 'replace',
-		})	
-		return this
+		}
+
+		return this.addTransform(transformer)
 	}
 
 	select(selector: string): Api {
-		this.transforms.push({
+		const transformer = {
+			...handlerDefaults.select,
 			selector,
-			type: 'select',
-		})
-		return this
+		}
+
+		return this.addTransform(transformer)
 	}
 }

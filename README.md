@@ -19,3 +19,6 @@ $ npm test
 
 ## Examples
 See `__test__` dir
+
+## ToDO
+- Fix change function that wraps a target

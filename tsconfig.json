@@ -18,7 +18,8 @@
     "src/index.node.ts",
     "src/index.browser.ts",
     "src/default.d.ts",
-    "src/actions.d.ts",
+    "src/handlers.d.ts",
+    "src/transformers.d.ts",
     "src/exporters.d.ts",
   ]
 }

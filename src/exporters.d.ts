@@ -1,30 +1,18 @@
-declare type Exporter = 'data' | 'jsx' | 'html' | 'text' | 'xml'
+declare type ExporterType = 'data' | 'jsx' | 'html' | 'text' | 'xml'
 
-declare type Options = DataExporterOptions | TextExporterOptions | XmlExporterOptions
+declare type Exporter = DataExporter | TextExporter | XmlExporter
 
-declare interface BaseOptions {
-	type: Exporter
-}
-
-declare interface DataExporterOptions {
+declare interface DataExporter extends BaseHandler<ExporterType> {
 	type: 'data'
 	deep?: boolean
 	text?: boolean
 }
 
-declare interface TextExporterOptions {
+declare interface TextExporter extends BaseHandler<ExporterType> {
 	type: 'text'
 	join?: string
 }
 
-declare interface XmlExporterOptions {
+declare interface XmlExporter extends BaseHandler<ExporterType> {
 	type: 'xml'
 }
-
-declare interface DataNode {
-	name: string
-	attributes: { [key: string]: string }
-	children: DataNode[]
-}
-
-declare type ExporterReturnValue = DataNode | DataNode[] | string | string[]

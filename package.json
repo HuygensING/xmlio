@@ -2,38 +2,20 @@
   "name": "xmlio",
   "version": "4.1.0",
   "description": "",
-  "browser": "build/index.browser.js",
-  "main": "build/index.node.js",
-  "types": "build/index.browser.d.ts",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "bump": "hi-bump",
-    "test": "jest",
+    "dist": "webpack",
     "watch": "tsc -w"
   },
   "author": "Gijsjan Brouwer (https://github.com/Gijsjan)",
   "license": "ISC",
-  "dependencies": {
-    "puppeteer": "^1.11.0"
-  },
   "devDependencies": {
-    "@types/expect-puppeteer": "^3.3.0",
-    "@types/jest": "^23.3.10",
-    "@types/jest-environment-puppeteer": "^2.2.1",
-    "@types/puppeteer": "^1.11.1",
-    "hi-bump": "^1.1.1",
-    "jest": "^23.6.0",
-    "jest-puppeteer": "^3.7.0",
-    "ts-jest": "^23.10.5",
+    "ts-loader": "^5.3.3",
     "tslib": "^1.9.3",
-    "typescript": "^3.2.2"
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "moduleFileExtensions": [
-      "ts",
-      "js",
-      "json"
-    ]
+    "typescript": "^3.2.2",
+    "webpack": "^4.28.3",
+    "webpack-cli": "^3.2.1"
   }
 }

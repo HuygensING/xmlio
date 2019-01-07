@@ -127,12 +127,14 @@ export default function evaluator(
 			return { name: node.nodeName.toLowerCase(), attributes, children: [] as any[] }
 		}
 
-		const nodeByData: Map<Element, DataNode> = new Map()
+		if (!dataOptions.deep) {
+			return elementToDataElement(tree)
+		}
 
+		const nodeByData: Map<Element, DataNode> = new Map()
 		const whatToShow = dataOptions.text ? NodeFilter.SHOW_ALL : NodeFilter.SHOW_ELEMENT
 		var treeWalker = document.createTreeWalker(tree, whatToShow)
 		const output = elementToDataElement(treeWalker.currentNode)
-		if (!dataOptions.deep) return output
 		nodeByData.set(treeWalker.currentNode as Element, output)
 
 		while (treeWalker.nextNode()) {

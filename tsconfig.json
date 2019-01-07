@@ -15,8 +15,7 @@
     "node_modules"
   ],
   "include": [
-    "src/index.node.ts",
-    "src/index.browser.ts",
+    "src/index.ts",
     "src/default.d.ts",
     "src/handlers.d.ts",
     "src/transformers.d.ts",

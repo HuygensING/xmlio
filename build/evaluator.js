@@ -99,12 +99,13 @@ function evaluator(xml, transforms, parserOptions, options) {
             }, {});
             return { name: node.nodeName.toLowerCase(), attributes, children: [] };
         }
+        if (!dataOptions.deep) {
+            return elementToDataElement(tree);
+        }
         const nodeByData = new Map();
         const whatToShow = dataOptions.text ? NodeFilter.SHOW_ALL : NodeFilter.SHOW_ELEMENT;
         var treeWalker = document.createTreeWalker(tree, whatToShow);
         const output = elementToDataElement(treeWalker.currentNode);
-        if (!dataOptions.deep)
-            return output;
         nodeByData.set(treeWalker.currentNode, output);
         while (treeWalker.nextNode()) {
             let dataNode;

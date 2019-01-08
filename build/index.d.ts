@@ -6,8 +6,11 @@ import handlerDefaults from './handler.defaults';
 export { handlerDefaults };
 export default class XMLio {
     protected xml: string;
-    protected parserOptions?: DomParserOptions;
-    protected transformers: XMLioTransformer[];
+    private parserOptions?;
+    private readonly root;
+    private transformers;
+    private trees;
+    private proxyHandler;
     constructor(xml: string, parserOptions?: DomParserOptions);
     export(options: DataExporter): DataNode | DataNode[];
     export(options: TextExporter): string | string[];
@@ -15,6 +18,9 @@ export default class XMLio {
     export(options: [DataExporter, XmlExporter]): [DataNode | DataNode[], string | string[]];
     export(options: Exporter[]): ExporterReturnValue[];
     export(): string | string[];
+    private reset;
+    createOutput: (exporter: Exporter) => any[];
+    private applyTransformers;
     addTransform(transformer: XMLioTransformer): this;
     change(selector: string, changeFunc: (target: HTMLElement) => HTMLElement): XMLio;
     rename(selector: string, newName: string): XMLio;

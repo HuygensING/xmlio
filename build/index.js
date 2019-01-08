@@ -4,21 +4,77 @@ const tslib_1 = require("tslib");
 const handler_defaults_1 = tslib_1.__importDefault(require("./handler.defaults"));
 exports.handlerDefaults = handler_defaults_1.default;
 const validators_1 = tslib_1.__importDefault(require("./validators"));
-const evaluator_1 = tslib_1.__importDefault(require("./evaluator"));
+const transformers_1 = require("./evaluator/transformers");
+const exporters_1 = require("./evaluator/exporters");
+const utils_1 = require("./evaluator/utils");
+const proxy_handler_1 = tslib_1.__importDefault(require("./evaluator/proxy-handler"));
 class XMLio {
     constructor(xml, parserOptions) {
         this.xml = xml;
         this.parserOptions = parserOptions;
         this.transformers = [];
+        this.trees = [];
+        this.createOutput = (exporter) => {
+            const output = this.trees
+                .map((tree) => this.proxyHandler.removeProxies(tree))
+                .map(utils_1.unwrap)
+                .map(tree => {
+                if (exporter.type === 'xml')
+                    return exporters_1.exportAsXml(tree, exporter, this.parserOptions);
+                if (exporter.type === 'data')
+                    return exporters_1.exportAsData(tree, exporter);
+                if (exporter.type === 'text')
+                    return exporters_1.exportAsText(tree, exporter);
+            });
+            if (!output.length)
+                return null;
+            return (output.length === 1) ? output[0] : output;
+        };
+        this.parserOptions = Object.assign({ handleNamespaces: true, namespaces: [] }, parserOptions);
+        this.proxyHandler = new proxy_handler_1.default(this.parserOptions);
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(utils_1.wrapXml(xml, this.parserOptions), 'application/xml');
+        const root = this.proxyHandler.addProxies(doc.documentElement);
+        let firstChild = root.firstChild;
+        while (firstChild != null && !firstChild.childNodes.length) {
+            const nextChild = firstChild.nextSibling;
+            firstChild.parentNode.removeChild(firstChild);
+            firstChild = nextChild;
+        }
+        this.root = root.cloneNode(true);
+        this.trees = [root];
     }
     export(options) {
         if (options == null)
-            options = handler_defaults_1.default.xml;
-        else if (Array.isArray(options))
+            options = [handler_defaults_1.default.xml];
+        else {
+            if (!Array.isArray(options))
+                options = [options];
             options = options.map(option => (Object.assign({}, handler_defaults_1.default[option.type], option)));
-        else
-            options = Object.assign({}, handler_defaults_1.default[options.type], options);
-        return evaluator_1.default(this.xml, this.transformers, this.parserOptions, options);
+        }
+        this.applyTransformers();
+        let output = options.map(this.createOutput);
+        output = output.length === 1 ? output[0] : output;
+        this.reset();
+        return output;
+    }
+    reset() {
+        this.transformers = [];
+        this.trees = [this.root.cloneNode(true)];
+    }
+    applyTransformers() {
+        this.transformers.forEach((transformer) => {
+            if (transformer.type === 'exclude')
+                this.trees = transformers_1.exclude(this.trees, transformer);
+            if (transformer.type === 'replace')
+                this.trees = transformers_1.replace(this.trees, transformer);
+            if (transformer.type === 'select')
+                this.trees = transformers_1.select(this.trees, transformer, this.parserOptions);
+            if (transformer.type === 'change')
+                this.trees = transformers_1.change(this.trees, transformer);
+            if (transformer.type === 'rename')
+                this.trees = transformers_1.rename(this.trees, transformer);
+        });
     }
     addTransform(transformer) {
         transformer = Object.assign({}, handler_defaults_1.default[transformer.type], transformer);

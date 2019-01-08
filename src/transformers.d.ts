@@ -10,7 +10,7 @@ declare interface RenameTransformer extends BaseHandler<TransformerType> {
 
 declare interface ReplaceTransformer extends BaseHandler<TransformerType> {
 	removeSource?: boolean
-	sourceSelectorFunc: string // (target: HTMLElement) => string 
+	sourceSelectorFunc: string // (target: HTMLElement) => string | Node
 	targetSelector: string
 	type: 'replace'
 }

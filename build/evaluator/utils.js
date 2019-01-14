@@ -2,14 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const proxy_handler_1 = require("./proxy-handler");
 const pseudos = [':empty', ':not(', ':first-child', ':last-child', ':nth-child(', ':nth-last-child', ':nth-of-type', ':first-of-type', ':last-of-type', ':only-child'];
-function wrapXml(xml, parserOptions) {
-    const namespaces = parserOptions.namespaces.reduce((prev, ns) => {
-        prev += ` xmlns:${ns}="http://example.com"`;
-        return prev;
-    }, '');
-    return `<section${namespaces}>${xml}</section>`;
-}
-exports.wrapXml = wrapXml;
 function wrapTree(parserOptions) {
     return function (el) {
         const wrapper = document.createElement('section');

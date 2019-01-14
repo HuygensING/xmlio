@@ -87,8 +87,6 @@ function select(trees, data, parserOptions) {
     return trees
         .map(tree => {
         const found = utils_1.selectElements(tree, data.selector);
-        if (!found.length)
-            return [tree];
         return found.map(utils_1.wrapTree(parserOptions));
     })
         .reduce((prev, curr) => prev.concat(curr), []);

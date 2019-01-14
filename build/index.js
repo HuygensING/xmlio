@@ -33,14 +33,11 @@ class XMLio {
         this.parserOptions = Object.assign({ handleNamespaces: true, namespaces: [] }, parserOptions);
         this.proxyHandler = new proxy_handler_1.default(this.parserOptions);
         const parser = new DOMParser();
-        const doc = parser.parseFromString(utils_1.wrapXml(xml, this.parserOptions), 'application/xml');
-        const root = this.proxyHandler.addProxies(doc.documentElement);
-        let firstChild = root.firstChild;
-        while (firstChild != null && !firstChild.childNodes.length) {
-            const nextChild = firstChild.nextSibling;
-            firstChild.parentNode.removeChild(firstChild);
-            firstChild = nextChild;
-        }
+        const doc = parser.parseFromString(xml, 'application/xml');
+        let root = document.createElement('root');
+        parserOptions.namespaces.forEach((ns) => root.setAttribute(`xmlns:${ns}`, "http://example.com"));
+        root.appendChild(doc.documentElement);
+        root = this.proxyHandler.addProxies(root);
         this.root = [root.cloneNode(true)];
         this.trees = [root];
     }

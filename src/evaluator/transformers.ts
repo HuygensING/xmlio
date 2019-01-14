@@ -99,7 +99,7 @@ export function select(trees: Element[], data: SelectTransformer, parserOptions:
 		.map(tree => {
 			const found = selectElements(tree, data.selector)
 			// If the selector does not match any elements, return the original tree
-			if (!found.length) return [tree]
+			// if (!found.length) return [tree]
 			return found.map(wrapTree(parserOptions))
 		})
 		.reduce((prev, curr) => prev.concat(curr), [])

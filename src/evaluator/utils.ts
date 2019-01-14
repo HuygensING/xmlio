@@ -7,13 +7,13 @@ const pseudos = [':empty', ':not(', ':first-child', ':last-child', ':nth-child('
 // To match the root node when querySelector(All) is used,
 // a wrapper node is used, because querySelector(All) only
 // searches children.
-export function wrapXml(xml: string, parserOptions: DomParserOptions): string {
-	const namespaces = parserOptions.namespaces.reduce((prev, ns) => {
-		prev += ` xmlns:${ns}="http://example.com"`
-		return prev
-	}, '')
-	return `<section${namespaces}>${xml}</section>`
-}
+// export function wrapXml(xml: string, parserOptions: DomParserOptions): string {
+// 	const namespaces = parserOptions.namespaces.reduce((prev, ns) => {
+// 		prev += ` xmlns:${ns}="http://example.com"`
+// 		return prev
+// 	}, '')
+// 	return `<section${namespaces}>${xml}</section>`
+// }
 
 // Same as wrapXml, but for a node tree. This is used after a
 // select transform, wrapXml is used when the XML string is converted

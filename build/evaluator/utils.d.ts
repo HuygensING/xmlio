@@ -1,4 +1,3 @@
-export declare function wrapXml(xml: string, parserOptions: DomParserOptions): string;
 export declare function wrapTree(parserOptions: DomParserOptions): (el: Element) => Element;
 export declare function unwrap(wrapper: HTMLElement): HTMLElement;
 export declare function unwrapStringFunction(func: string): any;

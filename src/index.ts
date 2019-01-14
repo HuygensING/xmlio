@@ -7,7 +7,7 @@ import handlerDefaults from './handler.defaults'
 import validators from './validators'
 import { exclude, replace, select, change, rename } from './evaluator/transformers'
 import { exportAsData, exportAsXml, exportAsText } from './evaluator/exporters'
-import { wrapXml, unwrap } from './evaluator/utils';
+import { unwrap } from './evaluator/utils'
 import ProxyHandler from './evaluator/proxy-handler'
 
 export { handlerDefaults }
@@ -26,14 +26,11 @@ export default class XMLio {
 		// Create the DOMParser and create the trees array. The trees array is initialized with the parsed tree.
 		// An array is used, because the select transform can create multiple trees.
 		const parser = new DOMParser()
-		const doc = parser.parseFromString(wrapXml(xml, this.parserOptions), 'application/xml')
-		const root = this.proxyHandler.addProxies(doc.documentElement)
-		let firstChild = root.firstChild
-		while (firstChild != null && !firstChild.childNodes.length) {
-			const nextChild = firstChild.nextSibling as ChildNode
-			firstChild.parentNode.removeChild(firstChild)
-			firstChild = nextChild
-		}
+		const doc = parser.parseFromString(xml, 'application/xml')
+		let root = document.createElement('root') as Element
+		parserOptions.namespaces.forEach((ns) => root.setAttribute(`xmlns:${ns}`, "http://example.com"))
+		root.appendChild(doc.documentElement)
+		root = this.proxyHandler.addProxies(root)
 		this.root = [root.cloneNode(true) as Element]
 		this.trees = [root]
 	}

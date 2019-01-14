@@ -41,7 +41,7 @@ class XMLio {
             firstChild.parentNode.removeChild(firstChild);
             firstChild = nextChild;
         }
-        this.root = root.cloneNode(true);
+        this.root = [root.cloneNode(true)];
         this.trees = [root];
     }
     export(options) {
@@ -58,9 +58,15 @@ class XMLio {
         this.reset();
         return output;
     }
+    persist() {
+        this.applyTransformers();
+        this.root = this.trees.map(tree => tree.cloneNode(true));
+        this.reset();
+        return this;
+    }
     reset() {
         this.transformers = [];
-        this.trees = [this.root.cloneNode(true)];
+        this.trees = this.root.map(el => el.cloneNode(true));
     }
     applyTransformers() {
         this.transformers.forEach((transformer) => {
@@ -85,7 +91,7 @@ class XMLio {
     }
     change(selector, changeFunc) {
         return this.addTransform({
-            changeFunc: changeFunc.toString(),
+            changeFunc,
             selector,
             type: 'change',
         });
@@ -106,7 +112,7 @@ class XMLio {
     replace(targetSelector, sourceSelectorFunc, removeSource = true) {
         return this.addTransform({
             removeSource,
-            sourceSelectorFunc: sourceSelectorFunc.toString(),
+            sourceSelectorFunc,
             targetSelector,
             type: 'replace',
         });

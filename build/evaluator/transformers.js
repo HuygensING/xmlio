@@ -15,9 +15,8 @@ function exclude(trees, data) {
 exports.exclude = exclude;
 function change(trees, data) {
     return trees.map(tree => {
-        const changeFunc = utils_1.unwrapStringFunction(data.changeFunc);
         const targets = utils_1.selectElements(tree, data.selector);
-        Array.from(targets).forEach(changeFunc);
+        Array.from(targets).forEach(data.changeFunc);
         return tree;
     });
 }
@@ -38,7 +37,6 @@ function replace(trees, data) {
 }
 exports.replace = replace;
 function replaceInTree(tree, data) {
-    const sourceSelectorFunc = utils_1.unwrapStringFunction(data.sourceSelectorFunc);
     const targets = utils_1.selectElements(tree, data.targetSelector);
     if (!targets.length)
         console.log('WARNING', `No targets found for ${data.targetSelector}`);
@@ -46,7 +44,7 @@ function replaceInTree(tree, data) {
     Array.from(targets)
         .forEach(target => {
         used.push(target);
-        const sourceSelector = sourceSelectorFunc(target);
+        const sourceSelector = data.sourceSelectorFunc(target);
         let sources = [];
         if (sourceSelector instanceof Node) {
             sources.push(sourceSelector);

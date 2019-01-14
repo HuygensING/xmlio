@@ -13,7 +13,7 @@ import ProxyHandler from './evaluator/proxy-handler'
 export { handlerDefaults }
 
 export default class XMLio {
-	private readonly root: Element
+	private root: Element[]
 	private transformers: XMLioTransformer[] = []
 	private trees: Element[] = []
 	private proxyHandler: ProxyHandler
@@ -34,7 +34,7 @@ export default class XMLio {
 			firstChild.parentNode.removeChild(firstChild)
 			firstChild = nextChild
 		}
-		this.root = root.cloneNode(true) as Element
+		this.root = [root.cloneNode(true) as Element]
 		this.trees = [root]
 	}
 
@@ -59,12 +59,19 @@ export default class XMLio {
 		return output
 	}
 
-	private reset() {
-		this.transformers = []
-		this.trees = [this.root.cloneNode(true) as Element]
+	persist(): XMLio {
+		this.applyTransformers()
+		this.root = this.trees.map(tree => tree.cloneNode(true) as Element)
+		this.reset()
+		return this
 	}
 
-	createOutput = (exporter: Exporter): any[] => {
+	private reset() {
+		this.transformers = []
+		this.trees = this.root.map(el => el.cloneNode(true) as Element)
+	}
+
+	private createOutput = (exporter: Exporter): any[] => {
 		const output: any[] = this.trees
 			.map((tree) => this.proxyHandler.removeProxies(tree))
 			.map(unwrap)
@@ -105,7 +112,7 @@ export default class XMLio {
 
 	change(selector: string, changeFunc: (target: HTMLElement) => HTMLElement): XMLio {
 		return this.addTransform({
-			changeFunc: changeFunc.toString(),
+			changeFunc,
 			selector,
 			type: 'change',
 		})
@@ -129,7 +136,7 @@ export default class XMLio {
 	replace(targetSelector: string, sourceSelectorFunc: (target: HTMLElement) => string, removeSource: boolean = true): XMLio {
 		return this.addTransform({
 			removeSource,
-			sourceSelectorFunc: sourceSelectorFunc.toString(),
+			sourceSelectorFunc,
 			targetSelector,
 			type: 'replace',
 		})

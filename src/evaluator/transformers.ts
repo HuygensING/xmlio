@@ -1,6 +1,5 @@
-import { selectElements, unwrapStringFunction, renameElement, replaceElement, wrapTree } from './utils'
-import { COLON_REPLACE } from './proxy-handler';
-// import { COLON_REPLACE } from '.';
+import { selectElements, renameElement, replaceElement, wrapTree } from './utils'
+import { COLON_REPLACE } from './proxy-handler'
 
 export function exclude(trees: Element[], data: ExcludeTransformer): Element[] {
 	return trees.map(tree => {
@@ -17,9 +16,9 @@ export function exclude(trees: Element[], data: ExcludeTransformer): Element[] {
 
 export function change(trees: Element[], data: ChangeTransformer): Element[] {
 	return trees.map(tree => {
-		const changeFunc = unwrapStringFunction(data.changeFunc)
+		// const changeFunc = unwrapStringFunction(data.changeFunc)
 		const targets = selectElements(tree, data.selector)
-		Array.from(targets).forEach(changeFunc)
+		Array.from(targets).forEach(data.changeFunc)
 		return tree
 	})
 }
@@ -39,7 +38,7 @@ export function replace(trees: Element[], data: ReplaceTransformer): Element[] {
 	return trees.map(tree => replaceInTree(tree, data))
 }
 function replaceInTree(tree: Element, data: ReplaceTransformer) {
-	const sourceSelectorFunc = unwrapStringFunction(data.sourceSelectorFunc)
+	// const sourceSelectorFunc = unwrapStringFunction(data.sourceSelectorFunc)
 
 	// Retrieve the targets from the document
 	const targets = selectElements(tree, data.targetSelector)
@@ -55,7 +54,7 @@ function replaceInTree(tree: Element, data: ReplaceTransformer) {
 			used.push(target)
 
 			// Retrieve the sources, but subtract the already used sources
-			const sourceSelector = sourceSelectorFunc(target)
+			const sourceSelector = data.sourceSelectorFunc(target)
 			let sources = []
 			if (sourceSelector instanceof Node) {
 				sources.push(sourceSelector)

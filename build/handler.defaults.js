@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const handlerDefaults = {
     change: {
         active: true,
-        changeFunc: '',
+        changeFunc: (el) => el,
         selector: '',
         type: 'change',
     },
@@ -21,7 +21,7 @@ const handlerDefaults = {
     replace: {
         active: true,
         removeSource: true,
-        sourceSelectorFunc: '',
+        sourceSelectorFunc: () => '',
         targetSelector: '',
         type: 'replace',
     },

@@ -2,7 +2,7 @@ const handlerDefaults: HandlerDefaults = {
 	// Transformers
 	change: {
 		active: true,
-		changeFunc: '',
+		changeFunc: (el: Element) => el,
 		selector: '',
 		type: 'change',
 	},
@@ -20,7 +20,7 @@ const handlerDefaults: HandlerDefaults = {
 	replace: {
 		active: true,
 		removeSource: true,
-		sourceSelectorFunc: '',
+		sourceSelectorFunc: () => '',
 		targetSelector: '',
 		type: 'replace',
 	},

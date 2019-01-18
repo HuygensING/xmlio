@@ -7,6 +7,7 @@ declare interface HandlerDefaults {
 	xml: XmlExporter
 	data: DataExporter
 	text: TextExporter
+	dom: DomExporter
 } 
 
 declare type HandlerType = TransformerType | ExporterType

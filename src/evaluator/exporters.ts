@@ -25,12 +25,13 @@ export function exportAsData(tree: Element, dataOptions: DataExporter): DataNode
 
 
 	if (!dataOptions.deep) {
-		let root = tree
-		while (!root.childNodes.length) {
-			root = root.nextElementSibling
-		}
+		// let root = tree
+		// console.log(root)
+		// while (root != null && !root.childNodes.length) {
+		// 	root = root.nextElementSibling
+		// }
 
-		return elementToDataElement(root)
+		return elementToDataElement(tree)
 	}
 
 	const nodeByData: Map<Element, DataNode> = new Map()
@@ -67,4 +68,8 @@ export function exportAsText(tree: Element, textOptions: TextExporter): string {
 	return text
 		.filter(t => t != null && t.length)
 		.join(textOptions.join)
+}
+
+export function exportAsDOM(tree: Element, _domOptions: DomExporter): Element {
+	return tree
 }

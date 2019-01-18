@@ -1,6 +1,6 @@
-declare type ExporterType = 'data' | 'jsx' | 'html' | 'text' | 'xml'
+declare type ExporterType = 'data' | 'jsx' | 'html' | 'text' | 'xml' | 'dom'
 
-declare type Exporter = DataExporter | TextExporter | XmlExporter
+declare type Exporter = DataExporter | TextExporter | XmlExporter | DomExporter
 
 declare interface DataExporter extends BaseHandler<ExporterType> {
 	type: 'data'
@@ -15,4 +15,8 @@ declare interface TextExporter extends BaseHandler<ExporterType> {
 
 declare interface XmlExporter extends BaseHandler<ExporterType> {
 	type: 'xml'
+}
+
+declare interface DomExporter extends BaseHandler<ExporterType> {
+	type: 'dom'
 }

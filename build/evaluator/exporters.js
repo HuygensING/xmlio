@@ -22,11 +22,7 @@ function exportAsData(tree, dataOptions) {
         return { name: node.nodeName.toLowerCase(), attributes, children: [] };
     }
     if (!dataOptions.deep) {
-        let root = tree;
-        while (!root.childNodes.length) {
-            root = root.nextElementSibling;
-        }
-        return elementToDataElement(root);
+        return elementToDataElement(tree);
     }
     const nodeByData = new Map();
     const whatToShow = dataOptions.text ? NodeFilter.SHOW_ALL : NodeFilter.SHOW_ELEMENT;
@@ -63,3 +59,7 @@ function exportAsText(tree, textOptions) {
         .join(textOptions.join);
 }
 exports.exportAsText = exportAsText;
+function exportAsDOM(tree, _domOptions) {
+    return tree;
+}
+exports.exportAsDOM = exportAsDOM;

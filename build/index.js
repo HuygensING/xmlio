@@ -9,8 +9,8 @@ const exporters_1 = require("./evaluator/exporters");
 const utils_1 = require("./evaluator/utils");
 const proxy_handler_1 = tslib_1.__importDefault(require("./evaluator/proxy-handler"));
 class XMLio {
-    constructor(xml, parserOptions) {
-        this.xml = xml;
+    constructor(el, parserOptions) {
+        this.el = el;
         this.parserOptions = parserOptions;
         this.transformers = [];
         this.trees = [];
@@ -25,6 +25,8 @@ class XMLio {
                     return exporters_1.exportAsData(tree, exporter);
                 if (exporter.type === 'text')
                     return exporters_1.exportAsText(tree, exporter);
+                if (exporter.type === 'dom')
+                    return exporters_1.exportAsDOM(tree, exporter);
             });
             if (!output.length)
                 return null;
@@ -32,11 +34,9 @@ class XMLio {
         };
         this.parserOptions = Object.assign({ handleNamespaces: true, namespaces: [] }, parserOptions);
         this.proxyHandler = new proxy_handler_1.default(this.parserOptions);
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(xml, 'application/xml');
         let root = document.createElement('root');
-        parserOptions.namespaces.forEach((ns) => root.setAttribute(`xmlns:${ns}`, "http://example.com"));
-        root.appendChild(doc.documentElement);
+        this.parserOptions.namespaces.forEach((ns) => root.setAttribute(`xmlns:${ns}`, "http://example.com"));
+        root.appendChild(el);
         root = this.proxyHandler.addProxies(root);
         this.root = [root.cloneNode(true)];
         this.trees = [root];

@@ -9,4 +9,4 @@ declare interface DataNode {
 	children: DataNode[]
 }
 
-declare type ExporterReturnValue = DataNode | DataNode[] | string | string[]
+declare type ExporterReturnValue = DataNode | DataNode[] | string | string[] | Element | Element[]

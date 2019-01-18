@@ -6,7 +6,7 @@
 import handlerDefaults from './handler.defaults'
 import validators from './validators'
 import { exclude, replace, select, change, rename } from './evaluator/transformers'
-import { exportAsData, exportAsXml, exportAsText } from './evaluator/exporters'
+import { exportAsData, exportAsXml, exportAsText, exportAsDOM } from './evaluator/exporters'
 import { unwrap } from './evaluator/utils'
 import ProxyHandler from './evaluator/proxy-handler'
 
@@ -18,18 +18,19 @@ export default class XMLio {
 	private trees: Element[] = []
 	private proxyHandler: ProxyHandler
 
-	constructor(protected xml: string, private parserOptions?: DomParserOptions) {
+	constructor(protected el: Element, private parserOptions?: DomParserOptions) {
 		this.parserOptions = { handleNamespaces: true, namespaces: [], ...parserOptions }
 
 		this.proxyHandler = new ProxyHandler(this.parserOptions)
 
 		// Create the DOMParser and create the trees array. The trees array is initialized with the parsed tree.
 		// An array is used, because the select transform can create multiple trees.
-		const parser = new DOMParser()
-		const doc = parser.parseFromString(xml, 'application/xml')
+		// const parser = new DOMParser()
+		// const doc = parser.parseFromString(xml, 'application/xml')
+
 		let root = document.createElement('root') as Element
-		parserOptions.namespaces.forEach((ns) => root.setAttribute(`xmlns:${ns}`, "http://example.com"))
-		root.appendChild(doc.documentElement)
+		this.parserOptions.namespaces.forEach((ns) => root.setAttribute(`xmlns:${ns}`, "http://example.com"))
+		root.appendChild(el)
 		root = this.proxyHandler.addProxies(root)
 		this.root = [root.cloneNode(true) as Element]
 		this.trees = [root]
@@ -38,6 +39,7 @@ export default class XMLio {
 	export(options: DataExporter): DataNode | DataNode[]
 	export(options: TextExporter): string | string[]
 	export(options: XmlExporter): string | string[]
+	export(options: DomExporter): Element | Element[]
 	export(options: [DataExporter, XmlExporter]): [DataNode | DataNode[], string | string[]]
 	export(options: Exporter[]): ExporterReturnValue[]
 	export(): string | string[]
@@ -76,6 +78,7 @@ export default class XMLio {
 				if (exporter.type === 'xml') return exportAsXml(tree, exporter, this.parserOptions)
 				if (exporter.type === 'data') return exportAsData(tree, exporter)
 				if (exporter.type === 'text') return exportAsText(tree, exporter)
+				if (exporter.type === 'dom') return exportAsDOM(tree, exporter)
 			})
 
 		if (!output.length) return null

@@ -44,6 +44,10 @@ const handlerDefaults = {
         active: true,
         join: ' ',
         type: 'text'
+    },
+    dom: {
+        active: true,
+        type: 'dom'
     }
 };
 exports.default = handlerDefaults;

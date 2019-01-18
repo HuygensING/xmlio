@@ -45,6 +45,10 @@ const handlerDefaults: HandlerDefaults = {
 		active: true,
 		join: ' ',
 		type: 'text'
+	},
+	dom: {
+		active: true,
+		type: 'dom'
 	}
 }
 

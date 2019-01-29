@@ -1,6 +1,6 @@
 {
   "name": "xmlio",
-  "version": "5.1.1",
+  "version": "5.1.2",
   "description": "",
   "main": "build/index.js",
   "types": "build/index.d.ts",

@@ -1,13 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const handler_defaults_1 = tslib_1.__importDefault(require("./handler.defaults"));
+const handler_defaults_1 = require("./handler.defaults");
 exports.handlerDefaults = handler_defaults_1.default;
-const validators_1 = tslib_1.__importDefault(require("./validators"));
+const validators_1 = require("./validators");
 const transformers_1 = require("./evaluator/transformers");
 const exporters_1 = require("./evaluator/exporters");
 const utils_1 = require("./evaluator/utils");
-const proxy_handler_1 = tslib_1.__importDefault(require("./evaluator/proxy-handler"));
+const proxy_handler_1 = require("./evaluator/proxy-handler");
 class XMLio {
     constructor(el, parserOptions) {
         this.parserOptions = parserOptions;

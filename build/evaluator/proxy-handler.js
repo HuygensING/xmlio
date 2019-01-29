@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = require("./utils");
 exports.COLON_REPLACE = '_-_-_-_';
 function createProxyName(name) {
-    return name.replace(/:/usg, exports.COLON_REPLACE);
+    return name.replace(/:/ug, exports.COLON_REPLACE);
 }
 class ProxyHandler {
     constructor(parserOptions) {

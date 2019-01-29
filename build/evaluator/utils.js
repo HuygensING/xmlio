@@ -26,7 +26,7 @@ function selectElements(el, selector) {
     const colonIndex = selector.indexOf(':');
     if (colonIndex > 0 &&
         pseudos.every(pseudo => selector.slice(colonIndex, colonIndex + pseudo.length) !== pseudo)) {
-        selector = selector.replace(/:/usg, proxy_handler_1.COLON_REPLACE).toLowerCase();
+        selector = selector.replace(/:/ug, proxy_handler_1.COLON_REPLACE).toLowerCase();
     }
     const elements = el.querySelectorAll(selector);
     return Array.from(elements);

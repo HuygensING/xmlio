@@ -7,7 +7,7 @@ function exportAsXml(tree, _xmlOptions, parserOptions) {
     return (parserOptions.namespaces.length ||
         (tree.attributes != null &&
             !Array.from(tree.attributes).some(attr => /^xmlns/.test(attr.name)))) ?
-        xml.replace(/\sxmlns(:.*?)?="(.*?)"/usg, '') :
+        xml.replace(/\sxmlns(:.*?)?="(.*?)"/ug, '') :
         xml;
 }
 exports.exportAsXml = exportAsXml;

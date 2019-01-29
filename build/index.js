@@ -10,7 +10,6 @@ const utils_1 = require("./evaluator/utils");
 const proxy_handler_1 = tslib_1.__importDefault(require("./evaluator/proxy-handler"));
 class XMLio {
     constructor(el, parserOptions) {
-        this.el = el;
         this.parserOptions = parserOptions;
         this.transformers = [];
         this.trees = [];

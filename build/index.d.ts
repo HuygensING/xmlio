@@ -5,7 +5,6 @@
 import handlerDefaults from './handler.defaults';
 export { handlerDefaults };
 export default class XMLio {
-    protected el: Element;
     private parserOptions?;
     private root;
     private transformers;

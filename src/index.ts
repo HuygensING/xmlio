@@ -18,7 +18,7 @@ export default class XMLio {
 	private trees: Element[] = []
 	private proxyHandler: ProxyHandler
 
-	constructor(protected el: Element, private parserOptions?: DomParserOptions) {
+	constructor(el: Element, private parserOptions?: DomParserOptions) {
 		this.parserOptions = { handleNamespaces: true, namespaces: [], ...parserOptions }
 
 		this.proxyHandler = new ProxyHandler(this.parserOptions)

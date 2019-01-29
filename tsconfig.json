@@ -2,12 +2,11 @@
   "compilerOptions": {
     "baseUrl": ".",
     "declaration": true,
-    "esModuleInterop": true,
     "importHelpers": true,
     "module": "commonjs",
     "noImplicitAny": true,
     "noUnusedLocals": true,
-    "outDir": "./build",
+    "outDir": "build",
     "removeComments": true,
     "target": "es6"
   },

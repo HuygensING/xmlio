@@ -3,7 +3,7 @@ import { renameElement, replaceElement } from './utils';
 export const COLON_REPLACE = '_-_-_-_'
 
 function createProxyName(name: string) {
-	return name.replace(/:/usg, COLON_REPLACE)
+	return name.replace(/:/ug, COLON_REPLACE)
 }
 
 export default class ProxyHandler {

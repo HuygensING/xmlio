@@ -8,7 +8,7 @@ export function exportAsXml(tree: Element, _xmlOptions: XmlExporter, parserOptio
 			!Array.from(tree.attributes).some(attr => /^xmlns/.test(attr.name))
 		)
 	) ?
-		xml.replace(/\sxmlns(:.*?)?="(.*?)"/usg, '') :
+		xml.replace(/\sxmlns(:.*?)?="(.*?)"/ug, '') :
 		xml
 }
 

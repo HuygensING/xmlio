@@ -53,7 +53,7 @@ export function selectElements(el: Element, selector: string): Element[] {
 		// Replace the colon and convert the whole selector to lower case.
 		// For instance a selector "some:uiComp" is not found, but "some:uicomp" is,
 		// even though the name of the node is <some:uiComp>
-		selector = selector.replace(/:/usg, COLON_REPLACE).toLowerCase()
+		selector = selector.replace(/:/ug, COLON_REPLACE).toLowerCase()
 	}
 
 	const elements = el.querySelectorAll(selector)

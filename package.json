@@ -10,7 +10,7 @@
     "watch": "tsc -w"
   },
   "author": "Gijsjan Brouwer (https://github.com/Gijsjan)",
-  "license": "ISC",
+  "license": "GPL-3.0-or-later",
   "devDependencies": {
     "ts-loader": "^5.3.3",
     "tslib": "^1.9.3",

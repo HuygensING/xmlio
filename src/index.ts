@@ -23,11 +23,6 @@ export default class XMLio {
 
 		this.proxyHandler = new ProxyHandler(this.parserOptions)
 
-		// Create the DOMParser and create the trees array. The trees array is initialized with the parsed tree.
-		// An array is used, because the select transform can create multiple trees.
-		// const parser = new DOMParser()
-		// const doc = parser.parseFromString(xml, 'application/xml')
-
 		let root = document.createElement('root') as Element
 		this.parserOptions.namespaces.forEach((ns) => root.setAttribute(`xmlns:${ns}`, "http://example.com"))
 		root.appendChild(el)

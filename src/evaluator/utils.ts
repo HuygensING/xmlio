@@ -66,7 +66,9 @@ export function renameElement(el: Element, newName: string): Element {
 
 	// Transfer attributes
 	Array.from(el.attributes).forEach(attr => newEl.setAttribute(attr.name, el.getAttribute(attr.name)))
-	newEl.className = el.className
+	if (el.className.length) {
+		newEl.className = el.className
+	}
 
 	// Transfer children
 	let nextNode = el.firstChild as Node

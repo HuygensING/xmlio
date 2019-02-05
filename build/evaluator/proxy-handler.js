@@ -5,10 +5,21 @@ exports.COLON_REPLACE = '_-_-_-_';
 function createProxyName(name) {
     return name.replace(/:/ug, exports.COLON_REPLACE);
 }
+function revertProxyName(name) {
+    const re = new RegExp(exports.COLON_REPLACE, 'ug');
+    return name.replace(re, ':');
+}
+function getDepth(node, parent) {
+    let depth = 0;
+    while (node !== parent) {
+        depth += 1;
+        node = node.parentNode;
+    }
+    return depth;
+}
 class ProxyHandler {
     constructor(parserOptions) {
         this.parserOptions = parserOptions;
-        this.proxyElements = new Map();
         this.proxyAttributeElements = [];
     }
     addProxies(el) {
@@ -27,13 +38,17 @@ class ProxyHandler {
                 }
             }
             if (node.nodeName.indexOf(':') > 0) {
-                toReplace.push(node);
+                toReplace.push({
+                    depth: getDepth(node, el),
+                    node
+                });
             }
         }
-        toReplace.forEach(node => {
-            const proxyElement = utils_1.renameElement(node, createProxyName(node.nodeName));
-            this.proxyElements.set(proxyElement, node);
-            utils_1.replaceElement(node, proxyElement);
+        toReplace
+            .sort((a, b) => b.depth - a.depth)
+            .forEach(rep => {
+            const proxyElement = utils_1.renameElement(rep.node, createProxyName(rep.node.nodeName));
+            utils_1.replaceElement(rep.node, proxyElement);
         });
         return el;
     }
@@ -45,8 +60,22 @@ class ProxyHandler {
                 }
             }
         });
-        Array.from(this.proxyElements.entries()).forEach(([proxyEl, origEl]) => {
-            utils_1.replaceElement(proxyEl, origEl);
+        const toReplace = [];
+        var treeWalker = document.createTreeWalker(el, NodeFilter.SHOW_ELEMENT);
+        while (treeWalker.nextNode()) {
+            const node = treeWalker.currentNode;
+            if (node.nodeName.indexOf(exports.COLON_REPLACE) > 0) {
+                toReplace.push({
+                    depth: getDepth(node, el),
+                    node
+                });
+            }
+        }
+        toReplace
+            .sort((a, b) => b.depth - a.depth)
+            .forEach(rep => {
+            const originalElement = utils_1.renameElement(rep.node, revertProxyName(rep.node.nodeName));
+            utils_1.replaceElement(rep.node, originalElement);
         });
         return el;
     }

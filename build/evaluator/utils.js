@@ -35,7 +35,9 @@ exports.selectElements = selectElements;
 function renameElement(el, newName) {
     const newEl = document.createElement(newName);
     Array.from(el.attributes).forEach(attr => newEl.setAttribute(attr.name, el.getAttribute(attr.name)));
-    newEl.className = el.className;
+    if (el.className.length) {
+        newEl.className = el.className;
+    }
     let nextNode = el.firstChild;
     while (nextNode) {
         newEl.appendChild(nextNode.cloneNode(true));

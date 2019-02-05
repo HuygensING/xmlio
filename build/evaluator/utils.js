@@ -22,11 +22,14 @@ function unwrapStringFunction(func) {
     return outerFunc();
 }
 exports.unwrapStringFunction = unwrapStringFunction;
+function replacer(match, offset, string) {
+    if (pseudos.some(pseudo => string.slice(offset, offset + pseudo.length) === pseudo))
+        return match;
+    return proxy_handler_1.COLON_REPLACE;
+}
 function selectElements(el, selector) {
-    const colonIndex = selector.indexOf(':');
-    if (colonIndex > 0 &&
-        pseudos.every(pseudo => selector.slice(colonIndex, colonIndex + pseudo.length) !== pseudo)) {
-        selector = selector.replace(/:/ug, proxy_handler_1.COLON_REPLACE);
+    if (selector.indexOf(':') > 0) {
+        selector = selector.replace(/:/ug, replacer);
     }
     const elements = el.querySelectorAll(selector);
     return Array.from(elements);

@@ -34,7 +34,6 @@ class ProxyHandler {
                 if (colonIndex > 0 &&
                     attr.name.slice(0, colonIndex + 1) !== 'xmlns:') {
                     node.setAttribute(createProxyName(attr.name), node.getAttribute(attr.name));
-                    console.log(node.outerHTML);
                 }
             }
             if (node.nodeName.indexOf(':') > 0) {

@@ -46,7 +46,6 @@ export default class ProxyHandler {
 					attr.name.slice(0, colonIndex + 1) !== 'xmlns:'
 				) {
 					node.setAttribute(createProxyName(attr.name), node.getAttribute(attr.name))
-					console.log(node.outerHTML)
 				}
 			}
 

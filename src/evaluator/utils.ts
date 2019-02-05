@@ -43,19 +43,18 @@ export function unwrapStringFunction(func: string) {
 	return outerFunc() // Return the inner function, because that is what the user passed
 }
 
+function replacer(match: string, offset: number, string: string) {
+	// If the colon is part of a pseudo, don't replace
+	if (pseudos.some(pseudo => string.slice(offset, offset + pseudo.length) === pseudo)) return match
+
+	// Else, do replace
+    return COLON_REPLACE;
+}
 export function selectElements(el: Element, selector: string): Element[] {
-	const colonIndex = selector.indexOf(':')
-
-	if (
-		colonIndex > 0 &&
-		pseudos.every(pseudo => selector.slice(colonIndex, colonIndex + pseudo.length) !== pseudo)
-	) {
-		// Replace the colon and convert the whole selector to lower case.
-		// For instance a selector "some:uiComp" is not found, but "some:uicomp" is,
-		// even though the name of the node is <some:uiComp>
-		selector = selector.replace(/:/ug, COLON_REPLACE)
+	// If the selector has a colon, replace them with a dummy (COLON_REPLACE)
+	if (selector.indexOf(':') > 0) {
+		selector = selector.replace(/:/ug, replacer)
 	}
-
 	const elements = el.querySelectorAll(selector)
 	return Array.from(elements)
 }

@@ -5,9 +5,9 @@
 
 import handlerDefaults from './handler.defaults'
 import validators from './validators'
-import { exclude, replace, select, change, rename } from './evaluator/transformers'
+import { exclude, replace, change } from './evaluator/transformers'
 import { exportAsData, exportAsXml, exportAsText, exportAsDOM } from './evaluator/exporters'
-import { unwrap } from './evaluator/utils'
+import { unwrap, selectElements, renameElement, replaceElement, wrapTree } from './evaluator/utils'
 import ProxyHandler from './evaluator/proxy-handler'
 
 export { handlerDefaults }
@@ -18,14 +18,13 @@ export default class XMLio {
 	private trees: Element[] = []
 	private proxyHandler: ProxyHandler
 
-	constructor(el: Element, private parserOptions?: DomParserOptions) {
+	constructor(private doc: XMLDocument, private parserOptions?: DomParserOptions) {
 		this.parserOptions = { handleNamespaces: true, namespaces: [], ...parserOptions }
 
-		this.proxyHandler = new ProxyHandler(this.parserOptions)
+		this.proxyHandler = new ProxyHandler(doc, this.parserOptions)
 
-		let root = document.createElement('root') as Element
-		this.parserOptions.namespaces.forEach((ns) => root.setAttribute(`xmlns:${ns}`, "http://example.com"))
-		root.appendChild(el)
+		let root = doc.createElement('root') as Element
+		root.appendChild(doc.documentElement)
 		root = this.proxyHandler.addProxies(root)
 		this.root = [root.cloneNode(true) as Element]
 		this.trees = [root]
@@ -80,13 +79,35 @@ export default class XMLio {
 		return (output.length === 1) ? output[0] : output
 	}
 
+	private renameTransformer(trees: Element[], data: RenameTransformer): Element[] {
+		return trees.map(tree => {
+			const oldEls = selectElements(tree, data.selector)
+			oldEls.forEach(oldEl => {
+				const newEl = renameElement(this.doc, oldEl, data.newName)
+				replaceElement(oldEl, newEl)
+			})
+			return tree
+		})
+	}
+
+	private selectTransformer(trees: Element[], data: SelectTransformer, parserOptions: DomParserOptions): Element[] {
+		return trees
+			.map(tree => {
+				const found = selectElements(tree, data.selector)
+				// If the selector does not match any elements, return the original tree
+				// if (!found.length) return [tree]
+				return found.map(wrapTree(this.doc, parserOptions))
+			})
+			.reduce((prev, curr) => prev.concat(curr), [])
+	}
+
 	private applyTransformers(): void {
 		this.transformers.forEach((transformer: XMLioTransformer) => {
 			if (transformer.type === 'exclude') this.trees = exclude(this.trees, transformer)
 			if (transformer.type === 'replace') this.trees = replace(this.trees, transformer)
-			if (transformer.type === 'select') this.trees = select(this.trees, transformer, this.parserOptions)
+			if (transformer.type === 'select') this.trees = this.selectTransformer(this.trees, transformer, this.parserOptions)
 			if (transformer.type === 'change') this.trees = change(this.trees, transformer)
-			if (transformer.type === 'rename') this.trees = rename(this.trees, transformer)
+			if (transformer.type === 'rename') this.trees = this.renameTransformer(this.trees, transformer)
 		})	
 	}
 

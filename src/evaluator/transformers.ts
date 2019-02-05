@@ -1,4 +1,4 @@
-import { selectElements, renameElement, replaceElement, wrapTree } from './utils'
+import { selectElements, replaceElement } from './utils'
 import { COLON_REPLACE } from './proxy-handler'
 
 export function exclude(trees: Element[], data: ExcludeTransformer): Element[] {
@@ -19,17 +19,6 @@ export function change(trees: Element[], data: ChangeTransformer): Element[] {
 		// const changeFunc = unwrapStringFunction(data.changeFunc)
 		const targets = selectElements(tree, data.selector)
 		Array.from(targets).forEach(data.changeFunc)
-		return tree
-	})
-}
-
-export function rename(trees: Element[], data: RenameTransformer): Element[] {
-	return trees.map(tree => {
-		const oldEls = selectElements(tree, data.selector)
-		oldEls.forEach(oldEl => {
-			const newEl = renameElement(oldEl, data.newName)
-			replaceElement(oldEl, newEl)
-		})
 		return tree
 	})
 }
@@ -92,15 +81,4 @@ function replaceInTree(tree: Element, data: ReplaceTransformer) {
 		})
 
 	return tree
-}
-
-export function select(trees: Element[], data: SelectTransformer, parserOptions: DomParserOptions): Element[] {
-	return trees
-		.map(tree => {
-			const found = selectElements(tree, data.selector)
-			// If the selector does not match any elements, return the original tree
-			// if (!found.length) return [tree]
-			return found.map(wrapTree(parserOptions))
-		})
-		.reduce((prev, curr) => prev.concat(curr), [])
 }

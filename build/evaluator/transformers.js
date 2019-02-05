@@ -21,17 +21,6 @@ function change(trees, data) {
     });
 }
 exports.change = change;
-function rename(trees, data) {
-    return trees.map(tree => {
-        const oldEls = utils_1.selectElements(tree, data.selector);
-        oldEls.forEach(oldEl => {
-            const newEl = utils_1.renameElement(oldEl, data.newName);
-            utils_1.replaceElement(oldEl, newEl);
-        });
-        return tree;
-    });
-}
-exports.rename = rename;
 function replace(trees, data) {
     return trees.map(tree => replaceInTree(tree, data));
 }
@@ -83,12 +72,3 @@ function replaceInTree(tree, data) {
     });
     return tree;
 }
-function select(trees, data, parserOptions) {
-    return trees
-        .map(tree => {
-        const found = utils_1.selectElements(tree, data.selector);
-        return found.map(utils_1.wrapTree(parserOptions));
-    })
-        .reduce((prev, curr) => prev.concat(curr), []);
-}
-exports.select = select;

@@ -18,9 +18,9 @@ const pseudos = [':empty', ':not(', ':first-child', ':last-child', ':nth-child('
 // Same as wrapXml, but for a node tree. This is used after a
 // select transform, wrapXml is used when the XML string is converted
 // to a node tree. Don't seperate them, because they need to be in sync.
-export function wrapTree(parserOptions: DomParserOptions) {
+export function wrapTree(doc: XMLDocument, parserOptions: DomParserOptions) {
 	return function(el: Element): Element {
-		const wrapper = document.createElement('section')
+		const wrapper = doc.createElement('section')
 		parserOptions.namespaces.forEach(ns => {
 			el.setAttribute(`xmlns:${ns}`, 'http://example.com')
 		})
@@ -53,19 +53,20 @@ export function selectElements(el: Element, selector: string): Element[] {
 		// Replace the colon and convert the whole selector to lower case.
 		// For instance a selector "some:uiComp" is not found, but "some:uicomp" is,
 		// even though the name of the node is <some:uiComp>
-		selector = selector.replace(/:/ug, COLON_REPLACE).toLowerCase()
+		selector = selector.replace(/:/ug, COLON_REPLACE)
 	}
 
 	const elements = el.querySelectorAll(selector)
 	return Array.from(elements)
 }
 
-export function renameElement(el: Element, newName: string): Element {
+export function renameElement(doc: XMLDocument, el: Element, newName: string): Element {
 	// Create a new element, because old.nodeName is read only
-	const newEl = document.createElement(newName)
+	const newEl = doc.createElement(newName)
 
 	// Transfer attributes
 	Array.from(el.attributes).forEach(attr => newEl.setAttribute(attr.name, el.getAttribute(attr.name)))
+
 	if (el.className.length) {
 		newEl.className = el.className
 	}

@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const proxy_handler_1 = require("./proxy-handler");
 const pseudos = [':empty', ':not(', ':first-child', ':last-child', ':nth-child(', ':nth-last-child', ':nth-of-type', ':first-of-type', ':last-of-type', ':only-child'];
-function wrapTree(parserOptions) {
+function wrapTree(doc, parserOptions) {
     return function (el) {
-        const wrapper = document.createElement('section');
+        const wrapper = doc.createElement('section');
         parserOptions.namespaces.forEach(ns => {
             el.setAttribute(`xmlns:${ns}`, 'http://example.com');
         });
@@ -26,14 +26,14 @@ function selectElements(el, selector) {
     const colonIndex = selector.indexOf(':');
     if (colonIndex > 0 &&
         pseudos.every(pseudo => selector.slice(colonIndex, colonIndex + pseudo.length) !== pseudo)) {
-        selector = selector.replace(/:/ug, proxy_handler_1.COLON_REPLACE).toLowerCase();
+        selector = selector.replace(/:/ug, proxy_handler_1.COLON_REPLACE);
     }
     const elements = el.querySelectorAll(selector);
     return Array.from(elements);
 }
 exports.selectElements = selectElements;
-function renameElement(el, newName) {
-    const newEl = document.createElement(newName);
+function renameElement(doc, el, newName) {
+    const newEl = doc.createElement(newName);
     Array.from(el.attributes).forEach(attr => newEl.setAttribute(attr.name, el.getAttribute(attr.name)));
     if (el.className.length) {
         newEl.className = el.className;

@@ -8,7 +8,8 @@ const exporters_1 = require("./evaluator/exporters");
 const utils_1 = require("./evaluator/utils");
 const proxy_handler_1 = require("./evaluator/proxy-handler");
 class XMLio {
-    constructor(el, parserOptions) {
+    constructor(doc, parserOptions) {
+        this.doc = doc;
         this.parserOptions = parserOptions;
         this.transformers = [];
         this.trees = [];
@@ -31,10 +32,9 @@ class XMLio {
             return (output.length === 1) ? output[0] : output;
         };
         this.parserOptions = Object.assign({ handleNamespaces: true, namespaces: [] }, parserOptions);
-        this.proxyHandler = new proxy_handler_1.default(this.parserOptions);
-        let root = document.createElement('root');
-        this.parserOptions.namespaces.forEach((ns) => root.setAttribute(`xmlns:${ns}`, "http://example.com"));
-        root.appendChild(el);
+        this.proxyHandler = new proxy_handler_1.default(doc, this.parserOptions);
+        let root = doc.createElement('root');
+        root.appendChild(doc.documentElement);
         root = this.proxyHandler.addProxies(root);
         this.root = [root.cloneNode(true)];
         this.trees = [root];
@@ -63,6 +63,24 @@ class XMLio {
         this.transformers = [];
         this.trees = this.root.map(el => el.cloneNode(true));
     }
+    renameTransformer(trees, data) {
+        return trees.map(tree => {
+            const oldEls = utils_1.selectElements(tree, data.selector);
+            oldEls.forEach(oldEl => {
+                const newEl = utils_1.renameElement(this.doc, oldEl, data.newName);
+                utils_1.replaceElement(oldEl, newEl);
+            });
+            return tree;
+        });
+    }
+    selectTransformer(trees, data, parserOptions) {
+        return trees
+            .map(tree => {
+            const found = utils_1.selectElements(tree, data.selector);
+            return found.map(utils_1.wrapTree(this.doc, parserOptions));
+        })
+            .reduce((prev, curr) => prev.concat(curr), []);
+    }
     applyTransformers() {
         this.transformers.forEach((transformer) => {
             if (transformer.type === 'exclude')
@@ -70,11 +88,11 @@ class XMLio {
             if (transformer.type === 'replace')
                 this.trees = transformers_1.replace(this.trees, transformer);
             if (transformer.type === 'select')
-                this.trees = transformers_1.select(this.trees, transformer, this.parserOptions);
+                this.trees = this.selectTransformer(this.trees, transformer, this.parserOptions);
             if (transformer.type === 'change')
                 this.trees = transformers_1.change(this.trees, transformer);
             if (transformer.type === 'rename')
-                this.trees = transformers_1.rename(this.trees, transformer);
+                this.trees = this.renameTransformer(this.trees, transformer);
         });
     }
     addTransform(transformer) {

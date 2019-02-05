@@ -18,15 +18,15 @@ function getDepth(node, parent) {
     return depth;
 }
 class ProxyHandler {
-    constructor(parserOptions) {
+    constructor(doc, parserOptions) {
+        this.doc = doc;
         this.parserOptions = parserOptions;
-        this.proxyAttributeElements = [];
     }
     addProxies(el) {
         if (!this.parserOptions.handleNamespaces)
             return;
         const toReplace = [];
-        var treeWalker = document.createTreeWalker(el, NodeFilter.SHOW_ELEMENT);
+        var treeWalker = this.doc.createTreeWalker(el, NodeFilter.SHOW_ELEMENT);
         while (treeWalker.nextNode()) {
             const node = treeWalker.currentNode;
             for (const attr of node.attributes) {
@@ -34,7 +34,7 @@ class ProxyHandler {
                 if (colonIndex > 0 &&
                     attr.name.slice(0, colonIndex + 1) !== 'xmlns:') {
                     node.setAttribute(createProxyName(attr.name), node.getAttribute(attr.name));
-                    this.proxyAttributeElements.push(node);
+                    console.log(node.outerHTML);
                 }
             }
             if (node.nodeName.indexOf(':') > 0) {
@@ -47,23 +47,21 @@ class ProxyHandler {
         toReplace
             .sort((a, b) => b.depth - a.depth)
             .forEach(rep => {
-            const proxyElement = utils_1.renameElement(rep.node, createProxyName(rep.node.nodeName));
+            const proxyElement = utils_1.renameElement(this.doc, rep.node, createProxyName(rep.node.nodeName));
             utils_1.replaceElement(rep.node, proxyElement);
         });
         return el;
     }
     removeProxies(el) {
-        this.proxyAttributeElements.forEach(node => {
+        const toReplace = [];
+        var treeWalker = this.doc.createTreeWalker(el, NodeFilter.SHOW_ELEMENT);
+        while (treeWalker.nextNode()) {
+            const node = treeWalker.currentNode;
             for (const attr of node.attributes) {
                 if (attr.name.indexOf(exports.COLON_REPLACE) > 0) {
                     node.removeAttribute(attr.name);
                 }
             }
-        });
-        const toReplace = [];
-        var treeWalker = document.createTreeWalker(el, NodeFilter.SHOW_ELEMENT);
-        while (treeWalker.nextNode()) {
-            const node = treeWalker.currentNode;
             if (node.nodeName.indexOf(exports.COLON_REPLACE) > 0) {
                 toReplace.push({
                     depth: getDepth(node, el),
@@ -74,7 +72,7 @@ class ProxyHandler {
         toReplace
             .sort((a, b) => b.depth - a.depth)
             .forEach(rep => {
-            const originalElement = utils_1.renameElement(rep.node, revertProxyName(rep.node.nodeName));
+            const originalElement = utils_1.renameElement(this.doc, rep.node, revertProxyName(rep.node.nodeName));
             utils_1.replaceElement(rep.node, originalElement);
         });
         return el;

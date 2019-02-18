@@ -16,10 +16,9 @@ class XMLio {
         this.createOutput = (exporter) => {
             const output = this.trees
                 .map((tree) => this.proxyHandler.removeProxies(tree))
-                .map(utils_1.unwrap)
                 .map(tree => {
                 if (exporter.type === 'xml')
-                    return exporters_1.exportAsXml(tree, exporter, this.parserOptions);
+                    return exporters_1.exportAsXml(tree, exporter);
                 if (exporter.type === 'data')
                     return exporters_1.exportAsData(tree, exporter);
                 if (exporter.type === 'text')
@@ -33,11 +32,9 @@ class XMLio {
         };
         this.parserOptions = Object.assign({ handleNamespaces: true, namespaces: [] }, parserOptions);
         this.proxyHandler = new proxy_handler_1.default(doc, this.parserOptions);
-        let root = doc.createElement('root');
-        root.appendChild(doc.documentElement);
-        root = this.proxyHandler.addProxies(root);
-        this.root = [root.cloneNode(true)];
-        this.trees = [root];
+        doc = this.proxyHandler.addProxies(doc);
+        this.root = [doc.cloneNode(true)];
+        this.trees = [doc];
     }
     export(options) {
         if (options == null)
@@ -76,8 +73,12 @@ class XMLio {
     selectTransformer(trees, data, parserOptions) {
         return trees
             .map(tree => {
-            const found = utils_1.selectElements(tree, data.selector);
-            return found.map(utils_1.wrapTree(this.doc, parserOptions));
+            return utils_1.selectElements(tree, data.selector)
+                .map(el => {
+                const docCopy = tree.cloneNode(true);
+                docCopy.replaceChild(el, docCopy.documentElement);
+                return docCopy;
+            });
         })
             .reduce((prev, curr) => prev.concat(curr), []);
     }

@@ -18,16 +18,16 @@ const pseudos = [':empty', ':not(', ':first-child', ':last-child', ':nth-child('
 // Same as wrapXml, but for a node tree. This is used after a
 // select transform, wrapXml is used when the XML string is converted
 // to a node tree. Don't seperate them, because they need to be in sync.
-export function wrapTree(doc: XMLDocument, parserOptions: DomParserOptions) {
-	return function(el: Element): Element {
-		const wrapper = doc.createElement('section')
-		parserOptions.namespaces.forEach(ns => {
-			el.setAttribute(`xmlns:${ns}`, 'http://example.com')
-		})
-		wrapper.appendChild(el)
-		return wrapper
-	}
-}
+// export function wrapTree(doc: XMLDocument, parserOptions: DomParserOptions) {
+// 	return function(el: Element): Element {
+// 		const wrapper = doc.createElement('section')
+// 		parserOptions.namespaces.forEach(ns => {
+// 			el.setAttribute(`xmlns:${ns}`, 'http://example.com')
+// 		})
+// 		wrapper.appendChild(el)
+// 		return wrapper
+// 	}
+// }
 
 // Remove the wrapper node from the tree (see: wrapXml() and wrapTree())
 export function unwrap(wrapper: HTMLElement): HTMLElement {
@@ -50,12 +50,12 @@ function replacer(match: string, offset: number, string: string) {
 	// Else, do replace
     return COLON_REPLACE;
 }
-export function selectElements(el: Element, selector: string): Element[] {
+export function selectElements(doc: XMLDocument, selector: string): Element[] {
 	// If the selector has a colon, replace them with a dummy (COLON_REPLACE)
 	if (selector.indexOf(':') > 0) {
 		selector = selector.replace(/:/ug, replacer)
 	}
-	const elements = el.querySelectorAll(selector)
+	const elements = doc.querySelectorAll(selector)
 	return Array.from(elements)
 }
 
@@ -81,6 +81,6 @@ export function renameElement(doc: XMLDocument, el: Element, newName: string): E
 }
 
 export function replaceElement(oldEl: Element, newEl: Node) {
-	if (oldEl.parentElement == null) return
-	oldEl.parentElement.replaceChild(newEl, oldEl)
+	if (oldEl.parentNode == null) return
+	oldEl.parentNode.replaceChild(newEl, oldEl)
 }

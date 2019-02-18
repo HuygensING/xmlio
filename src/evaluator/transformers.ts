@@ -1,7 +1,7 @@
 import { selectElements, replaceElement } from './utils'
 import { COLON_REPLACE } from './proxy-handler'
 
-export function exclude(trees: Element[], data: ExcludeTransformer): Element[] {
+export function exclude(trees: XMLDocument[], data: ExcludeTransformer): XMLDocument[] {
 	return trees.map(tree => {
 		const selector = (Array.isArray(data.selector)) ? data.selector : [data.selector]
 
@@ -14,7 +14,7 @@ export function exclude(trees: Element[], data: ExcludeTransformer): Element[] {
 	})
 }
 
-export function change(trees: Element[], data: ChangeTransformer): Element[] {
+export function change(trees: XMLDocument[], data: ChangeTransformer): XMLDocument[] {
 	return trees.map(tree => {
 		// const changeFunc = unwrapStringFunction(data.changeFunc)
 		const targets = selectElements(tree, data.selector)
@@ -23,14 +23,14 @@ export function change(trees: Element[], data: ChangeTransformer): Element[] {
 	})
 }
 
-export function replace(trees: Element[], data: ReplaceTransformer): Element[] {
+export function replace(trees: XMLDocument[], data: ReplaceTransformer): XMLDocument[] {
 	return trees.map(tree => replaceInTree(tree, data))
 }
-function replaceInTree(tree: Element, data: ReplaceTransformer) {
+function replaceInTree(doc: XMLDocument, data: ReplaceTransformer) {
 	// const sourceSelectorFunc = unwrapStringFunction(data.sourceSelectorFunc)
 
 	// Retrieve the targets from the document
-	const targets = selectElements(tree, data.targetSelector)
+	const targets = selectElements(doc, data.targetSelector)
 	if (!targets.length) console.log('WARNING', `No targets found for ${data.targetSelector}`)
 
 	// Keep a list of used elements, otherwise a replaced target or moved source can be
@@ -48,7 +48,7 @@ function replaceInTree(tree: Element, data: ReplaceTransformer) {
 			if (sourceSelector instanceof Node) {
 				sources.push(sourceSelector)
 			} else {
-				const sourceElements = selectElements(tree, sourceSelector)
+				const sourceElements = selectElements(doc, sourceSelector)
 				sources = Array.from(sourceElements).filter(source => used.indexOf(source) === -1)
 			}
 
@@ -80,5 +80,5 @@ function replaceInTree(tree: Element, data: ReplaceTransformer) {
 				})
 		})
 
-	return tree
+	return doc
 }

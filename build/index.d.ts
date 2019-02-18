@@ -15,7 +15,7 @@ export default class XMLio {
     export(options: DataExporter): DataNode | DataNode[];
     export(options: TextExporter): string | string[];
     export(options: XmlExporter): string | string[];
-    export(options: DomExporter): Element | Element[];
+    export(options: DomExporter): XMLDocument | XMLDocument[];
     export(options: [DataExporter, XmlExporter]): [DataNode | DataNode[], string | string[]];
     export(options: Exporter[]): ExporterReturnValue[];
     export(): string | string[];

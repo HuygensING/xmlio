@@ -2,17 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const proxy_handler_1 = require("./proxy-handler");
 const pseudos = [':empty', ':not(', ':first-child', ':last-child', ':nth-child(', ':nth-last-child', ':nth-of-type', ':first-of-type', ':last-of-type', ':only-child'];
-function wrapTree(doc, parserOptions) {
-    return function (el) {
-        const wrapper = doc.createElement('section');
-        parserOptions.namespaces.forEach(ns => {
-            el.setAttribute(`xmlns:${ns}`, 'http://example.com');
-        });
-        wrapper.appendChild(el);
-        return wrapper;
-    };
-}
-exports.wrapTree = wrapTree;
 function unwrap(wrapper) {
     return wrapper.firstChild;
 }
@@ -27,11 +16,11 @@ function replacer(match, offset, string) {
         return match;
     return proxy_handler_1.COLON_REPLACE;
 }
-function selectElements(el, selector) {
+function selectElements(doc, selector) {
     if (selector.indexOf(':') > 0) {
         selector = selector.replace(/:/ug, replacer);
     }
-    const elements = el.querySelectorAll(selector);
+    const elements = doc.querySelectorAll(selector);
     return Array.from(elements);
 }
 exports.selectElements = selectElements;
@@ -50,8 +39,8 @@ function renameElement(doc, el, newName) {
 }
 exports.renameElement = renameElement;
 function replaceElement(oldEl, newEl) {
-    if (oldEl.parentElement == null)
+    if (oldEl.parentNode == null)
         return;
-    oldEl.parentElement.replaceChild(newEl, oldEl);
+    oldEl.parentNode.replaceChild(newEl, oldEl);
 }
 exports.replaceElement = replaceElement;

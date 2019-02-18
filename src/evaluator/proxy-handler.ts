@@ -28,14 +28,14 @@ interface ToReplace {
 export default class ProxyHandler {
 	// private proxyAttributeElements: Element[] = []
 
-	constructor(private doc: XMLDocument, private parserOptions: DomParserOptions) {}
+	constructor(doc: XMLDocument, private parserOptions: DomParserOptions) {}
 
-	addProxies(el: Element): Element {
+	addProxies(doc: XMLDocument): XMLDocument {
 		if (!this.parserOptions.handleNamespaces) return
 
 		const toReplace: ToReplace[] = []
 
-		var treeWalker = this.doc.createTreeWalker(el, NodeFilter.SHOW_ELEMENT)
+		var treeWalker = doc.createTreeWalker(doc, NodeFilter.SHOW_ELEMENT)
 		while (treeWalker.nextNode()) {
 			const node = treeWalker.currentNode as Element
 
@@ -53,7 +53,7 @@ export default class ProxyHandler {
 			// be replaced first, otherwise the reference to these nodes is lost
 			if (node.nodeName.indexOf(':') > 0) {
 				toReplace.push({
-					depth: getDepth(node, el),
+					depth: getDepth(node, doc),
 					node 
 				})
 			}
@@ -62,15 +62,15 @@ export default class ProxyHandler {
 		toReplace
 			.sort((a, b) => b.depth - a.depth)
 			.forEach(rep => {
-				const proxyElement = renameElement(this.doc, rep.node, createProxyName(rep.node.nodeName))
+				const proxyElement = renameElement(doc, rep.node, createProxyName(rep.node.nodeName))
 				replaceElement(rep.node, proxyElement)
 			})
 
-		return el
+		return doc
 	}
 
 
-	removeProxies(el: Element): Element {
+	removeProxies(doc: XMLDocument): XMLDocument {
 		// // Remove the proxy attributes
 		// this.proxyAttributeElements.forEach(node => {
 		// 	for (const attr of node.attributes) {
@@ -81,7 +81,7 @@ export default class ProxyHandler {
 		// })
 
 		const toReplace: ToReplace[] = []
-		var treeWalker = this.doc.createTreeWalker(el, NodeFilter.SHOW_ELEMENT)
+		var treeWalker = doc.createTreeWalker(doc, NodeFilter.SHOW_ELEMENT)
 		while (treeWalker.nextNode()) {
 			const node = treeWalker.currentNode as Element
 
@@ -95,7 +95,7 @@ export default class ProxyHandler {
 			// be replaced first, otherwise the reference to these nodes is lost
 			if (node.nodeName.indexOf(COLON_REPLACE) > 0) {
 				toReplace.push({
-					depth: getDepth(node, el),
+					depth: getDepth(node, doc),
 					node 
 				})
 			}
@@ -108,10 +108,10 @@ export default class ProxyHandler {
 			// Replace proxy elements with original elements. The elements are renamed, so the original
 			// aren't placed back
 			.forEach(rep => {
-				const originalElement = renameElement(this.doc, rep.node, revertProxyName(rep.node.nodeName))
+				const originalElement = renameElement(doc, rep.node, revertProxyName(rep.node.nodeName))
 				replaceElement(rep.node, originalElement)
 			})
 
-		return el
+		return doc
 	}
 }

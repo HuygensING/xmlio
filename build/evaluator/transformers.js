@@ -25,8 +25,8 @@ function replace(trees, data) {
     return trees.map(tree => replaceInTree(tree, data));
 }
 exports.replace = replace;
-function replaceInTree(tree, data) {
-    const targets = utils_1.selectElements(tree, data.targetSelector);
+function replaceInTree(doc, data) {
+    const targets = utils_1.selectElements(doc, data.targetSelector);
     if (!targets.length)
         console.log('WARNING', `No targets found for ${data.targetSelector}`);
     const used = [];
@@ -39,7 +39,7 @@ function replaceInTree(tree, data) {
             sources.push(sourceSelector);
         }
         else {
-            const sourceElements = utils_1.selectElements(tree, sourceSelector);
+            const sourceElements = utils_1.selectElements(doc, sourceSelector);
             sources = Array.from(sourceElements).filter(source => used.indexOf(source) === -1);
         }
         if (!sources.length) {
@@ -70,5 +70,5 @@ function replaceInTree(tree, data) {
             firstSource.parentNode.insertBefore(source, firstSource.nextSibling);
         });
     });
-    return tree;
+    return doc;
 }

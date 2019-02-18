@@ -19,14 +19,13 @@ function getDepth(node, parent) {
 }
 class ProxyHandler {
     constructor(doc, parserOptions) {
-        this.doc = doc;
         this.parserOptions = parserOptions;
     }
-    addProxies(el) {
+    addProxies(doc) {
         if (!this.parserOptions.handleNamespaces)
             return;
         const toReplace = [];
-        var treeWalker = this.doc.createTreeWalker(el, NodeFilter.SHOW_ELEMENT);
+        var treeWalker = doc.createTreeWalker(doc, NodeFilter.SHOW_ELEMENT);
         while (treeWalker.nextNode()) {
             const node = treeWalker.currentNode;
             for (const attr of node.attributes) {
@@ -38,7 +37,7 @@ class ProxyHandler {
             }
             if (node.nodeName.indexOf(':') > 0) {
                 toReplace.push({
-                    depth: getDepth(node, el),
+                    depth: getDepth(node, doc),
                     node
                 });
             }
@@ -46,14 +45,14 @@ class ProxyHandler {
         toReplace
             .sort((a, b) => b.depth - a.depth)
             .forEach(rep => {
-            const proxyElement = utils_1.renameElement(this.doc, rep.node, createProxyName(rep.node.nodeName));
+            const proxyElement = utils_1.renameElement(doc, rep.node, createProxyName(rep.node.nodeName));
             utils_1.replaceElement(rep.node, proxyElement);
         });
-        return el;
+        return doc;
     }
-    removeProxies(el) {
+    removeProxies(doc) {
         const toReplace = [];
-        var treeWalker = this.doc.createTreeWalker(el, NodeFilter.SHOW_ELEMENT);
+        var treeWalker = doc.createTreeWalker(doc, NodeFilter.SHOW_ELEMENT);
         while (treeWalker.nextNode()) {
             const node = treeWalker.currentNode;
             for (const attr of node.attributes) {
@@ -63,7 +62,7 @@ class ProxyHandler {
             }
             if (node.nodeName.indexOf(exports.COLON_REPLACE) > 0) {
                 toReplace.push({
-                    depth: getDepth(node, el),
+                    depth: getDepth(node, doc),
                     node
                 });
             }
@@ -71,10 +70,10 @@ class ProxyHandler {
         toReplace
             .sort((a, b) => b.depth - a.depth)
             .forEach(rep => {
-            const originalElement = utils_1.renameElement(this.doc, rep.node, revertProxyName(rep.node.nodeName));
+            const originalElement = utils_1.renameElement(doc, rep.node, revertProxyName(rep.node.nodeName));
             utils_1.replaceElement(rep.node, originalElement);
         });
-        return el;
+        return doc;
     }
 }
 exports.default = ProxyHandler;

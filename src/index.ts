@@ -7,15 +7,15 @@ import handlerDefaults from './handler.defaults'
 import validators from './validators'
 import { exclude, replace, change } from './evaluator/transformers'
 import { exportAsData, exportAsXml, exportAsText, exportAsDOM } from './evaluator/exporters'
-import { unwrap, selectElements, renameElement, replaceElement, wrapTree } from './evaluator/utils'
+import { selectElements, renameElement, replaceElement } from './evaluator/utils'
 import ProxyHandler from './evaluator/proxy-handler'
 
 export { handlerDefaults }
 
 export default class XMLio {
-	private root: Element[]
+	private root: XMLDocument[]
 	private transformers: XMLioTransformer[] = []
-	private trees: Element[] = []
+	private trees: XMLDocument[] = []
 	private proxyHandler: ProxyHandler
 
 	constructor(private doc: XMLDocument, private parserOptions?: DomParserOptions) {
@@ -23,17 +23,17 @@ export default class XMLio {
 
 		this.proxyHandler = new ProxyHandler(doc, this.parserOptions)
 
-		let root = doc.createElement('root') as Element
-		root.appendChild(doc.documentElement)
-		root = this.proxyHandler.addProxies(root)
-		this.root = [root.cloneNode(true) as Element]
-		this.trees = [root]
+		// let root = doc.createElement('root') as Element
+		// root.appendChild(doc.documentElement)
+		doc = this.proxyHandler.addProxies(doc)
+		this.root = [doc.cloneNode(true) as XMLDocument]
+		this.trees = [doc]
 	}
 
 	export(options: DataExporter): DataNode | DataNode[]
 	export(options: TextExporter): string | string[]
 	export(options: XmlExporter): string | string[]
-	export(options: DomExporter): Element | Element[]
+	export(options: DomExporter): XMLDocument | XMLDocument[]
 	export(options: [DataExporter, XmlExporter]): [DataNode | DataNode[], string | string[]]
 	export(options: Exporter[]): ExporterReturnValue[]
 	export(): string | string[]
@@ -54,22 +54,22 @@ export default class XMLio {
 
 	persist(): XMLio {
 		this.applyTransformers()
-		this.root = this.trees.map(tree => tree.cloneNode(true) as Element)
+		this.root = this.trees.map(tree => tree.cloneNode(true) as XMLDocument)
 		this.reset()
 		return this
 	}
 
 	private reset() {
 		this.transformers = []
-		this.trees = this.root.map(el => el.cloneNode(true) as Element)
+		this.trees = this.root.map(el => el.cloneNode(true) as XMLDocument)
 	}
 
 	private createOutput = (exporter: Exporter): any[] => {
 		const output: any[] = this.trees
 			.map((tree) => this.proxyHandler.removeProxies(tree))
-			.map(unwrap)
+			// .map(unwrap)
 			.map(tree => {
-				if (exporter.type === 'xml') return exportAsXml(tree, exporter, this.parserOptions)
+				if (exporter.type === 'xml') return exportAsXml(tree, exporter)
 				if (exporter.type === 'data') return exportAsData(tree, exporter)
 				if (exporter.type === 'text') return exportAsText(tree, exporter)
 				if (exporter.type === 'dom') return exportAsDOM(tree, exporter)
@@ -79,7 +79,7 @@ export default class XMLio {
 		return (output.length === 1) ? output[0] : output
 	}
 
-	private renameTransformer(trees: Element[], data: RenameTransformer): Element[] {
+	private renameTransformer(trees: XMLDocument[], data: RenameTransformer): XMLDocument[] {
 		return trees.map(tree => {
 			const oldEls = selectElements(tree, data.selector)
 			oldEls.forEach(oldEl => {
@@ -90,13 +90,19 @@ export default class XMLio {
 		})
 	}
 
-	private selectTransformer(trees: Element[], data: SelectTransformer, parserOptions: DomParserOptions): Element[] {
+	private selectTransformer(trees: XMLDocument[], data: SelectTransformer, parserOptions: DomParserOptions): XMLDocument[] {
 		return trees
 			.map(tree => {
-				const found = selectElements(tree, data.selector)
+				// const found =
+				return selectElements(tree, data.selector)
+					.map(el => {
+						const docCopy = tree.cloneNode(true) as XMLDocument
+						docCopy.replaceChild(el, docCopy.documentElement)
+						return docCopy
+					})
 				// If the selector does not match any elements, return the original tree
 				// if (!found.length) return [tree]
-				return found.map(wrapTree(this.doc, parserOptions))
+				// return found.map(wrapTree(this.doc, parserOptions))
 			})
 			.reduce((prev, curr) => prev.concat(curr), [])
 	}

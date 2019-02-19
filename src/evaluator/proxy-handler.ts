@@ -26,13 +26,7 @@ interface ToReplace {
 }
 
 export default class ProxyHandler {
-	// private proxyAttributeElements: Element[] = []
-
-	constructor(doc: XMLDocument, private parserOptions: DomParserOptions) {}
-
 	addProxies(doc: XMLDocument): XMLDocument {
-		if (!this.parserOptions.handleNamespaces) return
-
 		const toReplace: ToReplace[] = []
 
 		var treeWalker = doc.createTreeWalker(doc, NodeFilter.SHOW_ELEMENT)

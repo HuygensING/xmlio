@@ -18,12 +18,7 @@ function getDepth(node, parent) {
     return depth;
 }
 class ProxyHandler {
-    constructor(doc, parserOptions) {
-        this.parserOptions = parserOptions;
-    }
     addProxies(doc) {
-        if (!this.parserOptions.handleNamespaces)
-            return;
         const toReplace = [];
         var treeWalker = doc.createTreeWalker(doc, NodeFilter.SHOW_ELEMENT);
         while (treeWalker.nextNode()) {

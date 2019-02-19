@@ -8,9 +8,7 @@ const exporters_1 = require("./evaluator/exporters");
 const utils_1 = require("./evaluator/utils");
 const proxy_handler_1 = require("./evaluator/proxy-handler");
 class XMLio {
-    constructor(doc, parserOptions) {
-        this.doc = doc;
-        this.parserOptions = parserOptions;
+    constructor(doc) {
         this.transformers = [];
         this.trees = [];
         this.createOutput = (exporter) => {
@@ -30,8 +28,7 @@ class XMLio {
                 return null;
             return (output.length === 1) ? output[0] : output;
         };
-        this.parserOptions = Object.assign({ handleNamespaces: true, namespaces: [] }, parserOptions);
-        this.proxyHandler = new proxy_handler_1.default(doc, this.parserOptions);
+        this.proxyHandler = new proxy_handler_1.default();
         doc = this.proxyHandler.addProxies(doc);
         this.root = [doc.cloneNode(true)];
         this.trees = [doc];
@@ -55,46 +52,6 @@ class XMLio {
         this.root = this.trees.map(tree => tree.cloneNode(true));
         this.reset();
         return this;
-    }
-    reset() {
-        this.transformers = [];
-        this.trees = this.root.map(el => el.cloneNode(true));
-    }
-    renameTransformer(trees, data) {
-        return trees.map(tree => {
-            const oldEls = utils_1.selectElements(tree, data.selector);
-            oldEls.forEach(oldEl => {
-                const newEl = utils_1.renameElement(this.doc, oldEl, data.newName);
-                utils_1.replaceElement(oldEl, newEl);
-            });
-            return tree;
-        });
-    }
-    selectTransformer(trees, data, parserOptions) {
-        return trees
-            .map(tree => {
-            return utils_1.selectElements(tree, data.selector)
-                .map(el => {
-                const docCopy = tree.cloneNode(true);
-                docCopy.replaceChild(el, docCopy.documentElement);
-                return docCopy;
-            });
-        })
-            .reduce((prev, curr) => prev.concat(curr), []);
-    }
-    applyTransformers() {
-        this.transformers.forEach((transformer) => {
-            if (transformer.type === 'exclude')
-                this.trees = transformers_1.exclude(this.trees, transformer);
-            if (transformer.type === 'replace')
-                this.trees = transformers_1.replace(this.trees, transformer);
-            if (transformer.type === 'select')
-                this.trees = this.selectTransformer(this.trees, transformer, this.parserOptions);
-            if (transformer.type === 'change')
-                this.trees = transformers_1.change(this.trees, transformer);
-            if (transformer.type === 'rename')
-                this.trees = this.renameTransformer(this.trees, transformer);
-        });
     }
     addTransform(transformer) {
         transformer = Object.assign({}, handler_defaults_1.default[transformer.type], transformer);
@@ -136,6 +93,44 @@ class XMLio {
             selector,
             type: 'select',
         });
+    }
+    reset() {
+        this.transformers = [];
+        this.trees = this.root.map(el => el.cloneNode(true));
+    }
+    applyTransformers() {
+        this.transformers.forEach((transformer) => {
+            if (transformer.type === 'exclude')
+                this.trees = transformers_1.exclude(this.trees, transformer);
+            if (transformer.type === 'replace')
+                this.trees = transformers_1.replace(this.trees, transformer);
+            if (transformer.type === 'select')
+                this.trees = this.selectTransformer(this.trees, transformer);
+            if (transformer.type === 'change')
+                this.trees = transformers_1.change(this.trees, transformer);
+            if (transformer.type === 'rename')
+                this.trees = this.renameTransformer(this.trees, transformer);
+        });
+    }
+    renameTransformer(docs, data) {
+        return docs.map(doc => {
+            const oldEls = utils_1.selectElements(doc, data.selector);
+            oldEls.forEach(oldEl => {
+                const newEl = utils_1.renameElement(doc, oldEl, data.newName);
+                utils_1.replaceElement(oldEl, newEl);
+            });
+            return doc;
+        });
+    }
+    selectTransformer(docs, data) {
+        return docs
+            .map(doc => utils_1.selectElements(doc, data.selector)
+            .map(el => {
+            const docCopy = doc.cloneNode(true);
+            docCopy.replaceChild(el, docCopy.documentElement);
+            return docCopy;
+        }))
+            .reduce((prev, curr) => prev.concat(curr), []);
     }
 }
 exports.default = XMLio;

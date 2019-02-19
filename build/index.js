@@ -11,18 +11,21 @@ class XMLio {
     constructor(doc) {
         this.transformers = [];
         this.trees = [];
-        this.createOutput = (exporter) => {
+        this.createOutput = (exporters) => {
             const output = this.trees
                 .map((tree) => this.proxyHandler.removeProxies(tree))
                 .map(tree => {
-                if (exporter.type === 'xml')
-                    return exporters_1.exportAsXml(tree, exporter);
-                if (exporter.type === 'data')
-                    return exporters_1.exportAsData(tree, exporter);
-                if (exporter.type === 'text')
-                    return exporters_1.exportAsText(tree, exporter);
-                if (exporter.type === 'dom')
-                    return exporters_1.exportAsDOM(tree, exporter);
+                let outputPart = exporters.map(exporter => {
+                    if (exporter.type === 'xml')
+                        return exporters_1.exportAsXml(tree, exporter);
+                    if (exporter.type === 'data')
+                        return exporters_1.exportAsData(tree, exporter);
+                    if (exporter.type === 'text')
+                        return exporters_1.exportAsText(tree, exporter);
+                    if (exporter.type === 'dom')
+                        return exporters_1.exportAsDOM(tree, exporter);
+                });
+                return outputPart.length === 1 ? outputPart[0] : outputPart;
             });
             if (!output.length)
                 return null;
@@ -42,8 +45,7 @@ class XMLio {
             options = options.map(option => (Object.assign({}, handler_defaults_1.default[option.type], option)));
         }
         this.applyTransformers();
-        let output = options.map(this.createOutput);
-        output = output.length === 1 ? output[0] : output;
+        const output = this.createOutput(options);
         this.reset();
         return output;
     }

@@ -42,8 +42,9 @@ export default class XMLio {
 			options = options.map(option => ({...handlerDefaults[option.type], ...option}))
 		}
 		this.applyTransformers()
-		let output = options.map(this.createOutput)
-		output = output.length === 1 ? output[0] : output
+		// let output = options.map(this.createOutput)
+		const output = this.createOutput(options)
+		// output = output.length === 1 ? output[0] : output
 
 		this.reset()
 
@@ -116,14 +117,17 @@ export default class XMLio {
 		this.trees = this.root.map(el => el.cloneNode(true) as XMLDocument)
 	}
 
-	private createOutput = (exporter: Exporter): any[] => {
+	private createOutput = (exporters: Exporter[]): any[] => {
 		const output: any[] = this.trees
 			.map((tree) => this.proxyHandler.removeProxies(tree))
 			.map(tree => {
-				if (exporter.type === 'xml') return exportAsXml(tree, exporter)
-				if (exporter.type === 'data') return exportAsData(tree, exporter)
-				if (exporter.type === 'text') return exportAsText(tree, exporter)
-				if (exporter.type === 'dom') return exportAsDOM(tree, exporter)
+				let outputPart = exporters.map(exporter => {
+					if (exporter.type === 'xml') return exportAsXml(tree, exporter)
+					if (exporter.type === 'data') return exportAsData(tree, exporter)
+					if (exporter.type === 'text') return exportAsText(tree, exporter)
+					if (exporter.type === 'dom') return exportAsDOM(tree, exporter)
+				})
+				return outputPart.length === 1 ? outputPart[0] : outputPart
 			})
 
 		if (!output.length) return null

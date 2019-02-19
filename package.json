@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "dist": "rm -rf dist && webpack && webpack --config webpack.config.prod.js",
-    "watch-dist": "webpack -w",
+    "watch:dist": "webpack -w",
     "watch": "tsc -w"
   },
   "author": "Gijsjan Brouwer (https://github.com/Gijsjan)",

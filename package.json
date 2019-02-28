@@ -7,12 +7,16 @@
   "scripts": {
     "build": "tsc",
     "dist": "rm -rf dist && webpack && webpack --config webpack.config.prod.js",
+    "test": "http-server",
     "watch:dist": "webpack -w",
     "watch": "tsc -w"
   },
   "author": "Gijsjan Brouwer (https://github.com/Gijsjan)",
   "license": "GPL-3.0-or-later",
   "devDependencies": {
+    "chai": "^4.2.0",
+    "http-server": "^0.11.1",
+    "mocha": "^6.0.2",
     "ts-loader": "^5.3.3",
     "tslib": "^1.9.3",
     "typescript": "^3.2.2",

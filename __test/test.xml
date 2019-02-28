@@ -1,0 +1,12 @@
+<xml xmlns:some="http://example.com">
+	<locs>
+		<loc some:attr="5">
+			<some:Naam some:attr="1">Den Haag</some:Naam>
+			<some:nOam some:attr="2">'s Gravenhage</some:nOam>
+		</loc>
+		<loc some:attr="6">
+			<some:name some:aTtribut="3">Buenos Aires</some:name>
+			<some:name some:Attrib="4">Bono</some:name>
+		</loc>
+	</locs>
+</xml>

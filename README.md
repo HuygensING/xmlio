@@ -12,4 +12,7 @@ $ npm run watch
 ```
 
 ## Test
-For tests see `xmlio-node` package
+```
+$ npm test
+```
+Go to `localhost:8080/__test` to see Mocha/Chai output

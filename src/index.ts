@@ -8,24 +8,19 @@ import validators from './validators'
 import { exclude, replace, change } from './evaluator/transformers'
 import { exportAsData, exportAsXml, exportAsText, exportAsDOM } from './evaluator/exporters'
 import { selectElements, renameElement, replaceElement } from './evaluator/utils'
-import ProxyHandler from './evaluator/proxy-handler'
+import { addProxies, removeProxies } from './evaluator/proxy-handler'
 
 export { handlerDefaults }
 
 export default class XMLio {
 	private root: XMLDocument[]
 	private transformers: XMLioTransformer[] = []
-	private trees: XMLDocument[] = []
-	private proxyHandler: ProxyHandler
+	private docs: XMLDocument[] = []
 
 	constructor(doc: XMLDocument) {
-		this.proxyHandler = new ProxyHandler()
-
-		// let root = doc.createElement('root') as Element
-		// root.appendChild(doc.documentElement)
-		doc = this.proxyHandler.addProxies(doc)
+		doc = addProxies(doc)
 		this.root = [doc.cloneNode(true) as XMLDocument]
-		this.trees = [doc]
+		this.docs = [doc]
 	}
 
 	export(options: DataExporter): DataNode | DataNode[]
@@ -53,7 +48,7 @@ export default class XMLio {
 
 	persist(): XMLio {
 		this.applyTransformers()
-		this.root = this.trees.map(tree => tree.cloneNode(true) as XMLDocument)
+		this.root = this.docs.map(tree => tree.cloneNode(true) as XMLDocument)
 		this.reset()
 		return this
 	}
@@ -114,12 +109,14 @@ export default class XMLio {
 
 	private reset() {
 		this.transformers = []
-		this.trees = this.root.map(el => el.cloneNode(true) as XMLDocument)
+		this.docs = this.root.map(el => el.cloneNode(true) as XMLDocument)
 	}
 
 	private createOutput = (exporters: Exporter[]): any[] => {
-		const output: any[] = this.trees
-			.map((tree) => this.proxyHandler.removeProxies(tree))
+		const hasSelect = this.transformers.some(t => t.type === 'select')
+
+		const output: any[] = this.docs
+			.map((tree) => removeProxies(tree))
 			.map(tree => {
 				let outputPart = exporters.map(exporter => {
 					if (exporter.type === 'xml') return exportAsXml(tree, exporter)
@@ -130,17 +127,17 @@ export default class XMLio {
 				return outputPart.length === 1 ? outputPart[0] : outputPart
 			})
 
-		if (!output.length) return null
-		return (output.length === 1) ? output[0] : output
+		if (!hasSelect && output.length !== 1) console.error('Output should contain one element!')
+		return hasSelect ? output : output[0]
 	}
 
 	private applyTransformers(): void {
 		this.transformers.forEach((transformer: XMLioTransformer) => {
-			if (transformer.type === 'exclude') this.trees = exclude(this.trees, transformer)
-			if (transformer.type === 'replace') this.trees = replace(this.trees, transformer)
-			if (transformer.type === 'select') this.trees = this.selectTransformer(this.trees, transformer)
-			if (transformer.type === 'change') this.trees = change(this.trees, transformer)
-			if (transformer.type === 'rename') this.trees = this.renameTransformer(this.trees, transformer)
+			if (transformer.type === 'exclude') this.docs = exclude(this.docs, transformer)
+			if (transformer.type === 'replace') this.docs = replace(this.docs, transformer)
+			if (transformer.type === 'select') this.docs = this.selectTransformer(this.docs, transformer)
+			if (transformer.type === 'change') this.docs = change(this.docs, transformer)
+			if (transformer.type === 'rename') this.docs = this.renameTransformer(this.docs, transformer)
 		})	
 	}
 

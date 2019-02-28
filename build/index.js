@@ -10,10 +10,11 @@ const proxy_handler_1 = require("./evaluator/proxy-handler");
 class XMLio {
     constructor(doc) {
         this.transformers = [];
-        this.trees = [];
+        this.docs = [];
         this.createOutput = (exporters) => {
-            const output = this.trees
-                .map((tree) => this.proxyHandler.removeProxies(tree))
+            const hasSelect = this.transformers.some(t => t.type === 'select');
+            const output = this.docs
+                .map((tree) => proxy_handler_1.removeProxies(tree))
                 .map(tree => {
                 let outputPart = exporters.map(exporter => {
                     if (exporter.type === 'xml')
@@ -27,14 +28,13 @@ class XMLio {
                 });
                 return outputPart.length === 1 ? outputPart[0] : outputPart;
             });
-            if (!output.length)
-                return null;
-            return (output.length === 1) ? output[0] : output;
+            if (!hasSelect && output.length !== 1)
+                console.error('Output should contain one element!');
+            return hasSelect ? output : output[0];
         };
-        this.proxyHandler = new proxy_handler_1.default();
-        doc = this.proxyHandler.addProxies(doc);
+        doc = proxy_handler_1.addProxies(doc);
         this.root = [doc.cloneNode(true)];
-        this.trees = [doc];
+        this.docs = [doc];
     }
     export(options) {
         if (options == null)
@@ -51,7 +51,7 @@ class XMLio {
     }
     persist() {
         this.applyTransformers();
-        this.root = this.trees.map(tree => tree.cloneNode(true));
+        this.root = this.docs.map(tree => tree.cloneNode(true));
         this.reset();
         return this;
     }
@@ -98,20 +98,20 @@ class XMLio {
     }
     reset() {
         this.transformers = [];
-        this.trees = this.root.map(el => el.cloneNode(true));
+        this.docs = this.root.map(el => el.cloneNode(true));
     }
     applyTransformers() {
         this.transformers.forEach((transformer) => {
             if (transformer.type === 'exclude')
-                this.trees = transformers_1.exclude(this.trees, transformer);
+                this.docs = transformers_1.exclude(this.docs, transformer);
             if (transformer.type === 'replace')
-                this.trees = transformers_1.replace(this.trees, transformer);
+                this.docs = transformers_1.replace(this.docs, transformer);
             if (transformer.type === 'select')
-                this.trees = this.selectTransformer(this.trees, transformer);
+                this.docs = this.selectTransformer(this.docs, transformer);
             if (transformer.type === 'change')
-                this.trees = transformers_1.change(this.trees, transformer);
+                this.docs = transformers_1.change(this.docs, transformer);
             if (transformer.type === 'rename')
-                this.trees = this.renameTransformer(this.trees, transformer);
+                this.docs = this.renameTransformer(this.docs, transformer);
         });
     }
     renameTransformer(docs, data) {

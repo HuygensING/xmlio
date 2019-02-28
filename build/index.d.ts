@@ -7,8 +7,7 @@ export { handlerDefaults };
 export default class XMLio {
     private root;
     private transformers;
-    private trees;
-    private proxyHandler;
+    private docs;
     constructor(doc: XMLDocument);
     export(options: DataExporter): DataNode | DataNode[];
     export(options: TextExporter): string | string[];

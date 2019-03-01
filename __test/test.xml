@@ -8,5 +8,9 @@
 			<some:name some:aTtribut="3">Buenos Aires</some:name>
 			<some:name some:Attrib="4">Bono</some:name>
 		</loc>
+		<some:loc>
+			<some:name some:attr="5">Den Bosch</some:name>
+			<some:name some:attr="6">'s Hertogenbosch</some:name>
+		</some:loc>
 	</locs>
 </xml>

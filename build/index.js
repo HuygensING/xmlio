@@ -69,9 +69,9 @@ class XMLio {
             type: 'change',
         });
     }
-    rename(selector, newName) {
+    rename(selector, renameFunc) {
         return this.addTransform({
-            newName,
+            renameFunc,
             selector,
             type: 'rename',
         });
@@ -117,9 +117,18 @@ class XMLio {
     renameTransformer(docs, data) {
         return docs.map(doc => {
             const oldEls = utils_1.selectElements(doc, data.selector);
-            oldEls.forEach(oldEl => {
-                const newEl = utils_1.renameElement(doc, oldEl, data.newName);
-                utils_1.replaceElement(oldEl, newEl);
+            oldEls
+                .map(el => ({
+                depth: utils_1.getDepth(el, doc),
+                el,
+            }))
+                .sort((a, b) => b.depth - a.depth)
+                .forEach(item => {
+                const newName = utils_1.createProxyName(data.renameFunc(utils_1.revertProxyName(item.el.nodeName)));
+                if (newName !== item.el.nodeName) {
+                    const newEl = utils_1.renameElement(doc, item.el, newName);
+                    utils_1.replaceElement(item.el, newEl);
+                }
             });
             return doc;
         });

@@ -84,3 +84,21 @@ export function replaceElement(oldEl: Element, newEl: Node) {
 	if (oldEl.parentNode == null) return
 	oldEl.parentNode.replaceChild(newEl, oldEl)
 }
+
+export function createProxyName(name: string) {
+	return name.replace(/:/ug, COLON_REPLACE)
+}
+
+export function revertProxyName(name: string) {
+	const re = new RegExp(COLON_REPLACE, 'ug')
+	return name.replace(re, ':')
+}
+
+export function getDepth(node: Node, parent: Node) {
+	let depth = 0
+	while (node !== parent) {
+		depth += 1
+		node = node.parentNode
+	}
+	return depth
+}

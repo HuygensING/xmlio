@@ -44,3 +44,21 @@ function replaceElement(oldEl, newEl) {
     oldEl.parentNode.replaceChild(newEl, oldEl);
 }
 exports.replaceElement = replaceElement;
+function createProxyName(name) {
+    return name.replace(/:/ug, proxy_handler_1.COLON_REPLACE);
+}
+exports.createProxyName = createProxyName;
+function revertProxyName(name) {
+    const re = new RegExp(proxy_handler_1.COLON_REPLACE, 'ug');
+    return name.replace(re, ':');
+}
+exports.revertProxyName = revertProxyName;
+function getDepth(node, parent) {
+    let depth = 0;
+    while (node !== parent) {
+        depth += 1;
+        node = node.parentNode;
+    }
+    return depth;
+}
+exports.getDepth = getDepth;

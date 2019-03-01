@@ -19,7 +19,7 @@ export default class XMLio {
     persist(): XMLio;
     addTransform(transformer: XMLioTransformer): this;
     change(selector: string, changeFunc: (target: HTMLElement) => HTMLElement): XMLio;
-    rename(selector: string, newName: string): XMLio;
+    rename(selector: string, renameFunc: (oldName: string) => string): XMLio;
     exclude(selector: string | string[]): XMLio;
     replace(targetSelector: string, sourceSelectorFunc: (target: HTMLElement) => string, removeSource?: boolean): XMLio;
     select(selector: string): XMLio;

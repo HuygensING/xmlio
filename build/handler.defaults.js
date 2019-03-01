@@ -15,7 +15,7 @@ const handlerDefaults = {
     rename: {
         active: true,
         selector: '',
-        newName: '',
+        renameFunc: () => '',
         type: 'rename',
     },
     replace: {

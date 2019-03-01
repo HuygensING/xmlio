@@ -4,7 +4,7 @@ declare type XMLioTransformer = ChangeTransformer | ExcludeTransformer | RenameT
 
 declare interface RenameTransformer extends BaseHandler<TransformerType> {
 	selector: string
-	newName: string
+	renameFunc: (oldName: string) => string
 	type: 'rename'
 }
 

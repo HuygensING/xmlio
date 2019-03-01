@@ -2,21 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = require("./utils");
 exports.COLON_REPLACE = '_-_-_-_';
-function createProxyName(name) {
-    return name.replace(/:/ug, exports.COLON_REPLACE);
-}
-function revertProxyName(name) {
-    const re = new RegExp(exports.COLON_REPLACE, 'ug');
-    return name.replace(re, ':');
-}
-function getDepth(node, parent) {
-    let depth = 0;
-    while (node !== parent) {
-        depth += 1;
-        node = node.parentNode;
-    }
-    return depth;
-}
 function addProxies(doc) {
     const toReplace = [];
     var treeWalker = doc.createTreeWalker(doc, NodeFilter.SHOW_ELEMENT);
@@ -26,12 +11,12 @@ function addProxies(doc) {
             const colonIndex = attr.name.indexOf(':');
             if (colonIndex > 0 &&
                 attr.name.slice(0, colonIndex + 1) !== 'xmlns:') {
-                node.setAttribute(createProxyName(attr.name), node.getAttribute(attr.name));
+                node.setAttribute(utils_1.createProxyName(attr.name), node.getAttribute(attr.name));
             }
         }
         if (node.nodeName.indexOf(':') > 0) {
             toReplace.push({
-                depth: getDepth(node, doc),
+                depth: utils_1.getDepth(node, doc),
                 node
             });
         }
@@ -39,7 +24,7 @@ function addProxies(doc) {
     toReplace
         .sort((a, b) => b.depth - a.depth)
         .forEach(rep => {
-        const proxyElement = utils_1.renameElement(doc, rep.node, createProxyName(rep.node.nodeName));
+        const proxyElement = utils_1.renameElement(doc, rep.node, utils_1.createProxyName(rep.node.nodeName));
         utils_1.replaceElement(rep.node, proxyElement);
     });
     return doc;
@@ -57,7 +42,7 @@ function removeProxies(doc) {
         }
         if (node.nodeName.indexOf(exports.COLON_REPLACE) > 0) {
             toReplace.push({
-                depth: getDepth(node, doc),
+                depth: utils_1.getDepth(node, doc),
                 node
             });
         }
@@ -65,7 +50,7 @@ function removeProxies(doc) {
     toReplace
         .sort((a, b) => b.depth - a.depth)
         .forEach(rep => {
-        const originalElement = utils_1.renameElement(doc, rep.node, revertProxyName(rep.node.nodeName));
+        const originalElement = utils_1.renameElement(doc, rep.node, utils_1.revertProxyName(rep.node.nodeName));
         utils_1.replaceElement(rep.node, originalElement);
     });
     return doc;

@@ -8,7 +8,7 @@ const validators = {
         return props.selector.length > 0;
     },
     rename: function (props) {
-        return props.selector.length > 0 && props.newName.length > 0;
+        return props.selector.length > 0;
     },
     replace: function (props) {
         return props.targetSelector.length > 0 && props.sourceSelectorFunc.length > 0;

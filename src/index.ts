@@ -7,7 +7,7 @@ import handlerDefaults from './handler.defaults'
 import validators from './validators'
 import { exclude, replace, change } from './evaluator/transformers'
 import { exportAsData, exportAsXml, exportAsText, exportAsDOM } from './evaluator/exporters'
-import { selectElements, renameElement, replaceElement } from './evaluator/utils'
+import { selectElements, renameElement, replaceElement, getDepth, createProxyName, revertProxyName } from './evaluator/utils'
 import { addProxies, removeProxies } from './evaluator/proxy-handler'
 
 export { handlerDefaults }
@@ -76,9 +76,9 @@ export default class XMLio {
 		})
 	}
 
-	rename(selector: string, newName: string): XMLio {
+	rename(selector: string, renameFunc: (oldName: string) => string): XMLio {
 		return this.addTransform({
-			newName,
+			renameFunc,
 			selector,
 			type: 'rename',
 		})
@@ -144,10 +144,19 @@ export default class XMLio {
 	private renameTransformer(docs: XMLDocument[], data: RenameTransformer): XMLDocument[] {
 		return docs.map(doc => {
 			const oldEls = selectElements(doc, data.selector)
-			oldEls.forEach(oldEl => {
-				const newEl = renameElement(doc, oldEl, data.newName)
-				replaceElement(oldEl, newEl)
-			})
+			oldEls
+				.map(el => ({
+					depth: getDepth(el, doc),
+					el,
+				}))
+				.sort((a, b) => b.depth - a.depth)
+				.forEach(item => {
+					const newName = createProxyName(data.renameFunc(revertProxyName(item.el.nodeName)))
+					if (newName !== item.el.nodeName) {
+						const newEl = renameElement(doc, item.el, newName)
+						replaceElement(item.el, newEl)
+					}
+				})
 			return doc
 		})
 	}

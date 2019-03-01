@@ -1,24 +1,6 @@
-import { renameElement, replaceElement } from './utils';
+import { renameElement, replaceElement, createProxyName, getDepth, revertProxyName } from './utils';
 
 export const COLON_REPLACE = '_-_-_-_'
-
-function createProxyName(name: string) {
-	return name.replace(/:/ug, COLON_REPLACE)
-}
-
-function revertProxyName(name: string) {
-	const re = new RegExp(COLON_REPLACE, 'ug')
-	return name.replace(re, ':')
-}
-
-function getDepth(node: Node, parent: Node) {
-	let depth = 0
-	while (node !== parent) {
-		depth += 1
-		node = node.parentNode
-	}
-	return depth
-}
 
 interface ToReplace {
 	depth: number
